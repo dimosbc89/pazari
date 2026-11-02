@@ -21,7 +21,7 @@ export function Home() {
       <div className="home-stage">
         <main className="home-main container">
           <h1 className="home-logo">
-            <Wordmark title="Pazari" />
+            <Wordmark title="Tagora" />
           </h1>
           <p className="home-title">{t('home.title')}</p>
           <SearchInput size="lg" onType={(v) => setTyped(v.trim().length)} />

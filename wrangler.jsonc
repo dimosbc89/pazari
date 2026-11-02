@@ -2,7 +2,7 @@
 // scheduled product sync. Setup steps: README.md → "Shops and product sync".
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "pazari",
+  "name": "tagora",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "assets": {
@@ -14,8 +14,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "pazari",
-      // Create it with `npx wrangler d1 create pazari` and paste the id here.
+      "database_name": "tagora",
+      // Create it with `npx wrangler d1 create tagora` and paste the id here.
       "database_id": "00000000-0000-0000-0000-000000000000",
       "migrations_dir": "migrations"
     }
@@ -23,9 +23,9 @@
   // Every 10 minutes: sync the shops that are due (each shop every SYNC_INTERVAL_HOURS).
   "triggers": { "crons": ["*/10 * * * *"] },
   "vars": {
-    "SITE_URL": "https://pazari.gr",
+    "SITE_URL": "https://tagora.gr",
     "ADMIN_EMAILS": "admin@example.com",
-    "MAIL_FROM": "Pazari <hello@pazari.gr>",
+    "MAIL_FROM": "Tagora <hello@tagora.gr>",
     "SYNC_INTERVAL_HOURS": "6",
     "SYNC_BATCH": "3",
     "TYPESENSE_HOST": "xxx.a1.typesense.net",

@@ -9,7 +9,7 @@ export const DEFAULT_COUNTRY = 'gr';
 export const findCountry = (code?: string) => COUNTRIES.find((c) => c.code === code?.toLowerCase());
 
 export const SITE = {
-  name: 'Pazari',
+  name: 'Tagora',
   version: __APP_VERSION__,
   /** Fill these in before launch (they show in the footer and the legal pages). */
   company: {
@@ -36,6 +36,6 @@ export const SEARCH_CONFIG = {
 };
 
 export const STORAGE_KEYS = {
-  country: 'pazari_country',
-  consent: 'pazari_consent',
+  country: 'tagora_country',
+  consent: 'tagora_consent',
 };

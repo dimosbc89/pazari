@@ -16,7 +16,7 @@ export function MerchantHeader({ me, onSignedOut }: { me?: Me | null; onSignedOu
   return (
     <header className="header mheader">
       <div className="header-inner container">
-        <Link to={path()} className="header-logo" aria-label="Pazari"><Wordmark /></Link>
+        <Link to={path()} className="header-logo" aria-label="Tagora"><Wordmark /></Link>
         <Link to={path('/shops')} className="mheader-label">{t('footer.forShops')}</Link>
         <div className="mheader-right">
           {me ? (

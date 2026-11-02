@@ -9,7 +9,7 @@ export interface Consent {
 }
 
 const TWELVE_MONTHS = 365 * 24 * 60 * 60 * 1000;
-export const OPEN_SETTINGS_EVENT = 'pazari:cookie-settings';
+export const OPEN_SETTINGS_EVENT = 'tagora:cookie-settings';
 
 export function readConsent(): Consent | null {
   try {
@@ -26,7 +26,7 @@ export function saveConsent(analytics: boolean) {
   const c: Consent = { analytics, ts: Date.now() };
   try { localStorage.setItem(STORAGE_KEYS.consent, JSON.stringify(c)); } catch { /* private mode: keep for this visit only */ }
   if (analytics) loadTagManager();
-  window.dispatchEvent(new CustomEvent('pazari:consent', { detail: c }));
+  window.dispatchEvent(new CustomEvent('tagora:consent', { detail: c }));
 }
 
 export const openCookieSettings = () => window.dispatchEvent(new Event(OPEN_SETTINGS_EVENT));

@@ -13,9 +13,9 @@ function render(m: Mail): { html: string; text: string } {
     ? `<p style="margin:22px 0"><a href="${escapeHtml(m.button.url)}" style="display:inline-block;background:#C9361A;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:12px;font-size:15px">${escapeHtml(m.button.label)}</a></p>`
     : '';
   const html = `<!doctype html><html><body style="margin:0;background:#FFF6EC;font-family:Arial,Helvetica,sans-serif">
-<div style="max-width:560px;margin:0 auto;padding:28px 20px"><div style="font-size:26px;font-weight:800;color:#1D1A2F;letter-spacing:-.5px;margin-bottom:18px">pazari<span style="color:#EF4A23">.</span></div>
+<div style="max-width:560px;margin:0 auto;padding:28px 20px"><div style="font-size:26px;font-weight:800;color:#1D1A2F;letter-spacing:-.5px;margin-bottom:18px">tag<span style="color:#EF4A23">o</span>ra</div>
 <div style="background:#fff;border-radius:16px;padding:24px 22px">${p}${btn}</div>
-<p style="font-size:12px;color:#5D5870;margin:16px 4px">Pazari · ${m.button ? escapeHtml(new URL(m.button.url).host) : ''}</p></div></body></html>`;
+<p style="font-size:12px;color:#5D5870;margin:16px 4px">Tagora · ${m.button ? escapeHtml(new URL(m.button.url).host) : ''}</p></div></body></html>`;
   const text = [...m.lines, ...(m.button ? ['', `${m.button.label}: ${m.button.url}`] : [])].join('\n\n');
   return { html, text };
 }
@@ -37,16 +37,16 @@ export async function sendMail(env: Env, m: Mail): Promise<boolean> {
 
 const T = {
   login: {
-    el: { subject: 'Σύνδεση στο Pazari', lines: ['Πάτησε το κουμπί για να μπεις στον λογαριασμό του καταστήματός σου. Ο σύνδεσμος ισχύει 30 λεπτά και μία φορά.', 'Αν δεν το ζήτησες εσύ, αγνόησε αυτό το μήνυμα.'], button: 'Σύνδεση' },
-    en: { subject: 'Sign in to Pazari', lines: ['Use the button to sign in to your shop account. The link works once, for 30 minutes.', 'If you did not ask for this, you can ignore this email.'], button: 'Sign in' },
+    el: { subject: 'Σύνδεση στο Tagora', lines: ['Πάτησε το κουμπί για να μπεις στον λογαριασμό του καταστήματός σου. Ο σύνδεσμος ισχύει 30 λεπτά και μία φορά.', 'Αν δεν το ζήτησες εσύ, αγνόησε αυτό το μήνυμα.'], button: 'Σύνδεση' },
+    en: { subject: 'Sign in to Tagora', lines: ['Use the button to sign in to your shop account. The link works once, for 30 minutes.', 'If you did not ask for this, you can ignore this email.'], button: 'Sign in' },
   },
   received: {
-    el: { subject: 'Λάβαμε την αίτηση του καταστήματός σου', lines: ['Ευχαριστούμε! Λάβαμε την αίτηση για το «{shop}» και θα την ελέγξουμε σύντομα.', 'Μόλις εγκριθεί, τα προϊόντα σου θα εμφανιστούν στο Pazari και θα ενημερώνονται αυτόματα. Θα σου στείλουμε email.'], button: 'Δες την κατάσταση' },
-    en: { subject: 'We received your shop application', lines: ['Thank you! We received the application for “{shop}” and will review it shortly.', 'Once approved, your products appear on Pazari and update automatically. We will email you.'], button: 'See the status' },
+    el: { subject: 'Λάβαμε την αίτηση του καταστήματός σου', lines: ['Ευχαριστούμε! Λάβαμε την αίτηση για το «{shop}» και θα την ελέγξουμε σύντομα.', 'Μόλις εγκριθεί, τα προϊόντα σου θα εμφανιστούν στο Tagora και θα ενημερώνονται αυτόματα. Θα σου στείλουμε email.'], button: 'Δες την κατάσταση' },
+    en: { subject: 'We received your shop application', lines: ['Thank you! We received the application for “{shop}” and will review it shortly.', 'Once approved, your products appear on Tagora and update automatically. We will email you.'], button: 'See the status' },
   },
   approved: {
-    el: { subject: 'Το «{shop}» είναι πλέον στο Pazari', lines: ['Η αίτησή σου εγκρίθηκε. {count} προϊόντα είναι ήδη online και ενημερώνονται αυτόματα κάθε {hours} ώρες.', 'Στον πίνακα του καταστήματος βλέπεις τον τελευταίο συγχρονισμό, τα προϊόντα που χρειάζονται διόρθωση και πόσους επισκέπτες σού στείλαμε.'], button: 'Άνοιξε τον πίνακα' },
-    en: { subject: '“{shop}” is now on Pazari', lines: ['Your application was approved. {count} products are already live and update automatically every {hours} hours.', 'Your shop dashboard shows the last sync, products that need fixing and how many visitors we sent you.'], button: 'Open the dashboard' },
+    el: { subject: 'Το «{shop}» είναι πλέον στο Tagora', lines: ['Η αίτησή σου εγκρίθηκε. {count} προϊόντα είναι ήδη online και ενημερώνονται αυτόματα κάθε {hours} ώρες.', 'Στον πίνακα του καταστήματος βλέπεις τον τελευταίο συγχρονισμό, τα προϊόντα που χρειάζονται διόρθωση και πόσους επισκέπτες σού στείλαμε.'], button: 'Άνοιξε τον πίνακα' },
+    en: { subject: '“{shop}” is now on Tagora', lines: ['Your application was approved. {count} products are already live and update automatically every {hours} hours.', 'Your shop dashboard shows the last sync, products that need fixing and how many visitors we sent you.'], button: 'Open the dashboard' },
   },
   rejected: {
     el: { subject: 'Η αίτηση του «{shop}»', lines: ['Δυστυχώς δεν μπορούμε να εγκρίνουμε την αίτηση αυτή τη στιγμή.', 'Αιτία: {reason}', 'Μπορείς να απαντήσεις σε αυτό το email για οποιαδήποτε ερώτηση.'] },

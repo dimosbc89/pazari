@@ -61,7 +61,7 @@ export function search(env: Env) {
   return typesenseClient({ host: env.TYPESENSE_HOST, port: env.TYPESENSE_PORT, protocol: env.TYPESENSE_PROTOCOL, apiKey: env.TYPESENSE_ADMIN_KEY, collection: env.TYPESENSE_COLLECTION });
 }
 
-/** Link to a page of the site in the shop's market, e.g. https://pazari.gr/gr/merchant */
+/** Link to a page of the site in the shop's market, e.g. https://tagora.gr/gr/merchant */
 export function siteLink(env: Env, shop: Pick<ShopRow, 'countries'>, path: string, origin?: string) {
   const base = (env.SITE_URL || origin || '').replace(/\/$/, '');
   const country = parse<string[]>(shop.countries, [])[0] || 'gr';

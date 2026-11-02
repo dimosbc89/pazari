@@ -8,7 +8,7 @@ export interface FetchOptions {
   timeoutMs?: number;
 }
 
-const UA = 'PazariBot/1.0 (+https://pazari.gr/shops; product sync)';
+const UA = 'TagoraBot/1.0 (+https://tagora.gr/shops; product sync)';
 const DEFAULT_MAX = 80 * 1024 * 1024;
 
 function isPrivateHost(host: string): boolean {

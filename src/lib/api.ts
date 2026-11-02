@@ -25,7 +25,9 @@ export async function api<T>(path: string, init: { method?: string; body?: unkno
   } catch {
     throw new ApiError(0, 'network', 'Network error');
   }
-  const data = (await res.json().catch(() => ({}))) as { ok?: boolean; code?: string; message?: string };
+  // Anything that isn't our JSON (e.g. a static host answering with index.html) is an error.
+  const data = (await res.json().catch(() => null)) as { ok?: boolean; code?: string; message?: string } | null;
+  if (!data || typeof data !== 'object') throw new ApiError(res.status, 'generic', 'The service is not available.');
   if (!res.ok || data.ok === false) throw new ApiError(res.status, data.code ?? 'generic', data.message ?? 'Error');
   return data as T;
 }
@@ -87,7 +89,10 @@ export function useMe() {
   const [state, setState] = useState<{ me: Me | null; loading: boolean }>({ me: null, loading: true });
   const reload = useCallback(() => {
     setState((s) => ({ ...s, loading: true }));
-    api<Me>('/auth/me').then((me) => setState({ me, loading: false }), () => setState({ me: null, loading: false }));
+    api<Me>('/auth/me').then(
+      (me) => setState({ me: me && typeof me.email === 'string' && Array.isArray(me.shops) ? me : null, loading: false }),
+      () => setState({ me: null, loading: false }),
+    );
   }, []);
   useEffect(reload, [reload]);
   return { ...state, reload };

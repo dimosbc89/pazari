@@ -1,4 +1,4 @@
-// Turns source items into Pazari products: checks each one, fills defaults and
+// Turns source items into Tagora products: checks each one, fills defaults and
 // counts problems so the shop can fix its data.
 import { isHttpUrl, slug, summaryOf, toParagraphs } from './text.ts';
 import { SKIP_CODES, type Issue, type IssueCode, type Product, type ShopConfig, type SourceResult, type SyncReport } from './types.ts';

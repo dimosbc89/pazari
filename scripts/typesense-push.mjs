@@ -62,6 +62,6 @@ console.log(`imported ${lines.length - failed.length}/${lines.length} documents 
 if (failed.length) console.log('first errors:', failed.slice(0, 3));
 
 if (flag('search-key')) {
-  const k = await api('POST', '/keys', { description: 'Pazari website (search only)', actions: ['documents:search'], collections: [collection] });
+  const k = await api('POST', '/keys', { description: 'Tagora website (search only)', actions: ['documents:search'], collections: [collection] });
   console.log(`\nSearch-only key (put it in VITE_TYPESENSE_SEARCH_KEY): ${k.value}`);
 }

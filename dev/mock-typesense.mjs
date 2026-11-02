@@ -1,5 +1,5 @@
 // A tiny in-memory stand-in for Typesense, for local development only. It supports
-// just what Pazari uses: collections, JSONL import, delete by filter and multi_search
+// just what Tagora uses: collections, JSONL import, delete by filter and multi_search
 // (text match on a few fields, := / != filters, facets, sorting, paging).
 // Run: node dev/mock-typesense.mjs   (port 8108, any API key)
 import http from 'node:http';

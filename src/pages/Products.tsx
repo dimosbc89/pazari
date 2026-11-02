@@ -29,7 +29,7 @@ export function Products() {
     [searchKey, pages],
   );
 
-  useDocumentTitle(query ? `${query} · Pazari` : t('meta.title'));
+  useDocumentTitle(query ? `${query} · Tagora` : t('meta.title'));
 
   const total = data?.total ?? 0;
   const countText = total === 1 ? t('results.countOne') : t('results.count', { n: num(total) });

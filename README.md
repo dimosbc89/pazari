@@ -1,8 +1,8 @@
-# pazari
+# tagora
 
-**Pazari** is a comparison shopping service (CSS): one search across many online shops, with filters, price comparison and a click-out to the shop that sells it. It has the same screens and flow as Wisely CSS (`shopping.shopwisely.io`): a home search, results with filters, a product page with offers and variants, and the legal pages. Everything in this repo is new, though: code, design, logo, copy, illustrations and demo data. Nothing was copied from that site.
+**Tagora** is a comparison shopping service (CSS): one search across many online shops, with filters, price comparison and a click-out to the shop that sells it. It has the same screens and flow as Wisely CSS (`shopping.shopwisely.io`): a home search, results with filters, a product page with offers and variants, and the legal pages. Everything in this repo is new, though: code, design, logo, copy, illustrations and demo data. Nothing was copied from that site.
 
-*Παζάρι* is Greek for both "bazaar" and "haggling for a better price", which is the job a price-comparison site does for you. The logo is a market-stall awning (see [BRAND.md](BRAND.md)).
+*Tagora* = price **tag** + **αγορά**, the ancient Greek marketplace: the market where every shop's price tags meet. The logo's "o" is the hole of a price tag; the market-stall awning is the site's motif (see [BRAND.md](BRAND.md)). The GitHub repository is still called `pazari`; rename it in GitHub → Settings if you like (old links keep redirecting).
 
 ![Brand sheet](brand/brand-sheet.png)
 
@@ -38,14 +38,14 @@ Copy `.env.example` to `.env` to change settings. With no `.env` the site runs o
 
 ## Shops and product sync
 
-Shops join by themselves and their products stay up to date without anyone at Pazari touching a file.
+Shops join by themselves and their products stay up to date without anyone at Tagora touching a file.
 
 **How a shop joins**
 
 1. On `/gr/shops` the shop picks how it connects and pastes an address:
    * **XML feed:** the Skroutz, BestPrice or Google Shopping feed it already has (XML or CSV/TSV). Recommended: it carries barcodes (EAN) and MPNs, which is what puts the shop in price comparisons.
-   * **Shopify:** just the shop address. Pazari reads the store's public `/products.json` (no app to install; no barcodes or delivery costs).
-   * **WooCommerce:** just the shop address. Pazari reads WooCommerce's built-in public Store API (no plugin or keys; no barcodes or delivery costs).
+   * **Shopify:** just the shop address. Tagora reads the store's public `/products.json` (no app to install; no barcodes or delivery costs).
+   * **WooCommerce:** just the shop address. Tagora reads WooCommerce's built-in public Store API (no plugin or keys; no barcodes or delivery costs).
 2. "Check" reads the source on the spot: how many products are ready, samples, and problems (no price, sold out, no barcode…).
 3. The shop fills in its details, the countries it delivers to, and an optional delivery cost / free-delivery threshold (used when the source has none). The application is saved as **pending** and both the shop and the admins get an email.
 4. An admin approves it on `/gr/admin`. That runs the first sync, so the products are live within seconds, and emails the shop.
@@ -55,14 +55,14 @@ Shops join by themselves and their products stay up to date without anyone at Pa
 
 * A Cloudflare cron runs every 10 minutes and syncs the shops that are due, a few at a time. Each shop is synced every `SYNC_INTERVAL_HOURS` (default 6). Shops can also press "Sync now" (once per 5 minutes).
 * Each sync reads the whole source, checks every product, uploads them to Typesense, then **removes that shop's products that were not in this sync** (deleted, sold out). Out-of-stock items are left out on purpose.
-* If a source fails (site down, broken feed), the products already online stay online, the shop gets one email, and Pazari retries in an hour.
+* If a source fails (site down, broken feed), the products already online stay online, the shop gets one email, and Tagora retries in an hour.
 * **Same product in different shops** = same barcode (EAN/GTIN), or same brand + MPN. Shop SKUs are never used for matching.
 * Every product-page click-out is counted per shop per day (no visitor data) for the shop dashboard.
 
 **Set it up on Cloudflare** (once)
 
 ```bash
-npx wrangler d1 create pazari                      # paste the database_id into wrangler.jsonc
+npx wrangler d1 create tagora                      # paste the database_id into wrangler.jsonc
 npm run db:migrate:remote                          # create the tables
 npx wrangler secret put TYPESENSE_ADMIN_KEY        # writes the search index
 npx wrangler secret put RESEND_API_KEY             # sends sign-in and notification emails (resend.com)
@@ -83,7 +83,7 @@ VITE_SEARCH_BACKEND=typesense VITE_TYPESENSE_HOST=localhost VITE_TYPESENSE_PORT=
 npm run dev:api                                    # site + API on http://localhost:8787
 ```
 
-Open `http://localhost:8787/gr/shops` and apply with `http://localhost:9100/feeds/skroutz.xml` (also `google.xml`, `bestprice.xml`, `products.tsv`, a Shopify store at `http://localhost:9100` and a WooCommerce shop at `http://localhost:9100/woo`). Sign in as `admin@example.com` at `/gr/merchant/login`: without an email key the sign-in link is shown on screen. Run the scheduled sync by hand with `curl -X POST "http://localhost:8787/cdn-cgi/local/explorer/api/local/scheduled?worker=pazari" -H 'Content-Type: application/json' -d '{"cron":"*/10 * * * *"}'`.
+Open `http://localhost:8787/gr/shops` and apply with `http://localhost:9100/feeds/skroutz.xml` (also `google.xml`, `bestprice.xml`, `products.tsv`, a Shopify store at `http://localhost:9100` and a WooCommerce shop at `http://localhost:9100/woo`). Sign in as `admin@example.com` at `/gr/merchant/login`: without an email key the sign-in link is shown on screen. Run the scheduled sync by hand with `curl -X POST "http://localhost:8787/cdn-cgi/local/explorer/api/local/scheduled?worker=tagora" -H 'Content-Type: application/json' -d '{"cron":"*/10 * * * *"}'`.
 
 ### Import from the command line
 
@@ -128,8 +128,8 @@ npm run demo:data  # rebuilds the demo catalogue and its images
 * Shop terms: the sign-up form asks for consent to be contacted and links the privacy policy. If shops pay or accept conditions, add a terms page and a checkbox for it.
 * Spam: the sign-up form has a hidden honeypot field. If fake applications appear, add Cloudflare Turnstile to the form.
 * Switch to real data (above). The demo footer note disappears with `VITE_SEARCH_BACKEND=typesense`.
-* Google CSS: apply to the CSS Program (directly or through a CSS partner), and set up each merchant in Merchant Center under the Pazari CSS.
-* Name and domain: check the trademark (EUIPO / Greek registry) and register a domain. Candidates: `pazari.gr`, `pazari.eu`, `getpazari.com`. Availability was **not** checked.
+* Google CSS: apply to the CSS Program (directly or through a CSS partner), and set up each merchant in Merchant Center under the Tagora CSS.
+* Name and domain: check the trademark (EUIPO / Greek registry) and register a domain. Candidates: `tagora.gr`, `tagora.eu`, `gettagora.com`. Availability was **not** checked.
 * `Powered by GROW Agency` in the footer: change or remove it in `src/config.ts` (`SITE.poweredBy`).
 
 ## Repo layout

@@ -2,7 +2,7 @@
 import { adminEmails, type Env } from './env.ts';
 import { addHours, getCookie, HttpError, nowIso } from './http.ts';
 
-export const SESSION_COOKIE = 'pazari_session';
+export const SESSION_COOKIE = 'tagora_session';
 const SESSION_DAYS = 30;
 const LINK_MINUTES = 30;
 

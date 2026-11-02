@@ -35,7 +35,7 @@ function Block({ b }: { b: LegalBlock }) {
 export function Legal({ kind }: { kind: 'privacy' | 'cookies' }) {
   const { lang } = useLocale();
   const page = (kind === 'privacy' ? privacyPolicy : cookiesPolicy)[lang];
-  useDocumentTitle(`${page.title} · Pazari`);
+  useDocumentTitle(`${page.title} · Tagora`);
   return (
     <>
       <Header />

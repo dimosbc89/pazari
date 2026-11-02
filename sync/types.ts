@@ -3,7 +3,7 @@ import type { Product } from '../src/search/types.ts';
 
 export type { Product };
 
-/** How a shop's products reach Pazari. */
+/** How a shop's products reach Tagora. */
 export type SourceType = 'feed' | 'shopify' | 'woocommerce';
 
 export interface ShopConfig {

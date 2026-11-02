@@ -34,7 +34,7 @@ export function ProductPage() {
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
   useEffect(() => { setActive(0); window.scrollTo(0, 0); }, [id]);
-  useDocumentTitle(p ? `${loc(p.title)} · Pazari` : undefined);
+  useDocumentTitle(p ? `${loc(p.title)} · Tagora` : undefined);
 
   // Sticky buy bar once the main button has scrolled out of view.
   const buyRef = useRef<HTMLAnchorElement>(null);

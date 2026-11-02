@@ -1,4 +1,4 @@
--- Shops that list their products on Pazari, their syncs, click-outs and logins.
+-- Shops that list their products on Tagora, their syncs, click-outs and logins.
 
 CREATE TABLE shops (
   id                  TEXT PRIMARY KEY,          -- slug, prefixes product ids
