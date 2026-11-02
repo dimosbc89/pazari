@@ -1,0 +1,41 @@
+/* Pazari design tokens. Brand reference: BRAND.md */
+:root {
+  /* brand */
+  --paprika: #EF4A23;
+  --paprika-deep: #C9361A;   /* buttons, links: 5.2:1 on white */
+  --paprika-darker: #A82B12;
+  --paprika-soft: #FDE7DF;
+  --ink: #1D1A2F;
+  --ink-2: #3A3650;
+  --muted: #5D5870;          /* 6.8:1 on white */
+  --cream: #FFF6EC;
+  --paper: #FCFAF7;
+  --white: #FFFFFF;
+  --saffron: #FFB627;
+  --saffron-soft: #FFF0CC;
+  --mint: #17A673;
+  --mint-text: #0B7A52;
+  --mint-soft: #E2F5EC;
+  --plum: #6D4AE8;
+  --sky: #2E9BE6;
+
+  /* neutrals */
+  --line: #ECE6DD;
+  --line-2: #DED6CA;
+  --tint: #F5F1EB;
+
+  /* shape */
+  --radius-s: 10px;
+  --radius: 14px;
+  --radius-l: 20px;
+  --shadow-1: 0 1px 2px rgb(29 26 47 / 0.06), 0 2px 8px rgb(29 26 47 / 0.05);
+  --shadow-2: 0 18px 40px -16px rgb(29 26 47 / 0.22), 0 2px 6px rgb(29 26 47 / 0.05);
+
+  /* type */
+  --font: 'Commissioner Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --container: 1280px;
+  --header-h: 76px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.5, 0.55, 1);
+}
