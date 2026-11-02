@@ -63,14 +63,15 @@ Shops join by themselves and their products stay up to date without anyone at Ta
 
 **Set it up on Cloudflare** (once)
 
-```bash
-npx wrangler d1 create tagora                      # paste the database_id into wrangler.jsonc
-npm run db:migrate:remote                          # create the tables
-npx wrangler secret put TYPESENSE_ADMIN_KEY        # writes the search index
-npx wrangler secret put RESEND_API_KEY             # sends sign-in and notification emails (resend.com)
-```
+The database `tagora` already exists (Western Europe) with its tables, and its id is in `wrangler.jsonc`. For a new migration in `migrations/`, run `npm run db:migrate:remote`.
 
-Then in `wrangler.jsonc` → `vars`: `SITE_URL`, `ADMIN_EMAILS` (comma-separated; these people can open `/admin`), `MAIL_FROM` (a sender on a domain verified in Resend) and the `TYPESENSE_*` host settings. The website needs the search-only key in `VITE_TYPESENSE_SEARCH_KEY` and `VITE_SEARCH_BACKEND=typesense` at build time (Cloudflare: Settings → Build → Variables). Deploy with `npm run deploy`, or connect the repo in the Cloudflare dashboard.
+Secrets (Cloudflare → Workers & Pages → tagora → Settings → Variables and Secrets, type "Secret"; or `npx wrangler secret put NAME`):
+
+* `ADMIN_EMAILS`: who can open `/admin` (comma-separated). Kept out of the repo.
+* `RESEND_API_KEY`: sends sign-in and notification emails ([resend.com](https://resend.com)).
+* `TYPESENSE_ADMIN_KEY`: writes the search index.
+
+In `wrangler.jsonc` → `vars`: `SITE_URL`, `MAIL_FROM` (a sender on a domain verified in Resend) and the `TYPESENSE_*` host settings. The website needs the search-only key in `VITE_TYPESENSE_SEARCH_KEY` and `VITE_SEARCH_BACKEND=typesense` at build time (Cloudflare: Settings → Build → Variables). Deploy with `npm run deploy`, or connect the repo in the Cloudflare dashboard.
 
 The scheduled sync needs the **Workers Paid plan** (the free plan's limits on CPU time and outgoing requests are too low for reading catalogues). Feeds up to ~80 MB and Shopify stores up to 25,000 products are read in one go; for much bigger catalogues, move the sync to Cloudflare Queues.
 
@@ -113,9 +114,9 @@ Only the search-only key goes in `VITE_` variables; they ship to the browser. Th
 
 The domain is already a Cloudflare zone, so the Worker can serve it directly:
 
-1. **Database:** `npx wrangler d1 create tagora`, paste the id into `wrangler.jsonc`, then `npx wrangler d1 migrations apply DB --remote`.
-2. **Secrets:** `npx wrangler secret put TYPESENSE_ADMIN_KEY` and `npx wrangler secret put RESEND_API_KEY`. Set `ADMIN_EMAILS` in `wrangler.jsonc` to your own address.
-3. **Deploy:** Workers & Pages → Create → Import a repository → `dimosbc89/pazari`, build command `npm run build`, deploy command `npx wrangler deploy`. Add `VITE_SEARCH_BACKEND=typesense` and the `VITE_TYPESENSE_*` search settings as build variables (see "Shops and product sync").
+1. **Database:** done (`tagora`, Western Europe, tables created).
+2. **Deploy:** Workers & Pages → Create → Import a repository → `dimosbc89/pazari`, project name `tagora` (it must match `wrangler.jsonc`), branch `main`, build command `npm run build`, deploy command `npx wrangler deploy`.
+3. **Secrets:** after the first deploy, add `ADMIN_EMAILS`, `RESEND_API_KEY` and `TYPESENSE_ADMIN_KEY` (see above). Until the search index exists the site runs on the fictional demo catalogue; once you have a Typesense cluster, add `VITE_SEARCH_BACKEND=typesense` and the `VITE_TYPESENSE_*` settings as build variables (Settings → Build) and redeploy.
 4. **Domain:** the `routes` entry in `wrangler.jsonc` attaches `tagora.online` on deploy (DNS record and certificate included). If the zone already has an A, AAAA or CNAME record for `tagora.online` (for example a parking page), delete it first, or the deploy stops with a conflict.
 5. **www:** in DNS add a proxied `A` record `www` → `192.0.2.1`, then Rules → Redirect Rules → "Redirect from WWW to root" (301, keep path and query). One address keeps Google from indexing every page twice.
 6. **Email:** in Resend add the domain `tagora.online` and create the DNS records it shows (Resend can add them to Cloudflare for you). Emails go out from `hello@tagora.online` (`MAIL_FROM`).
@@ -138,7 +139,7 @@ npm run demo:data  # rebuilds the demo catalogue and its images
 
 * Fill the company details once in `src/config.ts` (`SITE.company`: legal name, address, GEMI, VAT, email, phone, opening hours). They fill the same placeholders on every page. The text pages also need `[LAST UPDATED DATE]`, `[LOG RETENTION DAYS]`, `[EVENT RETENTION DAYS]`, `[HOSTING PROVIDER]`, `[EMAIL PROVIDER]` and `[MERCHANT RETENTION]` in `src/content/legal.ts`, and `[SHOP FEES]`, `[COURTS CITY]`, `[MEDIATORS]` in `src/content/terms.ts`. Search the pages for the yellow highlights to find any left.
 * Have a lawyer review the policies and both sets of terms. Click-outs are now counted per shop and day; searches are not logged server-side, although the policy says they are. Either add that logging or remove it from the policy.
-* Set `ADMIN_EMAILS` (it is `admin@example.com` in `wrangler.jsonc`) and the Resend sender before inviting shops.
+* Set the `ADMIN_EMAILS` secret and verify the Resend sender before inviting shops.
 * Shop terms: shops accept them at sign-up; the version and date are stored (`terms_version`, `terms_accepted_at`, shown in the admin). When you change the terms, bump `SHOP_TERMS_VERSION` in `worker/routes.ts` and email every shop at least 15 days before (EU Regulation 2019/1150). Rejected and paused shops get an email with the reason.
 * Spam: the sign-up form has a hidden honeypot field. If fake applications appear, add Cloudflare Turnstile to the form.
 * Switch to real data (above). The demo footer note disappears with `VITE_SEARCH_BACKEND=typesense`.

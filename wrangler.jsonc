@@ -15,8 +15,8 @@
     {
       "binding": "DB",
       "database_name": "tagora",
-      // Create it with `npx wrangler d1 create tagora` and paste the id here.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      // Western Europe. Tables are set up by migrations/ (both applied).
+      "database_id": "9fe7a271-44b5-43b6-bd3b-108716ca4d27",
       "migrations_dir": "migrations"
     }
   ],
@@ -27,7 +27,6 @@
   "triggers": { "crons": ["*/10 * * * *"] },
   "vars": {
     "SITE_URL": "https://tagora.online",
-    "ADMIN_EMAILS": "admin@example.com",
     "MAIL_FROM": "Tagora <hello@tagora.online>",
     "SYNC_INTERVAL_HOURS": "6",
     "SYNC_BATCH": "3",
@@ -37,6 +36,9 @@
     "TYPESENSE_COLLECTION": "products",
     "ENVIRONMENT": "production"
   },
-  // Secrets (not in this file): npx wrangler secret put TYPESENSE_ADMIN_KEY / RESEND_API_KEY
+  // Secrets (not in this file; Cloudflare → the Worker → Settings → Variables and Secrets):
+  //   ADMIN_EMAILS         who can open /admin (comma-separated)
+  //   RESEND_API_KEY       sends the emails
+  //   TYPESENSE_ADMIN_KEY  writes products to the search index
   "observability": { "enabled": true }
 }

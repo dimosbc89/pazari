@@ -5,7 +5,7 @@ export interface Env {
   /** Public address of the site, e.g. https://tagora.online (used in emails) */
   SITE_URL?: string;
   /** Comma-separated emails that can open the admin page */
-  ADMIN_EMAILS?: string;
+  ADMIN_EMAILS?: string; // a secret, so it is not in the repo
   /** production | development. Development allows localhost sources and shows sign-in links without email. */
   ENVIRONMENT?: string;
   /** Hours between automatic syncs of a shop (default 6) */
