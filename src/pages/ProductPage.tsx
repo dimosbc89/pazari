@@ -119,7 +119,10 @@ export function ProductPage() {
         {offers.length > 0 && (
           <section className="offers" aria-labelledby="offers-title">
             <h2 id="offers-title">{t('product.compare')}</h2>
-            <p className="section-note">{offers.length === 1 ? t('product.compareOne') : t('product.compareText', { n: offers.length })}</p>
+            <p className="section-note">
+              {offers.length === 1 ? t('product.compareOne') : t('product.compareText', { n: offers.length })}{' '}
+              <Link to={path('/pages/ranking')}>{t('product.howCompared')}</Link>
+            </p>
             <ol className="offers-list">
               {offers.map((o, i) => (
                 <li key={o.id} className={`offer ${o.id === p.id ? 'is-current' : ''}`}>

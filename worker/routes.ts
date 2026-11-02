@@ -8,6 +8,8 @@ import { body, checkSameOrigin, errorResponse, HttpError, isEmail, json, nowIso,
 import { getShop, intervalHours, shopDto, siteLink, syncShop, unlistShop, type ShopRow, type ShopStatus } from './shops.ts';
 
 const SOURCE_TYPES: SourceType[] = ['feed', 'shopify', 'woocommerce'];
+/** Bump when the shop terms (src/content/terms.ts) change, and email shops 15 days before. */
+const SHOP_TERMS_VERSION = '2026-11';
 const MARKETS = COUNTRIES.map((c) => c.code);
 
 type Handler = (ctx: { req: Request; env: Env; params: string[]; origin: string; exec: ExecutionContext }) => Promise<Response>;
@@ -114,10 +116,11 @@ const signup: Handler = async ({ req, env, origin }) => {
   if (!check.ok) throw new HttpError(422, check.code ?? 'source_failed', check.message ?? 'We could not read your products.');
 
   const id = await uniqueId(env, name);
-  await env.DB.prepare(`INSERT INTO shops (id, name, website, email, contact_name, phone, company, vat, countries, lang, source_type, source_url, source_format, default_shipping, free_shipping_over, status, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`)
+  const now = nowIso();
+  await env.DB.prepare(`INSERT INTO shops (id, name, website, email, contact_name, phone, company, vat, countries, lang, source_type, source_url, source_format, default_shipping, free_shipping_over, status, created_at, terms_version, terms_accepted_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)`)
     .bind(id, name, website, email, str(b.contactName, 120) ?? null, str(b.phone, 40) ?? null, str(b.company, 160) ?? null, str(b.vat, 30) ?? null,
-      JSON.stringify(countries), lang, type, url, check.format ?? null, num(b.defaultShipping), num(b.freeShippingOver), nowIso())
+      JSON.stringify(countries), lang, type, url, check.format ?? null, num(b.defaultShipping), num(b.freeShippingOver), now, SHOP_TERMS_VERSION, now)
     .run();
 
   const shop = { countries: JSON.stringify(countries) };
@@ -252,15 +255,19 @@ const adminAction: Handler = async ({ req, env, params, origin }) => {
   if (action === 'approve' || action === 'resume') {
     await env.DB.prepare("UPDATE shops SET status = 'active', status_reason = NULL, approved_at = COALESCE(approved_at, ?), next_sync_at = ? WHERE id = ?").bind(nowIso(), nowIso(), id).run();
     const result = await syncShop(env, { ...shop, status: 'active' }, 'approve', origin);
-    if (action === 'approve') {
-      await sendMail(env, mailFor('approved', lang, shop.email, { shop: shop.name, count: result.imported, hours: intervalHours(env) }, siteLink(env, shop, '/merchant/login', origin)));
+    // A shop that was paused hears it is back; a pending one hears it was approved.
+    const kind = action === 'approve' ? 'approved' : shop.status === 'paused' ? 'resumed' : null;
+    if (kind) {
+      await sendMail(env, mailFor(kind, lang, shop.email, { shop: shop.name, count: result.imported, hours: intervalHours(env) }, siteLink(env, shop, '/merchant/login', origin)));
     }
     return json({ ok: true, result });
   }
   if (action === 'reject' || action === 'pause') {
     await env.DB.prepare('UPDATE shops SET status = ?, status_reason = ? WHERE id = ?').bind(action === 'reject' ? 'rejected' : 'paused', reason, id).run();
     await unlistShop(env, id);
+    // Shops are always told why (EU Regulation 2019/1150, art. 4).
     if (action === 'reject') await sendMail(env, mailFor('rejected', lang, shop.email, { shop: shop.name, reason: reason ?? '-' }));
+    else await sendMail(env, mailFor('paused', lang, shop.email, { shop: shop.name, reason: reason ?? '-' }, siteLink(env, shop, '/merchant/login', origin)));
     return json({ ok: true });
   }
   throw new HttpError(404, 'not_found');

@@ -67,6 +67,7 @@ export interface Shop {
   status: ShopStatus; statusReason: string | null; createdAt: string; approvedAt: string | null;
   lastSyncAt: string | null; lastSyncStatus: 'ok' | 'warning' | 'error' | null; lastSyncMessage: string | null;
   lastIssues: Issue[]; productCount: number; nextSyncAt: string | null;
+  termsVersion: string | null; termsAcceptedAt: string | null;
   clicks30?: number;
 }
 

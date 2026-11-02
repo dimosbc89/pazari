@@ -213,7 +213,7 @@ export function ShopsPage() {
 
               <label className="checkbox consent">
                 <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                <span>{t('field.consent')} <Link to={path('/pages/privacy-policy')} target="_blank">{t('field.consentLink')}</Link>.</span>
+                <span>{t('field.consent')} <Link to={path('/pages/shop-terms')} target="_blank">{t('field.consentTerms')}</Link> {t('field.consentAnd')} <Link to={path('/pages/privacy-policy')} target="_blank">{t('field.consentLink')}</Link>.</span>
               </label>
 
               {error && <p className="form-error" role="alert"><Icon name="alert" /> {error}</p>}

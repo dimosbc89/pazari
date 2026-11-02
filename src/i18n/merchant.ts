@@ -110,7 +110,9 @@ export const merchantEl = {
   'field.freeOver': 'Δωρεάν αποστολή από (€)',
   'field.shippingHelp': 'Μπαίνει όταν η πηγή δεν δίνει κόστος αποστολής (Shopify, WooCommerce και αρκετά feeds). Άφησέ τα κενά αν δεν θέλεις να εμφανίζεται.',
   'field.optional': 'προαιρετικό',
-  'field.consent': 'Συμφωνώ να επικοινωνήσει μαζί μου το Tagora για την ένταξη του καταστήματος και έχω διαβάσει την',
+  'field.consent': 'Αποδέχομαι τους',
+  'field.consentTerms': 'όρους για καταστήματα',
+  'field.consentAnd': 'και έχω διαβάσει την',
   'field.consentLink': 'πολιτική απορρήτου',
 
   'login.meta': 'Σύνδεση καταστήματος · Tagora',
@@ -204,6 +206,8 @@ export const merchantEl = {
   'admin.contact': 'Επικοινωνία',
   'admin.company': 'Εταιρεία',
   'admin.done': 'Έγινε.',
+  'admin.terms': 'Όροι',
+  'admin.termsAccepted': 'Αποδέχτηκε την έκδοση {v} στις {when}',
 };
 
 export type MerchantKey = keyof typeof merchantEl;
@@ -319,7 +323,9 @@ export const merchantEn: Record<MerchantKey, string> = {
   'field.freeOver': 'Free delivery from (€)',
   'field.shippingHelp': 'Used when your source has no delivery cost (Shopify, WooCommerce and many feeds). Leave empty to show nothing.',
   'field.optional': 'optional',
-  'field.consent': 'I agree that Tagora may contact me about listing my shop, and I have read the',
+  'field.consent': 'I accept the',
+  'field.consentTerms': 'terms for shops',
+  'field.consentAnd': 'and have read the',
   'field.consentLink': 'privacy policy',
 
   'login.meta': 'Shop sign-in · Tagora',
@@ -413,4 +419,6 @@ export const merchantEn: Record<MerchantKey, string> = {
   'admin.contact': 'Contact',
   'admin.company': 'Company',
   'admin.done': 'Done.',
+  'admin.terms': 'Terms',
+  'admin.termsAccepted': 'Accepted version {v} on {when}',
 };

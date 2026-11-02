@@ -20,12 +20,15 @@
       "migrations_dir": "migrations"
     }
   ],
+  // The site's address. tagora.online is a Cloudflare zone, so `wrangler deploy`
+  // creates the DNS record and certificate itself. www → tagora.online: README → Deploy.
+  "routes": [{ "pattern": "tagora.online", "custom_domain": true }],
   // Every 10 minutes: sync the shops that are due (each shop every SYNC_INTERVAL_HOURS).
   "triggers": { "crons": ["*/10 * * * *"] },
   "vars": {
-    "SITE_URL": "https://tagora.gr",
+    "SITE_URL": "https://tagora.online",
     "ADMIN_EMAILS": "admin@example.com",
-    "MAIL_FROM": "Tagora <hello@tagora.gr>",
+    "MAIL_FROM": "Tagora <hello@tagora.online>",
     "SYNC_INTERVAL_HOURS": "6",
     "SYNC_BATCH": "3",
     "TYPESENSE_HOST": "xxx.a1.typesense.net",

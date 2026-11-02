@@ -2,7 +2,7 @@ export interface Env {
   DB: D1Database;
   ASSETS: Fetcher;
 
-  /** Public address of the site, e.g. https://tagora.gr (used in emails) */
+  /** Public address of the site, e.g. https://tagora.online (used in emails) */
   SITE_URL?: string;
   /** Comma-separated emails that can open the admin page */
   ADMIN_EMAILS?: string;
@@ -22,7 +22,7 @@ export interface Env {
 
   /** Secret: Resend API key for sign-in and notification emails */
   RESEND_API_KEY?: string;
-  /** Sender, e.g. "Tagora <hello@tagora.gr>" (the domain must be verified in Resend) */
+  /** Sender, e.g. "Tagora <hello@tagora.online>" (the domain must be verified in Resend) */
   MAIL_FROM?: string;
 }
 

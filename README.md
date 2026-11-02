@@ -13,7 +13,9 @@
 | Home | `/gr` | Logo, search, suggestions, catalogue stats. Two carts fill up as you type. |
 | Results | `/gr/products?q=…` | Filters for category, shop, brand, size, colour and discount (with counts and "show all" search), sorting, active-filter chips and "load more". On mobile the filters open in a drawer. |
 | Product | `/gr/products/:group/variant/:id` | Gallery with zoom, price, delivery, a "Buy at {shop}" click-out, a **price comparison** of the same product (same MPN) in every shop with totals including delivery, and the other colours and sizes. A buy bar sticks to the bottom once you scroll. |
-| Legal | `/gr/pages/privacy-policy`, `/gr/pages/cookies-policy` | Greek and English policies with `[PLACEHOLDERS]` highlighted. |
+| Legal | `/gr/pages/privacy-policy`, `/gr/pages/cookies-policy`, `/gr/pages/terms`, `/gr/pages/shop-terms` | Privacy and cookie policies, terms of use, and terms for shops (Greek and English), with `[PLACEHOLDERS]` highlighted. |
+| How we rank | `/gr/pages/ranking` | How results and offers are ordered, which shops appear, no paid placements. Linked from the results and the price comparison. |
+| Contact | `/gr/pages/contact` | Customer service, company details, links for shops and for data requests. |
 | For shops | `/gr/shops` | Shops apply: connect an XML feed, Shopify or WooCommerce, see a live check of their products, send the application. |
 | Shop dashboard | `/gr/merchant` (sign-in: `/gr/merchant/login`) | Products online, last and next sync, what needs fixing, visitors sent per day, "Sync now", change the connection. |
 | Admin | `/gr/admin` | Review applications, approve (runs the first sync), reject, pause, resume, sync. |
@@ -107,6 +109,18 @@ Only the search-only key goes in `VITE_` variables; they ship to the browser. Th
 * **Netlify** (`public/_redirects`, `public/_headers`): build `npm run build`, publish `dist`. The shop pages need the Worker API, so on Netlify or Vercel they won't work.
 * **Vercel** (`vercel.json`): framework preset Vite.
 
+### tagora.online on Cloudflare
+
+The domain is already a Cloudflare zone, so the Worker can serve it directly:
+
+1. **Database:** `npx wrangler d1 create tagora`, paste the id into `wrangler.jsonc`, then `npx wrangler d1 migrations apply DB --remote`.
+2. **Secrets:** `npx wrangler secret put TYPESENSE_ADMIN_KEY` and `npx wrangler secret put RESEND_API_KEY`. Set `ADMIN_EMAILS` in `wrangler.jsonc` to your own address.
+3. **Deploy:** Workers & Pages → Create → Import a repository → `dimosbc89/pazari`, build command `npm run build`, deploy command `npx wrangler deploy`. Add `VITE_SEARCH_BACKEND=typesense` and the `VITE_TYPESENSE_*` search settings as build variables (see "Shops and product sync").
+4. **Domain:** the `routes` entry in `wrangler.jsonc` attaches `tagora.online` on deploy (DNS record and certificate included). If the zone already has an A, AAAA or CNAME record for `tagora.online` (for example a parking page), delete it first, or the deploy stops with a conflict.
+5. **www:** in DNS add a proxied `A` record `www` → `192.0.2.1`, then Rules → Redirect Rules → "Redirect from WWW to root" (301, keep path and query). One address keeps Google from indexing every page twice.
+6. **Email:** in Resend add the domain `tagora.online` and create the DNS records it shows (Resend can add them to Cloudflare for you). Emails go out from `hello@tagora.online` (`MAIL_FROM`).
+7. **HTTPS:** SSL/TLS → Edge Certificates → turn on "Always Use HTTPS".
+
 ## Brand
 
 The logo, icon and colours are generated from code, so they stay consistent:
@@ -122,15 +136,38 @@ npm run demo:data  # rebuilds the demo catalogue and its images
 
 ## Before launch
 
-* Fill the placeholders: `[COMPANY LEGAL NAME]`, `[ADDRESS]`, `[GEMI NUMBER]`, `[VAT NUMBER]`, `[CONTACT EMAIL]` in `src/config.ts`. The legal pages also need `[LAST UPDATED DATE]`, `[LOG RETENTION DAYS]`, `[EVENT RETENTION DAYS]`, `[HOSTING PROVIDER]`, `[EMAIL PROVIDER]` and `[MERCHANT RETENTION]` in `src/content/legal.ts`.
-* Have a lawyer review both policies. Click-outs are now counted per shop and day; searches are not logged server-side, although the policy says they are. Either add that logging or remove it from the policy.
+* Fill the company details once in `src/config.ts` (`SITE.company`: legal name, address, GEMI, VAT, email, phone, opening hours). They fill the same placeholders on every page. The text pages also need `[LAST UPDATED DATE]`, `[LOG RETENTION DAYS]`, `[EVENT RETENTION DAYS]`, `[HOSTING PROVIDER]`, `[EMAIL PROVIDER]` and `[MERCHANT RETENTION]` in `src/content/legal.ts`, and `[SHOP FEES]`, `[COURTS CITY]`, `[MEDIATORS]` in `src/content/terms.ts`. Search the pages for the yellow highlights to find any left.
+* Have a lawyer review the policies and both sets of terms. Click-outs are now counted per shop and day; searches are not logged server-side, although the policy says they are. Either add that logging or remove it from the policy.
 * Set `ADMIN_EMAILS` (it is `admin@example.com` in `wrangler.jsonc`) and the Resend sender before inviting shops.
-* Shop terms: the sign-up form asks for consent to be contacted and links the privacy policy. If shops pay or accept conditions, add a terms page and a checkbox for it.
+* Shop terms: shops accept them at sign-up; the version and date are stored (`terms_version`, `terms_accepted_at`, shown in the admin). When you change the terms, bump `SHOP_TERMS_VERSION` in `worker/routes.ts` and email every shop at least 15 days before (EU Regulation 2019/1150). Rejected and paused shops get an email with the reason.
 * Spam: the sign-up form has a hidden honeypot field. If fake applications appear, add Cloudflare Turnstile to the form.
 * Switch to real data (above). The demo footer note disappears with `VITE_SEARCH_BACKEND=typesense`.
-* Google CSS: apply to the CSS Program (directly or through a CSS partner), and set up each merchant in Merchant Center under the Tagora CSS.
-* Name and domain: check the trademark (EUIPO / Greek registry) and register a domain. Candidates: `tagora.gr`, `tagora.eu`, `gettagora.com`. Availability was **not** checked.
+* Google CSS: see the checklist below.
+* Name: check the trademark (EUIPO / Greek registry). The domain is `tagora.online`, on Cloudflare.
 * `Powered by GROW Agency` in the footer: change or remove it in `src/config.ts` (`SITE.poweredBy`).
+
+## Apply to Google's CSS program
+
+What Google looks at, and where this repo stands:
+
+| Requirement | Status |
+| --- | --- |
+| A comparison website people can use: search across shops, filters, product pages, click-out to the shop | Done |
+| Your own product pages (not just links to the shop) | Done (`/products/:group/variant/:id`) |
+| Clear company and customer-service details | Contact page done; fill `SITE.company` |
+| Terms, privacy policy, how ranking works | Done; fill the placeholders and have them reviewed |
+| A real catalogue from real shops, updated often | Sign-up and sync done; you need shops (demo data is off with `VITE_SEARCH_BACKEND=typesense`) |
+| Your own domain on HTTPS | Register a domain and add it in Cloudflare |
+| Product pages Google can read | The app renders in the browser. Google renders JavaScript, but server-rendered product pages and a sitemap would make indexing faster |
+
+Steps:
+
+1. Launch on your domain with real shops and products (Google reviews the live site, not a demo).
+2. Create a Google Merchant Center account for Tagora as a CSS and apply through the [CSS Program](https://comparisonshoppingpartners.withgoogle.com/) (or join an existing CSS partner first and switch later).
+3. After approval, open a Merchant Center sub-account for each shop under the Tagora CSS. Their Shopping ads then show "By Tagora".
+4. To be a **CSS Premium Partner** you need enough ad spend and accounts managed through Google Ads; that comes later.
+
+Shops can then run their Shopping ads through Tagora instead of Google's own CSS: that's the service you sell them.
 
 ## Repo layout
 
@@ -142,6 +179,8 @@ src/
   pages/              Home, Products, ProductPage, Legal, NotFound, ShopsPage, MerchantLogin, MerchantDashboard, AdminPage
   components/         Header, Footer, SearchInput, HitCard, FacetList, SortSelect, Carts, Lightbox, …
   content/legal.ts    privacy and cookie policies (el, en)
+  content/terms.ts    terms of use, terms for shops (el, en)
+  content/pages.ts    how we rank results, contact (el, en)
   lib/                hooks (URL search state), consent + GTM, HTML sanitiser, shop API client
   styles/             tokens, base, components, home, results, product, pages
 worker/               Cloudflare Worker: /api (sign-up, sign-in, dashboards, admin) and the scheduled sync

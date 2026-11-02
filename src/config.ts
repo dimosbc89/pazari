@@ -18,6 +18,8 @@ export const SITE = {
     gemi: '[GEMI NUMBER]',
     vat: '[VAT NUMBER]',
     email: '[CONTACT EMAIL]',
+    phone: '[CUSTOMER SERVICE PHONE]',
+    hours: '[OPENING HOURS]',
   },
   poweredBy: { name: 'GROW Agency', url: 'https://growagency.online' },
   gtmId: import.meta.env.VITE_GTM_ID || '',

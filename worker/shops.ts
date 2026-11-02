@@ -14,6 +14,7 @@ export interface ShopRow {
   status: ShopStatus; status_reason: string | null; created_at: string; approved_at: string | null;
   last_sync_at: string | null; last_sync_status: string | null; last_sync_message: string | null; last_issues: string | null;
   product_count: number; next_sync_at: string | null; last_manual_sync_at: string | null;
+  terms_version: string | null; terms_accepted_at: string | null;
 }
 
 export interface RunResult {
@@ -38,6 +39,7 @@ export function shopDto(r: ShopRow) {
     status: r.status, statusReason: r.status_reason, createdAt: r.created_at, approvedAt: r.approved_at,
     lastSyncAt: r.last_sync_at, lastSyncStatus: r.last_sync_status, lastSyncMessage: r.last_sync_message,
     lastIssues: parse<Issue[]>(r.last_issues, []), productCount: r.product_count, nextSyncAt: r.next_sync_at,
+    termsVersion: r.terms_version, termsAcceptedAt: r.terms_accepted_at,
   };
 }
 
@@ -61,7 +63,7 @@ export function search(env: Env) {
   return typesenseClient({ host: env.TYPESENSE_HOST, port: env.TYPESENSE_PORT, protocol: env.TYPESENSE_PROTOCOL, apiKey: env.TYPESENSE_ADMIN_KEY, collection: env.TYPESENSE_COLLECTION });
 }
 
-/** Link to a page of the site in the shop's market, e.g. https://tagora.gr/gr/merchant */
+/** Link to a page of the site in the shop's market, e.g. https://tagora.online/gr/merchant */
 export function siteLink(env: Env, shop: Pick<ShopRow, 'countries'>, path: string, origin?: string) {
   const base = (env.SITE_URL || origin || '').replace(/\/$/, '');
   const country = parse<string[]>(shop.countries, [])[0] || 'gr';

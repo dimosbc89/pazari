@@ -31,7 +31,7 @@ export function AdminPage() {
 }
 
 function ShopsAdmin() {
-  const { t, num, path } = useLocale();
+  const { t, num, path, lang } = useLocale();
   const errText = useErrorText();
   const ago = useRelativeTime();
   const [version, setVersion] = useState(0);
@@ -119,6 +119,7 @@ function ShopsAdmin() {
                         <div><dt>{t('admin.company')}</dt><dd>{[s.company, s.vat && `${t('field.vat')} ${s.vat}`].filter(Boolean).join(' · ') || '–'}</dd></div>
                         <div><dt>{t('dash.source')}</dt><dd className="mono">{s.sourceUrl}</dd></div>
                         <div><dt>{t('field.countries')}</dt><dd>{s.countries.join(', ').toUpperCase()}</dd></div>
+                        <div><dt>{t('admin.terms')}</dt><dd>{s.termsAcceptedAt ? t('admin.termsAccepted', { v: s.termsVersion ?? '–', when: new Date(s.termsAcceptedAt).toLocaleDateString(lang) }) : '–'}</dd></div>
                         {s.statusReason && <div><dt>{t('dash.reason', { reason: '' }).replace(/[:\s]+$/, '')}</dt><dd>{s.statusReason}</dd></div>}
                         {s.lastSyncMessage && <div><dt>{t('admin.col.sync')}</dt><dd>{s.lastSyncMessage}</dd></div>}
                       </dl>

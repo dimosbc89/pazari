@@ -65,6 +65,10 @@ export function App() {
           <Route path="products/:groupId/variant/:id" element={<ProductPage />} />
           <Route path="pages/privacy-policy" element={<Legal kind="privacy" />} />
           <Route path="pages/cookies-policy" element={<Legal kind="cookies" />} />
+          <Route path="pages/terms" element={<Legal kind="terms" />} />
+          <Route path="pages/shop-terms" element={<Legal kind="shopTerms" />} />
+          <Route path="pages/ranking" element={<Legal kind="ranking" />} />
+          <Route path="pages/contact" element={<Legal kind="contact" />} />
           <Route path="shops" element={<ShopsPage />} />
           <Route path="merchant" element={<MerchantDashboard />} />
           <Route path="merchant/login" element={<MerchantLogin />} />

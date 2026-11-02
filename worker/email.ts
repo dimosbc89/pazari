@@ -52,6 +52,14 @@ const T = {
     el: { subject: 'Η αίτηση του «{shop}»', lines: ['Δυστυχώς δεν μπορούμε να εγκρίνουμε την αίτηση αυτή τη στιγμή.', 'Αιτία: {reason}', 'Μπορείς να απαντήσεις σε αυτό το email για οποιαδήποτε ερώτηση.'] },
     en: { subject: 'Your application for “{shop}”', lines: ['Unfortunately we cannot approve the application right now.', 'Reason: {reason}', 'You can reply to this email with any questions.'] },
   },
+  paused: {
+    el: { subject: 'Τα προϊόντα του «{shop}» αφαιρέθηκαν προσωρινά', lines: ['Αφαιρέσαμε προσωρινά τα προϊόντα του «{shop}» από το Tagora.', 'Αιτία: {reason}', 'Μόλις λυθεί, απάντησε σε αυτό το email και θα τα επαναφέρουμε. Μπορείς επίσης να απαντήσεις αν διαφωνείς με την απόφαση.'], button: 'Άνοιξε τον πίνακα' },
+    en: { subject: 'Products of “{shop}” temporarily removed', lines: ['We have temporarily removed the products of “{shop}” from Tagora.', 'Reason: {reason}', 'Once it is fixed, reply to this email and we will bring them back. You can also reply if you disagree with the decision.'], button: 'Open the dashboard' },
+  },
+  resumed: {
+    el: { subject: 'Το «{shop}» εμφανίζεται ξανά στο Tagora', lines: ['Τα προϊόντα του «{shop}» είναι ξανά online: {count} προϊόντα.', 'Ενημερώνονται αυτόματα κάθε {hours} ώρες, όπως πριν.'], button: 'Άνοιξε τον πίνακα' },
+    en: { subject: '“{shop}” is back on Tagora', lines: ['The products of “{shop}” are live again: {count} products.', 'They update automatically every {hours} hours, as before.'], button: 'Open the dashboard' },
+  },
   syncFailed: {
     el: { subject: 'Πρόβλημα στον συγχρονισμό του «{shop}»', lines: ['Δεν μπορέσαμε να διαβάσουμε τα προϊόντα του καταστήματός σου: {message}', 'Τα προϊόντα που ήδη έχουμε μένουν online. Θα ξαναδοκιμάσουμε σε μία ώρα.'], button: 'Δες λεπτομέρειες' },
     en: { subject: 'Problem syncing “{shop}”', lines: ['We could not read your shop’s products: {message}', 'The products we already have stay live. We will try again in an hour.'], button: 'See details' },

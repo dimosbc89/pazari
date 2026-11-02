@@ -76,6 +76,11 @@ const baseEl = {
   'product.size': 'Μέγεθος',
 
   'footer.privacy': 'Πολιτική απορρήτου',
+  'footer.contact': 'Επικοινωνία',
+  'footer.ranking': 'Πώς κατατάσσουμε',
+  'footer.terms': 'Όροι χρήσης',
+  'results.howRanked': 'Πώς κατατάσσονται τα αποτελέσματα',
+  'product.howCompared': 'Πώς συγκρίνουμε τις τιμές',
   'footer.cookies': 'Πολιτική cookies',
   'footer.cookieSettings': 'Ρυθμίσεις cookies',
   'footer.css': 'Το Tagora είναι υπηρεσία σύγκρισης αγορών (CSS). Οι τιμές, τα μεταφορικά και η διαθεσιμότητα ορίζονται από κάθε κατάστημα.',
@@ -207,6 +212,11 @@ const baseEn: Record<keyof typeof baseEl, string> = {
   'product.size': 'Size',
 
   'footer.privacy': 'Privacy policy',
+  'footer.contact': 'Contact',
+  'footer.ranking': 'How we rank',
+  'footer.terms': 'Terms of use',
+  'results.howRanked': 'How results are ranked',
+  'product.howCompared': 'How we compare prices',
   'footer.cookies': 'Cookie policy',
   'footer.cookieSettings': 'Cookie settings',
   'footer.css': 'Tagora is a comparison shopping service (CSS). Prices, delivery and availability are set by each shop.',

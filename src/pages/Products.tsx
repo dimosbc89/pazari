@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ActiveFilters } from '../components/ActiveFilters';
 import { FacetList } from '../components/FacetList';
 import { Footer } from '../components/Footer';
@@ -13,7 +14,7 @@ import { useAsync, useDocumentTitle, useScrollLock, useSearchState } from '../li
 import { backend, FACETS } from '../search';
 
 export function Products() {
-  const { t, num, country, lang } = useLocale();
+  const { t, num, country, lang, path } = useLocale();
   const { query, sort, refinements, toggle, remove, clear, setSort } = useSearchState();
   const [drawer, setDrawer] = useState(false);
   useScrollLock(drawer);
@@ -74,6 +75,7 @@ export function Products() {
             </div>
           </div>
           <ActiveFilters refinements={refinements} onRemove={remove} onClear={clear} />
+          <p className="ranking-note"><Link to={path('/pages/ranking')}>{t('results.howRanked')}</Link></p>
 
           {error && <p className="notice notice--error">{t('results.error')}</p>}
           {!data && loading && <Loader />}
