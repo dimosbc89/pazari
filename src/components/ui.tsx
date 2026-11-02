@@ -51,12 +51,15 @@ export function Shipping({ fee }: { fee?: number }) {
   );
 }
 
+/** Colours with a swatch in the stylesheet (the demo's colour keys); feed colours are free text. */
+const KNOWN_COLORS = new Set(['black', 'white', 'red', 'blue', 'navy', 'green', 'olive', 'yellow', 'orange', 'pink', 'purple', 'grey', 'beige']);
+
 export function Pills({ p }: { p: Pick<Product, 'size' | 'color'> }) {
   const { loc, facetLabel, t } = useLocale();
   if (!p.size && !p.color) return null;
   return (
     <div className="pills">
-      {p.color && <span title={t('product.color')}><i className={`swatch swatch--${p.color}`} />{facetLabel('color', p.color)}</span>}
+      {p.color && <span title={t('product.color')}>{KNOWN_COLORS.has(p.color) && <i className={`swatch swatch--${p.color}`} />}{facetLabel('color', p.color)}</span>}
       {p.size && <span title={t('product.size')}>{loc(p.size)}</span>}
     </div>
   );

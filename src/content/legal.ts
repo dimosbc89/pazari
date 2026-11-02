@@ -1,4 +1,4 @@
-// Legal content for Pazari: Privacy Policy and Cookies Policy (Greek / English).
+// Legal content for Tagora: Privacy Policy and Cookies Policy (Greek / English).
 // Bracketed ALL-CAPS placeholders must be filled in by the operator before launch.
 
 export type LegalBlock =
@@ -24,16 +24,16 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
     title: 'Πολιτική Απορρήτου',
     updated: 'Τελευταία ενημέρωση: [LAST UPDATED DATE]',
     intro:
-      'Η πολιτική αυτή εξηγεί ποια προσωπικά δεδομένα επεξεργάζεται το Pazari όταν χρησιμοποιείτε τον ιστότοπό μας, για ποιον λόγο και ποια δικαιώματα έχετε. Σχεδιάσαμε το Pazari ώστε να συλλέγει όσο το δυνατόν λιγότερα: δεν υπάρχουν λογαριασμοί χρηστών, εγγραφή ή newsletter, και μπορείτε να συγκρίνετε τιμές χωρίς να μας πείτε ποιος είστε.',
+      'Η πολιτική αυτή εξηγεί ποια προσωπικά δεδομένα επεξεργάζεται το Tagora όταν χρησιμοποιείτε τον ιστότοπό μας, για ποιον λόγο και ποια δικαιώματα έχετε. Σχεδιάσαμε το Tagora ώστε να συλλέγει όσο το δυνατόν λιγότερα: δεν υπάρχουν λογαριασμοί χρηστών, εγγραφή ή newsletter, και μπορείτε να συγκρίνετε τιμές χωρίς να μας πείτε ποιος είστε.',
     blocks: [
       { type: 'h2', text: '1. Ποιοι είμαστε' },
       {
         type: 'p',
-        text: 'Το Pazari είναι υπηρεσία σύγκρισης τιμών που λειτουργεί η εταιρεία **[COMPANY LEGAL NAME]**, [ADDRESS], αριθ. ΓΕΜΗ [GEMI NUMBER], ΑΦΜ [VAT NUMBER] («εμείς»). Είμαστε ο υπεύθυνος επεξεργασίας για όσα περιγράφονται εδώ. Για οποιαδήποτε ερώτηση ή αίτημα σχετικά με τα προσωπικά σας δεδομένα, γράψτε μας στο **[CONTACT EMAIL]**.',
+        text: 'Το Tagora είναι υπηρεσία σύγκρισης τιμών που λειτουργεί η εταιρεία **[COMPANY LEGAL NAME]**, [ADDRESS], αριθ. ΓΕΜΗ [GEMI NUMBER], ΑΦΜ [VAT NUMBER] («εμείς»). Είμαστε ο υπεύθυνος επεξεργασίας για όσα περιγράφονται εδώ. Για οποιαδήποτε ερώτηση ή αίτημα σχετικά με τα προσωπικά σας δεδομένα, γράψτε μας στο **[CONTACT EMAIL]**.',
       },
       {
         type: 'p',
-        text: 'Το Pazari είναι υπηρεσία σύγκρισης αγορών (Comparison Shopping Service – CSS) στο Google Shopping. Μπορείτε να αναζητάτε προϊόντα, να εφαρμόζετε φίλτρα, να συγκρίνετε προσφορές από πολλά ηλεκτρονικά καταστήματα και στη συνέχεια να μεταβαίνετε στο κατάστημα της επιλογής σας για να αγοράσετε. Εμείς δεν πουλάμε προϊόντα, δεν εισπράττουμε πληρωμές και δεν βλέπουμε ποτέ τα στοιχεία της παραγγελίας, της αποστολής ή της πληρωμής σας.',
+        text: 'Το Tagora είναι υπηρεσία σύγκρισης αγορών (Comparison Shopping Service – CSS) στο Google Shopping. Μπορείτε να αναζητάτε προϊόντα, να εφαρμόζετε φίλτρα, να συγκρίνετε προσφορές από πολλά ηλεκτρονικά καταστήματα και στη συνέχεια να μεταβαίνετε στο κατάστημα της επιλογής σας για να αγοράσετε. Εμείς δεν πουλάμε προϊόντα, δεν εισπράττουμε πληρωμές και δεν βλέπουμε ποτέ τα στοιχεία της παραγγελίας, της αποστολής ή της πληρωμής σας.',
       },
 
       { type: 'h2', text: '2. Τι συλλέγουμε και γιατί' },
@@ -61,6 +61,12 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       {
         type: 'p',
         text: 'Μόνο εφόσον συμφωνήσετε, φορτώνουμε εργαλεία της Google, όπως το Google Analytics 4, το Google Tag Manager και τη μέτρηση μετατροπών του Google Ads. Μας βοηθούν να καταλαβαίνουμε πώς χρησιμοποιείται ο ιστότοπος και να μετράμε την αποτελεσματικότητα των διαφημίσεών μας. Μπορεί να συλλέγουν ένα διαδικτυακό αναγνωριστικό, στοιχεία συσκευής και προγράμματος περιήγησης, τις σελίδες που βλέπετε και τις ενέργειές σας σε αυτές. Αν δεν δώσετε συγκατάθεση, τα εργαλεία αυτά δεν φορτώνονται καθόλου. Λεπτομέρειες θα βρείτε στην Πολιτική Cookies.',
+      },
+
+      { type: 'h3', text: 'Καταστήματα που συνεργάζονται μαζί μας' },
+      {
+        type: 'p',
+        text: 'Αν εκπροσωπείτε κατάστημα που κάνει αίτηση στο Tagora, επεξεργαζόμαστε όσα μας δίνετε στη φόρμα: όνομα υπευθύνου, email, τηλέφωνο, επωνυμία και ΑΦΜ της επιχείρησης, ιστότοπο και διεύθυνση του καταλόγου προϊόντων. Τα χρησιμοποιούμε για να εξετάσουμε την αίτηση, να επικοινωνούμε μαζί σας, να συγχρονίζουμε τα προϊόντα σας και να σας δείχνουμε στατιστικά, όπως πόσες μεταβάσεις σάς στείλαμε ανά ημέρα (μόνο ο αριθμός, χωρίς στοιχεία επισκεπτών). Για τη σύνδεση στον πίνακα του καταστήματος σάς στέλνουμε με email σύνδεσμο μίας χρήσης· μετά τη σύνδεση ορίζουμε το απολύτως απαραίτητο cookie **tagora_session**.',
       },
 
       { type: 'h2', text: '3. Νομικές βάσεις και χρόνος διατήρησης' },
@@ -93,6 +99,11 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
             'Συγκατάθεση (άρθρο 6 παρ. 1 στοιχ. α΄ ΓΚΠΔ και άρθρο 4 παρ. 5 ν. 3471/2006)',
             'Μέχρι να ανακαλέσετε τη συγκατάθεσή σας· η διάρκεια κάθε cookie αναφέρεται στην Πολιτική Cookies',
           ],
+          [
+            'Αιτήσεις και λογαριασμοί καταστημάτων',
+            'Εκτέλεση σύμβασης και προσυμβατικά μέτρα (άρθρο 6 παρ. 1 στοιχ. β΄ ΓΚΠΔ)',
+            'Όσο διαρκεί η συνεργασία και έως [MERCHANT RETENTION] μετά τη λήξη της· οι σύνδεσμοι σύνδεσης λήγουν σε 30 λεπτά και οι συνεδρίες σε 30 ημέρες',
+          ],
         ],
       },
       {
@@ -110,6 +121,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
         items: [
           'τον **πάροχο φιλοξενίας και CDN** ([HOSTING PROVIDER]), που εξυπηρετεί τον ιστότοπο και τηρεί τα αρχεία καταγραφής·',
           'το **Typesense Cloud**, που φιλοξενεί τη μηχανή αναζήτησης προϊόντων και επεξεργάζεται τα αιτήματα αναζήτησης·',
+          'τον **πάροχο αποστολής email** ([EMAIL PROVIDER]), που στέλνει στα καταστήματα τα email σύνδεσης και ενημέρωσης·',
           'την **Google**, μόνο εφόσον έχετε συναινέσει σε cookies ανάλυσης ή διαφήμισης.',
         ],
       },
@@ -121,7 +133,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: '5. Όταν μεταβαίνετε σε κατάστημα' },
       {
         type: 'p',
-        text: 'Όταν κάνετε κλικ σε μια προσφορά, μεταφέρεστε στον ιστότοπο του καταστήματος. Από εκείνη τη στιγμή υπεύθυνο για τα δεδομένα σας είναι το κατάστημα και ισχύει η δική του πολιτική απορρήτου, την οποία καλό είναι να διαβάσετε πριν αγοράσετε. Το κατάστημα μπορεί να γνωρίζει ότι φτάσατε από το Pazari, μέσω της διεύθυνσης παραπομπής (referrer) που στέλνει το πρόγραμμα περιήγησής σας και μέσω παραμέτρων παρακολούθησης (π.χ. UTM) που προστίθενται στον σύνδεσμο. Οι παράμετροι αυτές περιγράφουν την πηγή ή την καμπάνια, όχι το ποιος είστε.',
+        text: 'Όταν κάνετε κλικ σε μια προσφορά, μεταφέρεστε στον ιστότοπο του καταστήματος. Από εκείνη τη στιγμή υπεύθυνο για τα δεδομένα σας είναι το κατάστημα και ισχύει η δική του πολιτική απορρήτου, την οποία καλό είναι να διαβάσετε πριν αγοράσετε. Το κατάστημα μπορεί να γνωρίζει ότι φτάσατε από το Tagora, μέσω της διεύθυνσης παραπομπής (referrer) που στέλνει το πρόγραμμα περιήγησής σας και μέσω παραμέτρων παρακολούθησης (π.χ. UTM) που προστίθενται στον σύνδεσμο. Οι παράμετροι αυτές περιγράφουν την πηγή ή την καμπάνια, όχι το ποιος είστε.',
       },
       {
         type: 'p',
@@ -176,7 +188,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: '10. Παιδιά' },
       {
         type: 'p',
-        text: 'Το Pazari δεν απευθύνεται σε παιδιά κάτω των 15 ετών, που είναι η ηλικία ψηφιακής συγκατάθεσης στην Ελλάδα. Δεν συλλέγουμε εν γνώσει μας δεδομένα παιδιών. Αν πιστεύετε ότι ένα παιδί έδωσε συγκατάθεση ή μας παρείχε δεδομένα, επικοινωνήστε μαζί μας και θα τα διαγράψουμε.',
+        text: 'Το Tagora δεν απευθύνεται σε παιδιά κάτω των 15 ετών, που είναι η ηλικία ψηφιακής συγκατάθεσης στην Ελλάδα. Δεν συλλέγουμε εν γνώσει μας δεδομένα παιδιών. Αν πιστεύετε ότι ένα παιδί έδωσε συγκατάθεση ή μας παρείχε δεδομένα, επικοινωνήστε μαζί μας και θα τα διαγράψουμε.',
       },
 
       { type: 'h2', text: '11. Αλλαγές στην πολιτική' },
@@ -191,16 +203,16 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
     title: 'Privacy Policy',
     updated: 'Last updated: [LAST UPDATED DATE]',
     intro:
-      'This policy explains what personal data Pazari processes when you use our website, why we process it and what rights you have. We built Pazari to collect as little as possible: there are no user accounts, no sign-up and no newsletter, and you can compare prices without telling us who you are.',
+      'This policy explains what personal data Tagora processes when you use our website, why we process it and what rights you have. We built Tagora to collect as little as possible: there are no user accounts, no sign-up and no newsletter, and you can compare prices without telling us who you are.',
     blocks: [
       { type: 'h2', text: '1. Who we are' },
       {
         type: 'p',
-        text: 'Pazari is a price-comparison service operated by **[COMPANY LEGAL NAME]**, [ADDRESS], General Commercial Registry (GEMI) no. [GEMI NUMBER], VAT no. [VAT NUMBER] (“we”, “us”). We are the data controller for the processing described here. For any question or request about your personal data, write to **[CONTACT EMAIL]**.',
+        text: 'Tagora is a price-comparison service operated by **[COMPANY LEGAL NAME]**, [ADDRESS], General Commercial Registry (GEMI) no. [GEMI NUMBER], VAT no. [VAT NUMBER] (“we”, “us”). We are the data controller for the processing described here. For any question or request about your personal data, write to **[CONTACT EMAIL]**.',
       },
       {
         type: 'p',
-        text: 'Pazari is a Comparison Shopping Service (CSS) in Google Shopping. You can search for products, apply filters, compare offers from many online shops and then go to the shop of your choice to buy. We do not sell products, we do not take payments and we never see your order, delivery or payment details.',
+        text: 'Tagora is a Comparison Shopping Service (CSS) in Google Shopping. You can search for products, apply filters, compare offers from many online shops and then go to the shop of your choice to buy. We do not sell products, we do not take payments and we never see your order, delivery or payment details.',
       },
 
       { type: 'h2', text: '2. What we collect and why' },
@@ -228,6 +240,12 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       {
         type: 'p',
         text: 'Only if you agree, we load Google tools such as Google Analytics 4, Google Tag Manager and Google Ads conversion measurement. They help us understand how the website is used and measure how well our advertising works. They may collect an online identifier, device and browser data, the pages you view and how you interact with them. If you do not consent, these tools are not loaded at all. Details are in our Cookies Policy.',
+      },
+
+      { type: 'h3', text: 'Shops that work with us' },
+      {
+        type: 'p',
+        text: 'If you represent a shop that applies to Tagora, we process what you give us in the form: contact name, email, phone, company name and VAT number, website and the address of your product catalogue. We use it to review the application, contact you, sync your products and show you statistics, such as how many click-outs we sent you per day (a count only, with no visitor data). To sign in to the shop dashboard we email you a one-time link; once signed in, we set the strictly necessary cookie **tagora_session**.',
       },
 
       { type: 'h2', text: '3. Legal bases and retention' },
@@ -260,6 +278,11 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
             'Consent (Art. 6(1)(a) GDPR and Art. 4(5) of Greek Law 3471/2006, or the equivalent national rules)',
             'Until you withdraw consent; each cookie’s lifetime is listed in our Cookies Policy',
           ],
+          [
+            'Shop applications and accounts',
+            'Performance of a contract and pre-contractual steps (Art. 6(1)(b) GDPR)',
+            'For as long as we work together and up to [MERCHANT RETENTION] afterwards; sign-in links expire after 30 minutes and sessions after 30 days',
+          ],
         ],
       },
       {
@@ -277,6 +300,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
         items: [
           'our **hosting and CDN provider** ([HOSTING PROVIDER]), which serves the website and keeps the logs;',
           '**Typesense Cloud**, which hosts our product search engine and processes the search requests sent to it;',
+          'our **email provider** ([EMAIL PROVIDER]), which sends sign-in and update emails to shops;',
           '**Google**, only if you have consented to analytics or advertising cookies.',
         ],
       },
@@ -288,7 +312,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: '5. When you go to a shop' },
       {
         type: 'p',
-        text: 'When you click an offer, you are taken to the shop’s own website. From that moment the shop is responsible for your data and its own privacy policy applies, so it is worth reading before you buy. The shop may know that you came from Pazari, through the referring address your browser sends and through tracking parameters (such as UTM tags) added to the link. These parameters describe the source or campaign, not who you are.',
+        text: 'When you click an offer, you are taken to the shop’s own website. From that moment the shop is responsible for your data and its own privacy policy applies, so it is worth reading before you buy. The shop may know that you came from Tagora, through the referring address your browser sends and through tracking parameters (such as UTM tags) added to the link. These parameters describe the source or campaign, not who you are.',
       },
       {
         type: 'p',
@@ -343,7 +367,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: '10. Children' },
       {
         type: 'p',
-        text: 'Pazari is not directed at children under 15, which is the age of digital consent in Greece. We do not knowingly collect children’s data. If you believe a child has given consent or provided data to us, please contact us and we will delete it.',
+        text: 'Tagora is not directed at children under 15, which is the age of digital consent in Greece. We do not knowingly collect children’s data. If you believe a child has given consent or provided data to us, please contact us and we will delete it.',
       },
 
       { type: 'h2', text: '11. Changes to this policy' },
@@ -364,7 +388,7 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
     title: 'Πολιτική Cookies',
     updated: 'Τελευταία ενημέρωση: [LAST UPDATED DATE]',
     intro:
-      'Η πολιτική αυτή εξηγεί ποια cookies και παρόμοιες τεχνολογίες χρησιμοποιεί το Pazari, τι κάνουν και πώς μπορείτε να τα ελέγχετε. Ο κανόνας μας είναι απλός: αυτόματα ενεργοποιείται μόνο ό,τι χρειάζεται για να λειτουργεί ο ιστότοπος· όλα τα υπόλοιπα περιμένουν τη δική σας άδεια.',
+      'Η πολιτική αυτή εξηγεί ποια cookies και παρόμοιες τεχνολογίες χρησιμοποιεί το Tagora, τι κάνουν και πώς μπορείτε να τα ελέγχετε. Ο κανόνας μας είναι απλός: αυτόματα ενεργοποιείται μόνο ό,τι χρειάζεται για να λειτουργεί ο ιστότοπος· όλα τα υπόλοιπα περιμένουν τη δική σας άδεια.',
     blocks: [
       { type: 'h2', text: 'Τι είναι τα cookies και ο τοπικός χώρος αποθήκευσης' },
       {
@@ -377,7 +401,7 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
         type: 'ul',
         items: [
           '**Απολύτως απαραίτητα**: χρειάζονται για να λειτουργεί ο ιστότοπος όπως περιμένετε, για παράδειγμα για να θυμάται τη χώρα σας και την επιλογή σας για τα cookies. Δεν απαιτούν συγκατάθεση και δεν απενεργοποιούνται από τις ρυθμίσεις μας, μπορείτε όμως να τα διαγράψετε από το πρόγραμμα περιήγησης.',
-          '**Ανάλυσης**: μας βοηθούν να καταλαβαίνουμε πώς χρησιμοποιείται το Pazari, π.χ. ποιες σελίδες επισκέπτονται οι χρήστες και τι μπορούμε να βελτιώσουμε. Χρησιμοποιούνται μόνο με τη συγκατάθεσή σας.',
+          '**Ανάλυσης**: μας βοηθούν να καταλαβαίνουμε πώς χρησιμοποιείται το Tagora, π.χ. ποιες σελίδες επισκέπτονται οι χρήστες και τι μπορούμε να βελτιώσουμε. Χρησιμοποιούνται μόνο με τη συγκατάθεσή σας.',
           '**Διαφήμισης**: μας βοηθούν να μετράμε αν οι διαφημίσεις μας, για παράδειγμα στη Google, φέρνουν επισκέψεις. Χρησιμοποιούνται μόνο με τη συγκατάθεσή σας.',
         ],
       },
@@ -392,16 +416,22 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
         head: ['Όνομα', 'Σκοπός', 'Κατηγορία', 'Διάρκεια'],
         rows: [
           [
-            'pazari_country (localStorage)',
+            'tagora_country (localStorage)',
             'Θυμάται τη χώρα και τη γλώσσα που επιλέξατε',
             'Απολύτως απαραίτητο',
             'Μέχρι να το διαγράψετε από το πρόγραμμα περιήγησης',
           ],
           [
-            'pazari_consent (localStorage)',
+            'tagora_consent (localStorage)',
             'Αποθηκεύει τις επιλογές σας για τα cookies, ώστε να τις τηρούμε σε κάθε επίσκεψη',
             'Απολύτως απαραίτητο',
             '12 μήνες',
+          ],
+          [
+            'tagora_session (cookie)',
+            'Κρατά συνδεδεμένους τους υπευθύνους καταστημάτων στον πίνακα του καταστήματος· δεν ορίζεται για τους επισκέπτες',
+            'Απολύτως απαραίτητο',
+            '30 ημέρες ή μέχρι την αποσύνδεση',
           ],
           [
             '_ga',
@@ -449,7 +479,7 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: 'Μετάβαση σε καταστήματα' },
       {
         type: 'p',
-        text: 'Όταν μεταβαίνετε από το Pazari σε ένα κατάστημα, εκείνο μπορεί να ορίσει τα δικά του cookies. Δεν τα ελέγχουμε εμείς· συμβουλευτείτε την πολιτική cookies του καταστήματος.',
+        text: 'Όταν μεταβαίνετε από το Tagora σε ένα κατάστημα, εκείνο μπορεί να ορίσει τα δικά του cookies. Δεν τα ελέγχουμε εμείς· συμβουλευτείτε την πολιτική cookies του καταστήματος.',
       },
 
       { type: 'h2', text: 'Επικοινωνία' },
@@ -464,7 +494,7 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
     title: 'Cookies Policy',
     updated: 'Last updated: [LAST UPDATED DATE]',
     intro:
-      'This policy explains which cookies and similar technologies Pazari uses, what they do and how you can control them. Our rule is simple: only what the website needs in order to work is set automatically; everything else waits for your permission.',
+      'This policy explains which cookies and similar technologies Tagora uses, what they do and how you can control them. Our rule is simple: only what the website needs in order to work is set automatically; everything else waits for your permission.',
     blocks: [
       { type: 'h2', text: 'What are cookies and local storage?' },
       {
@@ -477,7 +507,7 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
         type: 'ul',
         items: [
           '**Strictly necessary**: needed for the website to work as you expect, for example to remember your country and your cookie choice. They do not require consent and cannot be switched off in our settings, but you can delete them in your browser.',
-          '**Analytics**: help us understand how Pazari is used, such as which pages people visit and what we could improve. They are used only with your consent.',
+          '**Analytics**: help us understand how Tagora is used, such as which pages people visit and what we could improve. They are used only with your consent.',
           '**Advertising**: help us measure whether our ads, for example on Google, bring visits to the site. They are used only with your consent.',
         ],
       },
@@ -492,16 +522,22 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
         head: ['Name', 'Purpose', 'Type', 'Duration'],
         rows: [
           [
-            'pazari_country (localStorage)',
+            'tagora_country (localStorage)',
             'Remembers the country and language you selected',
             'Strictly necessary',
             'Until you clear it in your browser',
           ],
           [
-            'pazari_consent (localStorage)',
+            'tagora_consent (localStorage)',
             'Stores your cookie choices so that we respect them on every visit',
             'Strictly necessary',
             '12 months',
+          ],
+          [
+            'tagora_session (cookie)',
+            'Keeps shop staff signed in to their shop dashboard; never set for visitors',
+            'Strictly necessary',
+            '30 days, or until you sign out',
           ],
           [
             '_ga',
@@ -549,7 +585,7 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: 'Going to a shop' },
       {
         type: 'p',
-        text: 'When you go from Pazari to a shop, that shop may set its own cookies. We do not control them; please check the shop’s own cookies policy.',
+        text: 'When you go from Tagora to a shop, that shop may set its own cookies. We do not control them; please check the shop’s own cookies policy.',
       },
 
       { type: 'h2', text: 'Contact' },

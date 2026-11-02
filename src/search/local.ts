@@ -16,7 +16,7 @@ import {
 } from './types';
 
 export const fold = (s: string) =>
-  s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ς/g, 'σ');
+  s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ς/g, 'σ');
 
 // Greek to Latin, the way people type "Greeklish" (ακουστικά -> akoustika).
 const DIGRAPHS: [RegExp, string][] = [[/ου/g, 'ou'], [/αυ/g, 'av'], [/ευ/g, 'ev'], [/γγ/g, 'ng'], [/γκ/g, 'gk'], [/μπ/g, 'mp'], [/ντ/g, 'nt']];
@@ -176,9 +176,9 @@ export function createLocalBackend(url = '/demo/products.json'): SearchBackend {
       return (await load()).filter((p) => p.groupId === groupId && p.countries.includes(country)).sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
     },
 
-    async getOffers(mpn, country) {
+    async getOffers(key, country) {
       return (await load())
-        .filter((p) => p.mpn === mpn && p.countries.includes(country))
+        .filter((p) => (p.matchKey ?? p.mpn) === key && p.countries.includes(country))
         .sort((a, b) => a.price + (a.shipping ?? 0) - (b.price + (b.shipping ?? 0)));
     },
 

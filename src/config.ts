@@ -1,30 +1,15 @@
-export type Lang = 'el' | 'en';
+import type { Lang } from './lang';
+export type { Lang };
 
-export interface Country {
-  /** URL segment, e.g. /gr */
-  code: string;
-  /** Name shown in the country picker, in that country's language */
-  label: string;
-  lang: Lang;
-  currency: string;
-  /** Used for number and price formatting */
-  locale: string;
-}
-
-/** Markets the site serves. Add a country here and tag products with its code. */
-export const COUNTRIES: Country[] = [
-  { code: 'gr', label: 'Ελλάδα', lang: 'el', currency: 'EUR', locale: 'el-GR' },
-  { code: 'cy', label: 'Κύπρος', lang: 'el', currency: 'EUR', locale: 'el-CY' },
-  { code: 'ie', label: 'Ireland', lang: 'en', currency: 'EUR', locale: 'en-IE' },
-  { code: 'mt', label: 'Malta', lang: 'en', currency: 'EUR', locale: 'en-MT' },
-];
+export { COUNTRIES, type Country } from '../shared/markets.ts';
+import { COUNTRIES } from '../shared/markets.ts';
 
 export const DEFAULT_COUNTRY = 'gr';
 
 export const findCountry = (code?: string) => COUNTRIES.find((c) => c.code === code?.toLowerCase());
 
 export const SITE = {
-  name: 'Pazari',
+  name: 'Tagora',
   version: __APP_VERSION__,
   /** Fill these in before launch (they show in the footer and the legal pages). */
   company: {
@@ -33,6 +18,8 @@ export const SITE = {
     gemi: '[GEMI NUMBER]',
     vat: '[VAT NUMBER]',
     email: '[CONTACT EMAIL]',
+    phone: '[CUSTOMER SERVICE PHONE]',
+    hours: '[OPENING HOURS]',
   },
   poweredBy: { name: 'GROW Agency', url: 'https://growagency.online' },
   gtmId: import.meta.env.VITE_GTM_ID || '',
@@ -51,6 +38,6 @@ export const SEARCH_CONFIG = {
 };
 
 export const STORAGE_KEYS = {
-  country: 'pazari_country',
-  consent: 'pazari_consent',
+  country: 'tagora_country',
+  consent: 'tagora_consent',
 };

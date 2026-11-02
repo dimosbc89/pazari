@@ -1,4 +1,4 @@
-import type { Lang } from '../config';
+import type { Lang } from '../lang';
 
 /** A string, or one string per language (the demo catalogue is bilingual; real feeds usually are not). */
 export type Localized = string | Partial<Record<Lang, string>>;
@@ -27,9 +27,13 @@ export interface Product {
   category: string;
   color?: string;
   size?: Localized;
-  /** Same mpn (or gtin) = same product, so offers from different shops can be compared */
   mpn?: string;
   gtin?: string;
+  /** Offers with the same key are the same product in different shops (barcode, or brand + MPN). Falls back to mpn. */
+  matchKey?: string;
+  /** Set for synced shops (not the demo) */
+  shopId?: string;
+  syncId?: string;
   /** Country codes where the offer is shown */
   countries: string[];
   /** Facet bucket: upto20 | 20to35 | 35plus */
@@ -80,7 +84,7 @@ export interface SearchBackend {
   getProduct(id: string): Promise<Product | null>;
   /** Other variants (same groupId) */
   getVariants(groupId: string, country: string): Promise<Product[]>;
-  /** The same product from every shop (same mpn) */
-  getOffers(mpn: string, country: string): Promise<Product[]>;
+  /** The same product from every shop (same matchKey, or mpn for the demo data) */
+  getOffers(key: string, country: string): Promise<Product[]>;
   stats(country: string): Promise<CatalogueStats>;
 }

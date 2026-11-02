@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { COLORS as C, wordmarkSVG, iconSVG, iconSmallSVG, awning, markInner } from './brand-geometry.mjs';
+import { COLORS as C, BOX, wordmarkSVG, iconSVG, iconSmallSVG, awning } from './brand-geometry.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = (...p) => path.join(root, ...p);
@@ -17,18 +17,21 @@ const write = (file, text) => { fs.writeFileSync(out(file), text); console.log('
 
 // ---------- SVG files ----------
 const logo = wordmarkSVG({ pad: 6 });
-const logoReverse = wordmarkSVG({ color: C.cream, dotColor: C.paprika, pad: 6 });
-const monoBlack = wordmarkSVG({ color: '#000', dotColor: '#000', pad: 6 });
-const monoWhite = wordmarkSVG({ color: '#fff', dotColor: '#fff', pad: 6 });
+const logoReverse = wordmarkSVG({ color: C.cream, accent: C.paprika, pad: 6 });
+const monoBlack = wordmarkSVG({ color: '#000', accent: '#000', pad: 6 });
+const monoWhite = wordmarkSVG({ color: '#fff', accent: '#fff', pad: 6 });
+
+const LOCKUP_SCALE = 290 / BOX.h; // wordmark height next to the 512 px icon
+const LOCKUP_W = Math.ceil(600 + BOX.w * LOCKUP_SCALE + 24);
 
 function lockupSVG({ reverse = false } = {}) {
-  // icon (512) + gap + wordmark scaled to the icon's height
-  const wm = wordmarkSVG({ color: reverse ? C.cream : C.ink, dotColor: C.paprika });
+  // icon (512) + gap + wordmark scaled to sit level with the icon
+  const wm = wordmarkSVG({ color: reverse ? C.cream : C.ink, accent: C.paprika });
   const inner = wm.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '').replace(/<title>.*?<\/title>/, '');
-  const scale = 300 / 201; // wordmark box height 201 -> 300 px
+  const scale = LOCKUP_SCALE;
   const icon = iconSVG().replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 512" role="img" aria-label="pazari"><title>pazari</title>` +
-    `${icon}<g transform="translate(${620 + 2 * scale} ${106 + 51 * scale}) scale(${scale})">${inner}</g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${LOCKUP_W} 512" role="img" aria-label="tagora"><title>tagora</title>` +
+    `${icon}<g transform="translate(${600 - BOX.x * scale} ${111 - BOX.y * scale}) scale(${scale})">${inner}</g></svg>`;
 }
 
 write('brand/logo.svg', logo);
@@ -65,7 +68,7 @@ html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:${C.crea
 
 // ---------- Brand sheet ----------
 const swatches = [
-  ['Paprika', C.paprika, 'Primary. Logo dot, awning, highlights'],
+  ['Paprika', C.paprika, 'Primary. The “o”, awning, highlights'],
   ['Paprika deep', C.paprikaDeep, 'Buttons and links (AA on white)'],
   ['Ink', C.ink, 'Text and wordmark'],
   ['Cream', C.cream, 'Warm backgrounds'],
@@ -84,7 +87,7 @@ h2{font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:#5d5870;ma
 .type{font-size:64px;font-weight:700;letter-spacing:-.02em;line-height:1.05}
 .type small{display:block;font-size:20px;font-weight:450;letter-spacing:0;margin-top:14px;color:#5d5870}
 </style>
-<h1>pazari · brand sheet</h1>
+<h1>tagora · brand sheet</h1>
 <div class="row">
   <div class="card" style="background:${C.cream};flex:1.4">${logo.replace('<svg ', '<svg width="520" ')}</div>
   <div class="card" style="background:${C.ink};flex:1">${logoReverse.replace('<svg ', '<svg width="340" ')}</div>
@@ -93,7 +96,7 @@ h2{font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:#5d5870;ma
 <div class="row" style="align-items:center">
   ${iconSVG({ size: 180 })}${iconSVG({ size: 96 })}${iconSVG({ size: 48 })}
   <span style="width:40px"></span>${iconSmallSVG({ size: 96 })}${iconSmallSVG({ size: 32 })}${iconSmallSVG({ size: 16 })}
-  <span style="font-size:14px;color:#5d5870;max-width:260px;margin-left:12px">App icon: a market-stall awning over the “p”. Below 48 px use the simple paprika tile.</span>
+  <span style="font-size:14px;color:#5d5870;max-width:260px;margin-left:12px">App icon: a price tag with the “t”, its hole ringed in paprika like the “o” of the wordmark. Below 48 px use the plain paprika tile.</span>
 </div>
 <h2>Colour</h2>
 <div class="row" style="gap:18px">${swatches.map(([n, h, u]) => `<div class="sw"><i style="background:${h}"></i><b>${n}</b><span>${h}</span><span>${u}</span></div>`).join('')}</div>
@@ -122,10 +125,10 @@ async function png(svgOrHtml, file, w, h, { transparent = true, isHTML = false }
   return out(file);
 }
 
-await png(logo, 'brand/png/logo-1200.png', 1200, Math.round(1200 * (201 + 12) / (583 + 12)));
-await png(logoReverse, 'brand/png/logo-reverse-1200.png', 1200, Math.round(1200 * (201 + 12) / (583 + 12)));
+await png(logo, 'brand/png/logo-1200.png', 1200, Math.round(1200 * (BOX.h + 12) / (BOX.w + 12)));
+await png(logoReverse, 'brand/png/logo-reverse-1200.png', 1200, Math.round(1200 * (BOX.h + 12) / (BOX.w + 12)));
 await png(iconSVG(), 'brand/png/icon-1024.png', 1024, 1024);
-await png(lockupSVG(), 'brand/png/lockup-1500.png', 1500, 512);
+await png(lockupSVG(), 'brand/png/lockup.png', LOCKUP_W, 512);
 await png(iconSVG({ shape: 'square' }), 'public/apple-touch-icon.png', 180, 180, { transparent: false });
 await png(iconSVG(), 'public/icon-192.png', 192, 192);
 await png(iconSVG(), 'public/icon-512.png', 512, 512);

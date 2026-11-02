@@ -35,26 +35,8 @@ const api = async (method, p, body, raw = false) => {
   return raw ? textBody : textBody ? JSON.parse(textBody) : null;
 };
 
-const schema = {
-  name: collection,
-  fields: [
-    { name: 'title', type: 'string' },
-    { name: 'brand', type: 'string', facet: true },
-    { name: 'summary', type: 'string', optional: true },
-    { name: 'shop', type: 'string', facet: true },
-    { name: 'category', type: 'string', facet: true },
-    { name: 'color', type: 'string', facet: true, optional: true },
-    { name: 'size', type: 'string', facet: true, optional: true },
-    { name: 'discount', type: 'string', facet: true, optional: true },
-    { name: 'discountPct', type: 'int32' },
-    { name: 'price', type: 'float' },
-    { name: 'countries', type: 'string[]', facet: true },
-    { name: 'groupId', type: 'string' },
-    { name: 'mpn', type: 'string', optional: true },
-    { name: 'rank', type: 'int32' },
-  ],
-  default_sorting_field: 'rank',
-};
+import shared from '../shared/typesense-schema.json' with { type: 'json' };
+const schema = { name: collection, ...shared };
 
 const lang = opt('lang', 'el');
 const pick = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? v[lang] ?? v.en ?? Object.values(v)[0] : v);
@@ -80,6 +62,6 @@ console.log(`imported ${lines.length - failed.length}/${lines.length} documents 
 if (failed.length) console.log('first errors:', failed.slice(0, 3));
 
 if (flag('search-key')) {
-  const k = await api('POST', '/keys', { description: 'Pazari website (search only)', actions: ['documents:search'], collections: [collection] });
+  const k = await api('POST', '/keys', { description: 'Tagora website (search only)', actions: ['documents:search'], collections: [collection] });
   console.log(`\nSearch-only key (put it in VITE_TYPESENSE_SEARCH_KEY): ${k.value}`);
 }

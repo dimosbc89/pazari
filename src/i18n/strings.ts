@@ -1,8 +1,9 @@
 import type { Lang } from '../config';
+import { merchantEl, merchantEn } from './merchant';
 
-const el = {
-  'meta.title': 'Pazari: Σύγκριση τιμών από όλα τα καταστήματα',
-  'meta.description': 'Βρες την καλύτερη τιμή. Το Pazari συγκρίνει προσφορές από πολλά online καταστήματα σε μία αναζήτηση.',
+const baseEl = {
+  'meta.title': 'Tagora: Σύγκριση τιμών από όλα τα καταστήματα',
+  'meta.description': 'Βρες την καλύτερη τιμή. Το Tagora συγκρίνει προσφορές από πολλά online καταστήματα σε μία αναζήτηση.',
 
   'home.title': 'Βρες την καλύτερη τιμή',
   'home.description': 'Συγκρίνουμε προσφορές από {shops} καταστήματα, για να ψωνίζεις πιο οικονομικά.',
@@ -75,9 +76,14 @@ const el = {
   'product.size': 'Μέγεθος',
 
   'footer.privacy': 'Πολιτική απορρήτου',
+  'footer.contact': 'Επικοινωνία',
+  'footer.ranking': 'Πώς κατατάσσουμε',
+  'footer.terms': 'Όροι χρήσης',
+  'results.howRanked': 'Πώς κατατάσσονται τα αποτελέσματα',
+  'product.howCompared': 'Πώς συγκρίνουμε τις τιμές',
   'footer.cookies': 'Πολιτική cookies',
   'footer.cookieSettings': 'Ρυθμίσεις cookies',
-  'footer.css': 'Το Pazari είναι υπηρεσία σύγκρισης αγορών (CSS). Οι τιμές, τα μεταφορικά και η διαθεσιμότητα ορίζονται από κάθε κατάστημα.',
+  'footer.css': 'Το Tagora είναι υπηρεσία σύγκρισης αγορών (CSS). Οι τιμές, τα μεταφορικά και η διαθεσιμότητα ορίζονται από κάθε κατάστημα.',
   'footer.demo': 'Δοκιμαστική έκδοση: όλα τα προϊόντα, οι μάρκες και τα καταστήματα είναι φανταστικά.',
   'footer.poweredBy': 'Powered by',
   'footer.gemi': 'ΓΕΜΗ',
@@ -86,7 +92,7 @@ const el = {
   'country.change': 'Αλλαγή χώρας',
 
   'cookie.title': 'Cookies',
-  'cookie.text': 'Χρησιμοποιούμε μόνο τα απαραίτητα για να λειτουργεί το Pazari. Με τη συναίνεσή σου, ενεργοποιούμε και εργαλεία μέτρησης που μας βοηθούν να το βελτιώνουμε.',
+  'cookie.text': 'Χρησιμοποιούμε μόνο τα απαραίτητα για να λειτουργεί το Tagora. Με τη συναίνεσή σου, ενεργοποιούμε και εργαλεία μέτρησης που μας βοηθούν να το βελτιώνουμε.',
   'cookie.accept': 'Αποδοχή όλων',
   'cookie.reject': 'Μόνο τα απαραίτητα',
   'cookie.more': 'Περισσότερα',
@@ -107,6 +113,7 @@ const el = {
   'category.eyewear': 'Γυαλιά',
   'category.sports': 'Αθλητισμός',
   'category.home': 'Σπίτι',
+  'category.other': 'Άλλα',
 
   'color.black': 'Μαύρο',
   'color.white': 'Λευκό',
@@ -127,11 +134,12 @@ const el = {
   'discount.35plus': '35% και πάνω',
 };
 
+const el = { ...baseEl, ...merchantEl };
 export type StringKey = keyof typeof el;
 
-const en: Record<StringKey, string> = {
-  'meta.title': 'Pazari: compare prices across every shop',
-  'meta.description': 'Find the best price. Pazari compares offers from many online shops in one search.',
+const baseEn: Record<keyof typeof baseEl, string> = {
+  'meta.title': 'Tagora: compare prices across every shop',
+  'meta.description': 'Find the best price. Tagora compares offers from many online shops in one search.',
 
   'home.title': 'Find the best price',
   'home.description': 'We compare offers from {shops} shops, so you can spend less.',
@@ -204,9 +212,14 @@ const en: Record<StringKey, string> = {
   'product.size': 'Size',
 
   'footer.privacy': 'Privacy policy',
+  'footer.contact': 'Contact',
+  'footer.ranking': 'How we rank',
+  'footer.terms': 'Terms of use',
+  'results.howRanked': 'How results are ranked',
+  'product.howCompared': 'How we compare prices',
   'footer.cookies': 'Cookie policy',
   'footer.cookieSettings': 'Cookie settings',
-  'footer.css': 'Pazari is a comparison shopping service (CSS). Prices, delivery and availability are set by each shop.',
+  'footer.css': 'Tagora is a comparison shopping service (CSS). Prices, delivery and availability are set by each shop.',
   'footer.demo': 'Demo version: every product, brand and shop shown is fictional.',
   'footer.poweredBy': 'Powered by',
   'footer.gemi': 'Company no.',
@@ -215,7 +228,7 @@ const en: Record<StringKey, string> = {
   'country.change': 'Change country',
 
   'cookie.title': 'Cookies',
-  'cookie.text': 'We only use what Pazari needs to work. With your consent we also turn on measurement tools that help us improve it.',
+  'cookie.text': 'We only use what Tagora needs to work. With your consent we also turn on measurement tools that help us improve it.',
   'cookie.accept': 'Accept all',
   'cookie.reject': 'Necessary only',
   'cookie.more': 'Learn more',
@@ -236,6 +249,7 @@ const en: Record<StringKey, string> = {
   'category.eyewear': 'Eyewear',
   'category.sports': 'Sports',
   'category.home': 'Home',
+  'category.other': 'Other',
 
   'color.black': 'Black',
   'color.white': 'White',
@@ -255,5 +269,7 @@ const en: Record<StringKey, string> = {
   'discount.20to35': '20% to 35%',
   'discount.35plus': '35% or more',
 };
+
+const en: Record<StringKey, string> = { ...baseEn, ...merchantEn };
 
 export const STRINGS: Record<Lang, Record<StringKey, string>> = { el, en };

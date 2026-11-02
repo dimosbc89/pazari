@@ -1,11 +1,44 @@
-// Cloudflare Workers (static assets). Cloudflare runs `npm run build`, then `npx wrangler deploy`.
-// "single-page-application" serves index.html for every route (/gr/products, ...).
+// Cloudflare Worker: the website (static files in dist/), the /api for shops, and the
+// scheduled product sync. Setup steps: README.md → "Shops and product sync".
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "pazari",
+  "name": "tagora",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tagora",
+      // Western Europe. Tables are set up by migrations/ (both applied).
+      "database_id": "9fe7a271-44b5-43b6-bd3b-108716ca4d27",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // The site's address. tagora.online is a Cloudflare zone, so `wrangler deploy`
+  // creates the DNS record and certificate itself. www → tagora.online: README → Deploy.
+  "routes": [{ "pattern": "tagora.online", "custom_domain": true }],
+  // Every 10 minutes: sync the shops that are due (each shop every SYNC_INTERVAL_HOURS).
+  "triggers": { "crons": ["*/10 * * * *"] },
+  "vars": {
+    "SITE_URL": "https://tagora.online",
+    "MAIL_FROM": "Tagora <hello@tagora.online>",
+    "SYNC_INTERVAL_HOURS": "6",
+    "SYNC_BATCH": "3",
+    "TYPESENSE_HOST": "xxx.a1.typesense.net",
+    "TYPESENSE_PORT": "443",
+    "TYPESENSE_PROTOCOL": "https",
+    "TYPESENSE_COLLECTION": "products",
+    "ENVIRONMENT": "production"
+  },
+  // Secrets (not in this file; Cloudflare → the Worker → Settings → Variables and Secrets):
+  //   ADMIN_EMAILS         who can open /admin (comma-separated)
+  //   RESEND_API_KEY       sends the emails
+  //   TYPESENSE_ADMIN_KEY  writes products to the search index
+  "observability": { "enabled": true }
 }

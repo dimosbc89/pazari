@@ -6,6 +6,7 @@ import { Icon } from '../components/Icons';
 import { Lightbox } from '../components/Lightbox';
 import { Loader, Pills, Price, ProductImage, Shipping, discountLabel } from '../components/ui';
 import { useLocale } from '../i18n';
+import { trackClick } from '../lib/api';
 import { track } from '../lib/consent';
 import { sanitizeHtml } from '../lib/sanitize';
 import { useAsync, useDocumentTitle } from '../lib/hooks';
@@ -16,7 +17,7 @@ async function loadProduct(id: string, country: string) {
   if (!product || !product.countries.includes(country)) return null;
   const [variants, offers] = await Promise.all([
     backend.getVariants(product.groupId, country),
-    product.mpn ? backend.getOffers(product.mpn, country) : Promise.resolve([product]),
+    product.matchKey ?? product.mpn ? backend.getOffers((product.matchKey ?? product.mpn)!, country) : Promise.resolve([product]),
   ]);
   return { product, variants: variants.filter((v) => v.id !== product.id), offers };
 }
@@ -33,7 +34,7 @@ export function ProductPage() {
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
   useEffect(() => { setActive(0); window.scrollTo(0, 0); }, [id]);
-  useDocumentTitle(p ? `${loc(p.title)} · Pazari` : undefined);
+  useDocumentTitle(p ? `${loc(p.title)} · Tagora` : undefined);
 
   // Sticky buy bar once the main button has scrolled out of view.
   const buyRef = useRef<HTMLAnchorElement>(null);
@@ -48,7 +49,7 @@ export function ProductPage() {
 
   const back = `${path('/products')}${query ? `?q=${encodeURIComponent(query)}` : ''}`;
   const variantLink = (v: Product) => `${path(`/products/${encodeURIComponent(v.groupId)}/variant/${encodeURIComponent(v.id)}`)}${query ? `?q=${encodeURIComponent(query)}` : ''}`;
-  const clickOut = (o: Product) => () => track('click_out', { shop: o.shop, product: o.id, price: o.price });
+  const clickOut = (o: Product) => () => { trackClick(o.shopId); track('click_out', { shop: o.shop, product: o.id, price: o.price }); };
 
   if (!data && loading) return (<><Header query={query} /><main className="product container"><Loader /></main><Footer /></>);
   if (!p) {
@@ -118,7 +119,10 @@ export function ProductPage() {
         {offers.length > 0 && (
           <section className="offers" aria-labelledby="offers-title">
             <h2 id="offers-title">{t('product.compare')}</h2>
-            <p className="section-note">{offers.length === 1 ? t('product.compareOne') : t('product.compareText', { n: offers.length })}</p>
+            <p className="section-note">
+              {offers.length === 1 ? t('product.compareOne') : t('product.compareText', { n: offers.length })}{' '}
+              <Link to={path('/pages/ranking')}>{t('product.howCompared')}</Link>
+            </p>
             <ol className="offers-list">
               {offers.map((o, i) => (
                 <li key={o.id} className={`offer ${o.id === p.id ? 'is-current' : ''}`}>

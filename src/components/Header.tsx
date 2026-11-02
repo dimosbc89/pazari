@@ -9,7 +9,7 @@ export function Header({ query = '' }: { query?: string }) {
   return (
     <header className="header">
       <div className="header-inner container">
-        <Link to={path()} className="header-logo" aria-label={`Pazari: ${t('meta.title')}`}>
+        <Link to={path()} className="header-logo" aria-label={`Tagora: ${t('meta.title')}`}>
           <Wordmark />
         </Link>
         <SearchInput defaultValue={query} />

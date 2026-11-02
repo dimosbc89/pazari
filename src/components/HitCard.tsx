@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLocale } from '../i18n';
+import { trackClick } from '../lib/api';
 import { track } from '../lib/consent';
 import type { Product } from '../search';
 import { Icon } from './Icons';
@@ -11,7 +12,7 @@ export function HitCard({ hit, query }: { hit: Product; query: string }) {
   const title = loc(hit.title);
   const details = `${path(`/products/${encodeURIComponent(hit.groupId)}/variant/${encodeURIComponent(hit.id)}`)}${query ? `?q=${encodeURIComponent(query)}` : ''}`;
   const off = discountLabel(hit);
-  const clickOut = () => track('click_out', { shop: hit.shop, product: hit.id, price: hit.price });
+  const clickOut = () => { trackClick(hit.shopId); track('click_out', { shop: hit.shop, product: hit.id, price: hit.price }); };
 
   return (
     <article className="hit">

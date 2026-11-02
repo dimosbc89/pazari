@@ -45,7 +45,7 @@ export function FacetList({ facet, values, selected, onToggle }: {
             <li key={v.value} className={checked ? 'is-checked' : ''}>
               <input type="checkbox" id={inputId} checked={checked} onChange={() => onToggle(v.value)} />
               <label htmlFor={inputId}>
-                {facet === 'color' && <i className={`swatch swatch--${v.value}`} />}
+                {facet === 'color' && /^[a-z]+$/.test(v.value) && <i className={`swatch swatch--${v.value}`} />}
                 <span className="facet-label">{facetLabel(facet, v.value)}</span>
                 <span className="facet-count">{num(v.count)}</span>
               </label>

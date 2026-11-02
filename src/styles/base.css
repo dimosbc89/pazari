@@ -32,7 +32,7 @@ a:hover { color: var(--paprika-darker); }
 .icon { width: 1.2em; height: 1.2em; flex-shrink: 0; }
 
 .wordmark { color: var(--ink); width: 100%; height: auto; }
-.wordmark-dot { fill: var(--paprika); }
+.wordmark-accent { stroke: var(--paprika); }
 
 /* ---------- buttons ---------- */
 .btn {

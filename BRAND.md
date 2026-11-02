@@ -1,8 +1,8 @@
-# Pazari brand
+# Tagora brand
 
 ## Name
 
-**pazari** (always lowercase in the logo; "Pazari" in running text). From the Greek *παζάρι*: a bazaar, and the act of haggling for a better price. It is short, easy to say in Greek and English, and it says what the service does: it bargains across every shop for you.
+**tagora** (always lowercase in the logo; "Tagora" in running text, said ta-GO-ra). Price **tag** + **αγορά**, the ancient Greek marketplace: the market of price tags, where every shop's prices meet. It is short, easy to say in Greek and English, and an invented word, so the name can be owned as a trademark and a domain.
 
 **Tagline:** Όλα τα καταστήματα. Μία αναζήτηση. / *Every shop. One search.*
 **Home headline:** Βρες την καλύτερη τιμή / *Find the best price*
@@ -11,15 +11,15 @@
 
 ![Logo](brand/png/logo-1200.png)
 
-* **Wordmark.** Custom geometric lettering: round bowls, round stroke ends and one stroke weight throughout. It is drawn from code (`scripts/brand-geometry.mjs`) rather than typed in a font. The dot of the **i** is always paprika: it is the "found it" spark.
-* **App icon.** A market-stall awning over the "p". Use it at 48 px and above.
-* **Small icon** (favicons, 16 to 32 px). The "p" on a paprika tile, with no awning.
-* **Clear space:** at least the height of the i-dot around the logo. **Minimum width:** 80 px on screen.
+* **Wordmark.** Custom geometric lettering: round bowls, round stroke ends and one stroke weight throughout. It is drawn from code (`scripts/brand-geometry.mjs`) rather than typed in a font. The **o** is always paprika: it is the hole of a price tag.
+* **App icon.** A cream price tag on an ink tile, with a "t" on it and its hole ringed in paprika, like the "o". Use it at 48 px and above.
+* **Small icon** (favicons, 16 to 32 px). A plain cream tag on a paprika tile.
+* **Clear space:** at least the height of the "o" around the logo. **Minimum width:** 80 px on screen.
 * Don't recolour the letters in brand colours, stretch, outline, or put the wordmark on busy photos. On dark backgrounds use `logo-reverse.svg`.
 
 | File | Use |
 | --- | --- |
-| `brand/logo.svg` | Default: ink wordmark, paprika dot |
+| `brand/logo.svg` | Default: ink wordmark, paprika "o" |
 | `brand/logo-reverse.svg` | On dark backgrounds |
 | `brand/logo-mono-black.svg`, `logo-mono-white.svg` | One-colour print, stamps, embroidery |
 | `brand/icon.svg`, `icon-square.svg` | App icon (rounded / full-bleed) |
@@ -49,6 +49,7 @@ The palette is taken from a spice market: paprika, saffron, mint. Ink and cream 
 
 ## Motifs
 
-* **The awning:** scalloped paprika and white stripes along the top of the home page, the social image and the app icon.
+* **The awning:** scalloped paprika and white stripes along the top of the home page, the shops page and the social image. It is the agora: the market stall where the prices meet.
+* **The price tag:** the app icon, and the paprika "o" of the wordmark (the tag's hole). Use it for stickers, badges and ad frames.
 * **Carts that fill up:** coloured shapes (balls, boxes, pills) in the accent colours drop into carts as you type. The same shapes can be used in ads and social posts.
 * **Rounded everything:** 12 to 20 px corner radius, round stroke ends, pill tags. This matches the wordmark.

@@ -1,0 +1,22 @@
+{
+  "fields": [
+    { "name": "title", "type": "string" },
+    { "name": "brand", "type": "string", "facet": true },
+    { "name": "summary", "type": "string", "optional": true },
+    { "name": "shop", "type": "string", "facet": true },
+    { "name": "shopId", "type": "string", "optional": true },
+    { "name": "syncId", "type": "string", "optional": true },
+    { "name": "category", "type": "string", "facet": true },
+    { "name": "color", "type": "string", "facet": true, "optional": true },
+    { "name": "size", "type": "string", "facet": true, "optional": true },
+    { "name": "discount", "type": "string", "facet": true, "optional": true },
+    { "name": "discountPct", "type": "int32" },
+    { "name": "price", "type": "float" },
+    { "name": "countries", "type": "string[]", "facet": true },
+    { "name": "groupId", "type": "string" },
+    { "name": "mpn", "type": "string", "optional": true },
+    { "name": "matchKey", "type": "string", "optional": true },
+    { "name": "rank", "type": "int32" }
+  ],
+  "default_sorting_field": "rank"
+}

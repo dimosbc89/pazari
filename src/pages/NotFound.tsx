@@ -7,7 +7,7 @@ import { useDocumentTitle } from '../lib/hooks';
 
 export function NotFound() {
   const { t, path } = useLocale();
-  useDocumentTitle(`${t('notFound.title')} · Pazari`);
+  useDocumentTitle(`${t('notFound.title')} · Tagora`);
   return (
     <>
       <Header />
