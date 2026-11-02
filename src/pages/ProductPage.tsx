@@ -6,6 +6,7 @@ import { Icon } from '../components/Icons';
 import { Lightbox } from '../components/Lightbox';
 import { Loader, Pills, Price, ProductImage, Shipping, discountLabel } from '../components/ui';
 import { useLocale } from '../i18n';
+import { trackClick } from '../lib/api';
 import { track } from '../lib/consent';
 import { sanitizeHtml } from '../lib/sanitize';
 import { useAsync, useDocumentTitle } from '../lib/hooks';
@@ -16,7 +17,7 @@ async function loadProduct(id: string, country: string) {
   if (!product || !product.countries.includes(country)) return null;
   const [variants, offers] = await Promise.all([
     backend.getVariants(product.groupId, country),
-    product.mpn ? backend.getOffers(product.mpn, country) : Promise.resolve([product]),
+    product.matchKey ?? product.mpn ? backend.getOffers((product.matchKey ?? product.mpn)!, country) : Promise.resolve([product]),
   ]);
   return { product, variants: variants.filter((v) => v.id !== product.id), offers };
 }
@@ -48,7 +49,7 @@ export function ProductPage() {
 
   const back = `${path('/products')}${query ? `?q=${encodeURIComponent(query)}` : ''}`;
   const variantLink = (v: Product) => `${path(`/products/${encodeURIComponent(v.groupId)}/variant/${encodeURIComponent(v.id)}`)}${query ? `?q=${encodeURIComponent(query)}` : ''}`;
-  const clickOut = (o: Product) => () => track('click_out', { shop: o.shop, product: o.id, price: o.price });
+  const clickOut = (o: Product) => () => { trackClick(o.shopId); track('click_out', { shop: o.shop, product: o.id, price: o.price }); };
 
   if (!data && loading) return (<><Header query={query} /><main className="product container"><Loader /></main><Footer /></>);
   if (!p) {

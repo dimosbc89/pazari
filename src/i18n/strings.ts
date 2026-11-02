@@ -1,6 +1,7 @@
 import type { Lang } from '../config';
+import { merchantEl, merchantEn } from './merchant';
 
-const el = {
+const baseEl = {
   'meta.title': 'Pazari: Σύγκριση τιμών από όλα τα καταστήματα',
   'meta.description': 'Βρες την καλύτερη τιμή. Το Pazari συγκρίνει προσφορές από πολλά online καταστήματα σε μία αναζήτηση.',
 
@@ -107,6 +108,7 @@ const el = {
   'category.eyewear': 'Γυαλιά',
   'category.sports': 'Αθλητισμός',
   'category.home': 'Σπίτι',
+  'category.other': 'Άλλα',
 
   'color.black': 'Μαύρο',
   'color.white': 'Λευκό',
@@ -127,9 +129,10 @@ const el = {
   'discount.35plus': '35% και πάνω',
 };
 
+const el = { ...baseEl, ...merchantEl };
 export type StringKey = keyof typeof el;
 
-const en: Record<StringKey, string> = {
+const baseEn: Record<keyof typeof baseEl, string> = {
   'meta.title': 'Pazari: compare prices across every shop',
   'meta.description': 'Find the best price. Pazari compares offers from many online shops in one search.',
 
@@ -236,6 +239,7 @@ const en: Record<StringKey, string> = {
   'category.eyewear': 'Eyewear',
   'category.sports': 'Sports',
   'category.home': 'Home',
+  'category.other': 'Other',
 
   'color.black': 'Black',
   'color.white': 'White',
@@ -255,5 +259,7 @@ const en: Record<StringKey, string> = {
   'discount.20to35': '20% to 35%',
   'discount.35plus': '35% or more',
 };
+
+const en: Record<StringKey, string> = { ...baseEn, ...merchantEn };
 
 export const STRINGS: Record<Lang, Record<StringKey, string>> = { el, en };

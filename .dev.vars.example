@@ -1,0 +1,12 @@
+# Local development values for `npm run dev:api` (copy to .dev.vars, which is git-ignored).
+# Works with the test shops and test search index in dev/ (npm run dev:mocks).
+ENVIRONMENT=development
+SITE_URL=http://localhost:8787
+ADMIN_EMAILS=admin@example.com
+TYPESENSE_HOST=localhost
+TYPESENSE_PORT=8108
+TYPESENSE_PROTOCOL=http
+TYPESENSE_ADMIN_KEY=dev
+# Leave these empty locally: sign-in links are then shown on screen instead of emailed.
+RESEND_API_KEY=
+MAIL_FROM=

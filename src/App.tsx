@@ -9,6 +9,10 @@ import { Legal } from './pages/Legal';
 import { NotFound } from './pages/NotFound';
 import { ProductPage } from './pages/ProductPage';
 import { Products } from './pages/Products';
+import { AdminPage } from './pages/AdminPage';
+import { MerchantDashboard } from './pages/MerchantDashboard';
+import { MerchantLogin } from './pages/MerchantLogin';
+import { ShopsPage } from './pages/ShopsPage';
 
 /** "/" goes to the visitor's last country, else a guess from the browser language, else Greece. */
 function RootRedirect() {
@@ -61,6 +65,10 @@ export function App() {
           <Route path="products/:groupId/variant/:id" element={<ProductPage />} />
           <Route path="pages/privacy-policy" element={<Legal kind="privacy" />} />
           <Route path="pages/cookies-policy" element={<Legal kind="cookies" />} />
+          <Route path="shops" element={<ShopsPage />} />
+          <Route path="merchant" element={<MerchantDashboard />} />
+          <Route path="merchant/login" element={<MerchantLogin />} />
+          <Route path="admin" element={<AdminPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

@@ -1,7 +1,8 @@
 // One inline SVG sprite for every UI icon; <Icon name="search" /> references it.
 export type IconName =
   | 'search' | 'chevron' | 'location' | 'close' | 'filters' | 'info' | 'image' | 'external'
-  | 'truck' | 'check' | 'arrow-left' | 'zoom' | 'tag' | 'store';
+  | 'truck' | 'check' | 'arrow-left' | 'zoom' | 'tag' | 'store'
+  | 'feed' | 'bag' | 'cart' | 'refresh' | 'alert' | 'logout' | 'chart' | 'clock';
 
 export function IconSprite() {
   return (
@@ -21,6 +22,14 @@ export function IconSprite() {
         <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2.2" /><path d="M15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></symbol>
         <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1.4 1.4 0 0 1 0 2l-6.5 6.5a1.4 1.4 0 0 1-2 0z" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinejoin="round" /><circle cx="8.2" cy="8.2" r="1.6" fill="currentColor" /></symbol>
         <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9.5V20h16V9.5M3 4h18l-1 5.5H4z" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinejoin="round" /><path d="M9.5 20v-5h5v5" fill="none" stroke="currentColor" strokeWidth="1.9" /></symbol>
+        <symbol id="i-feed" viewBox="0 0 24 24"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /><circle cx="6" cy="18" r="2" fill="currentColor" /></symbol>
+        <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /><path d="M9 10V7a3 3 0 0 1 6 0v3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></symbol>
+        <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2.5l2.2 10.5h10.6L20.5 7H7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><circle cx="9.5" cy="19" r="1.6" fill="currentColor" /><circle cx="17" cy="19" r="1.6" fill="currentColor" /></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4v4.5H15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 2.8 19.5h18.4z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /><path d="M12 10v4.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /><circle cx="12" cy="17" r="1.2" fill="currentColor" /></symbol>
+        <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4M14 8l4 4-4 4M18 12H9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 19V11M10 19V6M15 19v-5M20 19V9" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" /></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></symbol>
       </defs>
     </svg>
   );

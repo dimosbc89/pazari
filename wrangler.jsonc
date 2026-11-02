@@ -1,11 +1,39 @@
-// Cloudflare Workers (static assets). Cloudflare runs `npm run build`, then `npx wrangler deploy`.
-// "single-page-application" serves index.html for every route (/gr/products, ...).
+// Cloudflare Worker: the website (static files in dist/), the /api for shops, and the
+// scheduled product sync. Setup steps: README.md → "Shops and product sync".
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "pazari",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pazari",
+      // Create it with `npx wrangler d1 create pazari` and paste the id here.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // Every 10 minutes: sync the shops that are due (each shop every SYNC_INTERVAL_HOURS).
+  "triggers": { "crons": ["*/10 * * * *"] },
+  "vars": {
+    "SITE_URL": "https://pazari.gr",
+    "ADMIN_EMAILS": "admin@example.com",
+    "MAIL_FROM": "Pazari <hello@pazari.gr>",
+    "SYNC_INTERVAL_HOURS": "6",
+    "SYNC_BATCH": "3",
+    "TYPESENSE_HOST": "xxx.a1.typesense.net",
+    "TYPESENSE_PORT": "443",
+    "TYPESENSE_PROTOCOL": "https",
+    "TYPESENSE_COLLECTION": "products",
+    "ENVIRONMENT": "production"
+  },
+  // Secrets (not in this file): npx wrangler secret put TYPESENSE_ADMIN_KEY / RESEND_API_KEY
+  "observability": { "enabled": true }
 }

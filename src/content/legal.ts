@@ -63,6 +63,12 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
         text: 'Μόνο εφόσον συμφωνήσετε, φορτώνουμε εργαλεία της Google, όπως το Google Analytics 4, το Google Tag Manager και τη μέτρηση μετατροπών του Google Ads. Μας βοηθούν να καταλαβαίνουμε πώς χρησιμοποιείται ο ιστότοπος και να μετράμε την αποτελεσματικότητα των διαφημίσεών μας. Μπορεί να συλλέγουν ένα διαδικτυακό αναγνωριστικό, στοιχεία συσκευής και προγράμματος περιήγησης, τις σελίδες που βλέπετε και τις ενέργειές σας σε αυτές. Αν δεν δώσετε συγκατάθεση, τα εργαλεία αυτά δεν φορτώνονται καθόλου. Λεπτομέρειες θα βρείτε στην Πολιτική Cookies.',
       },
 
+      { type: 'h3', text: 'Καταστήματα που συνεργάζονται μαζί μας' },
+      {
+        type: 'p',
+        text: 'Αν εκπροσωπείτε κατάστημα που κάνει αίτηση στο Pazari, επεξεργαζόμαστε όσα μας δίνετε στη φόρμα: όνομα υπευθύνου, email, τηλέφωνο, επωνυμία και ΑΦΜ της επιχείρησης, ιστότοπο και διεύθυνση του καταλόγου προϊόντων. Τα χρησιμοποιούμε για να εξετάσουμε την αίτηση, να επικοινωνούμε μαζί σας, να συγχρονίζουμε τα προϊόντα σας και να σας δείχνουμε στατιστικά, όπως πόσες μεταβάσεις σάς στείλαμε ανά ημέρα (μόνο ο αριθμός, χωρίς στοιχεία επισκεπτών). Για τη σύνδεση στον πίνακα του καταστήματος σάς στέλνουμε με email σύνδεσμο μίας χρήσης· μετά τη σύνδεση ορίζουμε το απολύτως απαραίτητο cookie **pazari_session**.',
+      },
+
       { type: 'h2', text: '3. Νομικές βάσεις και χρόνος διατήρησης' },
       {
         type: 'table',
@@ -93,6 +99,11 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
             'Συγκατάθεση (άρθρο 6 παρ. 1 στοιχ. α΄ ΓΚΠΔ και άρθρο 4 παρ. 5 ν. 3471/2006)',
             'Μέχρι να ανακαλέσετε τη συγκατάθεσή σας· η διάρκεια κάθε cookie αναφέρεται στην Πολιτική Cookies',
           ],
+          [
+            'Αιτήσεις και λογαριασμοί καταστημάτων',
+            'Εκτέλεση σύμβασης και προσυμβατικά μέτρα (άρθρο 6 παρ. 1 στοιχ. β΄ ΓΚΠΔ)',
+            'Όσο διαρκεί η συνεργασία και έως [MERCHANT RETENTION] μετά τη λήξη της· οι σύνδεσμοι σύνδεσης λήγουν σε 30 λεπτά και οι συνεδρίες σε 30 ημέρες',
+          ],
         ],
       },
       {
@@ -110,6 +121,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
         items: [
           'τον **πάροχο φιλοξενίας και CDN** ([HOSTING PROVIDER]), που εξυπηρετεί τον ιστότοπο και τηρεί τα αρχεία καταγραφής·',
           'το **Typesense Cloud**, που φιλοξενεί τη μηχανή αναζήτησης προϊόντων και επεξεργάζεται τα αιτήματα αναζήτησης·',
+          'τον **πάροχο αποστολής email** ([EMAIL PROVIDER]), που στέλνει στα καταστήματα τα email σύνδεσης και ενημέρωσης·',
           'την **Google**, μόνο εφόσον έχετε συναινέσει σε cookies ανάλυσης ή διαφήμισης.',
         ],
       },
@@ -230,6 +242,12 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
         text: 'Only if you agree, we load Google tools such as Google Analytics 4, Google Tag Manager and Google Ads conversion measurement. They help us understand how the website is used and measure how well our advertising works. They may collect an online identifier, device and browser data, the pages you view and how you interact with them. If you do not consent, these tools are not loaded at all. Details are in our Cookies Policy.',
       },
 
+      { type: 'h3', text: 'Shops that work with us' },
+      {
+        type: 'p',
+        text: 'If you represent a shop that applies to Pazari, we process what you give us in the form: contact name, email, phone, company name and VAT number, website and the address of your product catalogue. We use it to review the application, contact you, sync your products and show you statistics, such as how many click-outs we sent you per day (a count only, with no visitor data). To sign in to the shop dashboard we email you a one-time link; once signed in, we set the strictly necessary cookie **pazari_session**.',
+      },
+
       { type: 'h2', text: '3. Legal bases and retention' },
       {
         type: 'table',
@@ -260,6 +278,11 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
             'Consent (Art. 6(1)(a) GDPR and Art. 4(5) of Greek Law 3471/2006, or the equivalent national rules)',
             'Until you withdraw consent; each cookie’s lifetime is listed in our Cookies Policy',
           ],
+          [
+            'Shop applications and accounts',
+            'Performance of a contract and pre-contractual steps (Art. 6(1)(b) GDPR)',
+            'For as long as we work together and up to [MERCHANT RETENTION] afterwards; sign-in links expire after 30 minutes and sessions after 30 days',
+          ],
         ],
       },
       {
@@ -277,6 +300,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
         items: [
           'our **hosting and CDN provider** ([HOSTING PROVIDER]), which serves the website and keeps the logs;',
           '**Typesense Cloud**, which hosts our product search engine and processes the search requests sent to it;',
+          'our **email provider** ([EMAIL PROVIDER]), which sends sign-in and update emails to shops;',
           '**Google**, only if you have consented to analytics or advertising cookies.',
         ],
       },
@@ -404,6 +428,12 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
             '12 μήνες',
           ],
           [
+            'pazari_session (cookie)',
+            'Κρατά συνδεδεμένους τους υπευθύνους καταστημάτων στον πίνακα του καταστήματος· δεν ορίζεται για τους επισκέπτες',
+            'Απολύτως απαραίτητο',
+            '30 ημέρες ή μέχρι την αποσύνδεση',
+          ],
+          [
             '_ga',
             'Google Analytics: ξεχωρίζει τους επισκέπτες με ένα τυχαίο αναγνωριστικό, για την παραγωγή στατιστικών χρήσης',
             'Ανάλυσης (μόνο με συγκατάθεση)',
@@ -502,6 +532,12 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
             'Stores your cookie choices so that we respect them on every visit',
             'Strictly necessary',
             '12 months',
+          ],
+          [
+            'pazari_session (cookie)',
+            'Keeps shop staff signed in to their shop dashboard; never set for visitors',
+            'Strictly necessary',
+            '30 days, or until you sign out',
           ],
           [
             '_ga',

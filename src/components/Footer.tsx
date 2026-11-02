@@ -14,6 +14,7 @@ export function Footer() {
         <div className="footer-row">
           <CountryPicker />
           <nav className="footer-links" aria-label="Footer">
+            <Link to={path('/shops')}>{t('footer.forShops')}</Link>
             <Link to={path('/pages/privacy-policy')}>{t('footer.privacy')}</Link>
             <Link to={path('/pages/cookies-policy')}>{t('footer.cookies')}</Link>
             <button type="button" className="linklike" onClick={openCookieSettings}>{t('footer.cookieSettings')}</button>

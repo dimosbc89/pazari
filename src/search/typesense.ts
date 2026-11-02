@@ -97,8 +97,9 @@ export function createTypesenseBackend(cfg: Config): SearchBackend {
 
     getVariants: (groupId, country) => find(`${inList('groupId', [groupId])} && ${inList('countries', [country])}`),
 
-    async getOffers(mpn, country) {
-      const offers = await find(`${inList('mpn', [mpn])} && ${inList('countries', [country])}`, 'price:asc');
+    async getOffers(key, country) {
+      const field = key.startsWith('gtin:') || key.startsWith('mpn:') ? 'matchKey' : 'mpn';
+      const offers = await find(`${inList(field, [key])} && ${inList('countries', [country])}`, 'price:asc');
       return offers.sort((a, b) => a.price + (a.shipping ?? 0) - (b.price + (b.shipping ?? 0)));
     },
 
