@@ -68,6 +68,10 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
         type: 'p',
         text: 'Αν εκπροσωπείτε κατάστημα που κάνει αίτηση στο Tagora, επεξεργαζόμαστε όσα μας δίνετε στη φόρμα: όνομα υπευθύνου, email, τηλέφωνο, επωνυμία και ΑΦΜ της επιχείρησης, ιστότοπο και διεύθυνση του καταλόγου προϊόντων. Τα χρησιμοποιούμε για να εξετάσουμε την αίτηση, να επικοινωνούμε μαζί σας, να συγχρονίζουμε τα προϊόντα σας και να σας δείχνουμε στατιστικά, όπως πόσες μεταβάσεις σάς στείλαμε ανά ημέρα (μόνο ο αριθμός, χωρίς στοιχεία επισκεπτών). Για τη σύνδεση στον πίνακα του καταστήματος σάς στέλνουμε με email σύνδεσμο μίας χρήσης· μετά τη σύνδεση ορίζουμε το απολύτως απαραίτητο cookie **tagora_session**.',
       },
+      {
+        type: 'p',
+        text: '**Εφαρμογή Tagora για Shopify.** Αν συνδέσετε το κατάστημά σας με την εφαρμογή μας στο Shopify, η Shopify μάς δίνει, με την άδειά σας, πρόσβαση μόνο για ανάγνωση στα προϊόντα και στο απόθεμά σας, καθώς και στο όνομα, το email, τον ιστότοπο και το νόμισμα του καταστήματος. Δεν έχουμε πρόσβαση σε πελάτες, παραγγελίες ή πληρωμές. Το κλειδί πρόσβασης που μας δίνει η Shopify φυλάσσεται κρυπτογραφημένο. Αν αφαιρέσετε την εφαρμογή, σταματάμε να διαβάζουμε το κατάστημα· όταν η Shopify μάς ζητήσει τη διαγραφή (48 ώρες μετά), διαγράφουμε τα προϊόντα και τα στοιχεία του καταστήματος που πήραμε από αυτήν.',
+      },
 
       { type: 'h2', text: '3. Νομικές βάσεις και χρόνος διατήρησης' },
       {
@@ -245,6 +249,10 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       {
         type: 'p',
         text: 'If you represent a shop that applies to Tagora, we process what you give us in the form: contact name, email, phone, company name and VAT number, website and the address of your product catalogue. We use it to review the application, contact you, sync your products and show you statistics, such as how many click-outs we sent you per day (a count only, with no visitor data). To sign in to the shop dashboard we email you a one-time link; once signed in, we set the strictly necessary cookie **tagora_session**.',
+      },
+      {
+        type: 'p',
+        text: '**Tagora app for Shopify.** If you connect your shop with our Shopify app, Shopify gives us, with your permission, read-only access to your products and stock, and to the store name, email, website and currency. We have no access to customers, orders or payments. The access token Shopify gives us is stored encrypted. If you remove the app, we stop reading the store; when Shopify asks us to erase its data (48 hours later), we delete the products and store details we received from it.',
       },
 
       { type: 'h2', text: '3. Legal bases and retention' },

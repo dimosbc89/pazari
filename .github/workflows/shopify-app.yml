@@ -1,0 +1,45 @@
+# Tests the Tagora app for Shopify against a stand-in Shopify (plugins/shopify/tests/mock-shopify.mjs)
+# and a local Tagora: install, apply, sync, approval, webhooks, token refresh, uninstall.
+name: Shopify app
+
+on:
+  push:
+    paths:
+      - 'worker/**'
+      - 'sync/**'
+      - 'plugins/shopify/**'
+      - 'migrations/**'
+      - '.dev.vars.example'
+      - '.github/workflows/shopify-app.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Tagora and the stand-in Shopify, locally
+        run: |
+          npm ci
+          npm run typecheck
+          cp .dev.vars.example .dev.vars
+          npx vite build
+          npx wrangler d1 migrations apply DB --local
+          nohup node plugins/shopify/tests/mock-shopify.mjs > mock.log 2>&1 &
+          nohup npx wrangler dev --port 8787 > wrangler.log 2>&1 &
+          for i in $(seq 1 90); do curl -sf -o /dev/null http://localhost:8787/gr && break; sleep 1; done
+          curl -sf http://localhost:8787/api/catalogue/mode
+      - name: End-to-end test
+        run: node plugins/shopify/tests/e2e.mjs
+      - name: Logs
+        if: always()
+        run: |
+          tail -n 80 wrangler.log || true
+          tail -n 20 mock.log || true

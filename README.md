@@ -103,6 +103,24 @@ Open `http://localhost:8787/gr/shops` and apply with `http://localhost:9100/feed
 * **WP-CLI:** `wp tagora connect <key>`, `wp tagora sync`, `wp tagora status`. For testing against another Tagora, add `define( 'TAGORA_API', 'http://localhost:8787/api' );` to `wp-config.php`.
 * **Tests:** `npm run plugin:test` (product conversion, no WordPress needed). `.github/workflows/woocommerce-plugin.yml` installs real WordPress + WooCommerce on GitHub, runs a local Tagora, and checks sign-up, full sync, approval, what search shows, live updates, removals, the settings page in Greek, and PHP notices.
 
+### Tagora app for Shopify
+
+A Shopify app that runs inside the Tagora Worker: no other server. Shopify shows the page at `/shopify` inside the store's admin; the store applies to Tagora from there, and its products stay current through webhooks.
+
+* **Code:** `worker/shopify.ts` (session tokens, token exchange, webhooks, full sync), `worker/shopify-page.ts` (the page in the Shopify admin, Greek and English), `sync/shopify.ts` → `adminProductItems` (Shopify product → Tagora offers), `migrations/0005_shopify.sql` (table `shopify_stores`). Shopify's settings: `plugins/shopify/shopify.app.toml`. App Store text and review notes: `plugins/shopify/LISTING.md`.
+* **Authentication** follows Shopify's rules for new public apps: App Bridge gives the page a session token (checked: HS256 with the app secret, audience, store); the first time, it is exchanged for an **expiring** offline access token (1 hour) and a refresh token, stored encrypted with a key derived from `SHOPIFY_API_SECRET`. Tokens refresh by themselves; if Shopify stops accepting them, the store reconnects the next time someone opens the app. Changing the secret means every store has to open the app once.
+* **Products:** a full sync is a bulk operation (Shopify prepares a file; the `bulk_operations/finish` webhook, or the cron if that is missed, saves it), on applying, on approval, from "Sync now" and once a day. In between, `products/*` and `inventory_levels/update` webhooks update one product at a time. Read: active products on the Online Store channel, one offer per variant in stock, price and compare-at price (VAT added when the store's prices exclude it), barcode, Vendor as brand, Shopify's product category (or product type), images, colour and size options. Prices must be in euro.
+* **Uninstall:** the shop is paused and its products leave the site; installing again brings it back. `shop/redact` (48 hours later) deletes its products and store details. No customer data is ever read, so the customer privacy webhooks just answer 200.
+* **Tests:** `node plugins/shopify/tests/mock-shopify.mjs` is a stand-in Shopify (token exchange and refresh, GraphQL, bulk files, signed webhooks). With it and `npm run dev:api` running (`.dev.vars` from `.dev.vars.example`), `node plugins/shopify/tests/e2e.mjs` checks the page, session tokens, install, applying, the first sync, approval, what search shows, live updates, token refresh (also two at once), webhook signatures, privacy webhooks, sync now, a missed webhook, uninstall, reinstall and data removal. GitHub runs it: `.github/workflows/shopify-app.yml`.
+
+**Setting it up (once):**
+
+1. Create a free account at [partners.shopify.com](https://partners.shopify.com) (or sign in), open the **Dev Dashboard** and create an app named **Tagora**.
+2. Copy its **Client ID** into `wrangler.jsonc` → `SHOPIFY_API_KEY` and `plugins/shopify/shopify.app.toml` → `client_id`. Add its **Client secret** as the Worker secret `SHOPIFY_API_SECRET` (Cloudflare → the Worker → Settings → Variables and Secrets). Then apply `migrations/0005_shopify.sql` and deploy.
+3. Upload the configuration: `cd plugins/shopify && shopify app deploy` (Shopify CLI), or enter the same values in the Dev Dashboard: App URL `https://tagora.online/shopify`, embedded, scopes `read_products,read_inventory`, API version 2026-07, the webhooks and the privacy webhooks to `https://tagora.online/api/shopify/webhooks`.
+4. Create a development store, install the app on it from the Dev Dashboard and try it.
+5. To list it in the App Store: register for the App Store (one-time US$19), fill in the listing from `plugins/shopify/LISTING.md` with screenshots, and submit for review. Choose public distribution: until Shopify approves the app, it installs only on development stores. (Custom distribution would tie the app to a single store for good.)
+
 ### Import from the command line
 
 The same sync engine runs from a terminal, e.g. for a one-off import or a shop you add yourself:

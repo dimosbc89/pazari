@@ -139,7 +139,7 @@ function ShopPanel({ id }: { id: string }) {
         <div className="tile">
           <span className="tile-label">{t('dash.products')}</span>
           <strong className="tile-value">{num(shop.productCount)}</strong>
-          <span className="tile-sub">{t('dash.every', { hours: syncEveryHours })}</span>
+          <span className="tile-sub">{shop.sourceType === 'plugin' || shop.sourceType === 'shopify-app' ? t('dash.everyChange') : t('dash.every', { hours: syncEveryHours })}</span>
         </div>
         <div className="tile">
           <span className="tile-label">{t('dash.lastSync')}</span>
@@ -198,7 +198,7 @@ function ShopPanel({ id }: { id: string }) {
           )}
           <dl className="facts">
             <div><dt>{t('dash.source')}</dt><dd>{t(`source.${shop.sourceType}` as StringKey)} · <span className="mono">{shop.sourceUrl}</span>
-              {shop.sourceType === 'shopify-app' && <span className="field-help">{t('shopify.note')}</span>}</dd></div>
+              {shop.sourceType === 'shopify-app' && <div className="field-help">{t('shopify.note')}</div>}</dd></div>
             {shop.sourceFormat && <div><dt>{t('dash.format')}</dt><dd>{t(`format.${shop.sourceFormat}` as StringKey)}</dd></div>}
             <div><dt>{t('field.countries')}</dt><dd>{shop.countries.map((c) => COUNTRIES.find((x) => x.code === c)?.label ?? c).join(', ')}</dd></div>
             <div><dt>{t('field.shipping')}</dt><dd>{shop.defaultShipping != null ? price(shop.defaultShipping) : t('dash.noShipping')}{shop.freeShippingOver != null && <> · {t('field.freeOver')}: {price(shop.freeShippingOver)}</>}</dd></div>
