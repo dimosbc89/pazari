@@ -29,7 +29,10 @@ async function alertAdmins(env: Env) {
   if (!admins.length) return;
   const last = await getSetting(env, 'last_alert_at');
   if (last && Date.now() - Date.parse(last) < 24 * 3_600_000) return;
-  const { results } = await env.DB.prepare("SELECT name FROM shops WHERE status = 'active' AND last_sync_status = 'error' ORDER BY name LIMIT 50").all<{ name: string }>();
+  // Failed syncs, and plugin shops whose plugin has been silent for two days.
+  const silentSince = new Date(Date.now() - 48 * 3_600_000).toISOString();
+  const { results } = await env.DB.prepare(`SELECT name FROM shops WHERE status = 'active' AND (last_sync_status = 'error'
+      OR (source_type = 'plugin' AND (plugin_seen_at IS NULL OR plugin_seen_at < ?))) ORDER BY name LIMIT 50`).bind(silentSince).all<{ name: string }>();
   if (!results.length) return;
   const url = `${(env.SITE_URL || '').replace(/\/$/, '')}/gr/admin`;
   await sendMail(env, mailFor('adminAlert', 'el', admins, { count: results.length, list: results.map((r) => r.name).join(', ') }, url));

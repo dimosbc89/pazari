@@ -1,10 +1,10 @@
 import { useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Footer } from '../components/Footer';
 import { Icon, type IconName } from '../components/Icons';
 import { MerchantHeader } from '../components/MerchantHeader';
 import { IssueList } from '../components/IssueList';
-import { COUNTRIES } from '../config';
+import { COUNTRIES, PLUGIN_ZIP } from '../config';
 import { useLocale } from '../i18n';
 import type { StringKey } from '../i18n/strings';
 import { api, useErrorText, useMe, type Preview, type SourceType } from '../lib/api';
@@ -14,7 +14,44 @@ const SOURCES: { type: SourceType; icon: IconName }[] = [
   { type: 'feed', icon: 'feed' },
   { type: 'shopify', icon: 'bag' },
   { type: 'woocommerce', icon: 'cart' },
+  { type: 'plugin', icon: 'store' },
 ];
+
+/** The 3 steps to connect a WooCommerce shop with the plugin. */
+export function PluginSteps() {
+  const { t } = useLocale();
+  return (
+    <div className="plugin-steps">
+      <p className="field-help">{t('source.plugin.help')}</p>
+      <h3>{t('plugin.steps')}</h3>
+      <ol>
+        <li>{t('plugin.step1')}</li>
+        <li>{t('plugin.step2')}</li>
+        <li>{t('plugin.step3')}</li>
+      </ol>
+      <a href={PLUGIN_ZIP} className="btn btn--ghost" download>{t('plugin.download')}</a>
+    </div>
+  );
+}
+
+/** A connection key, shown once, with a copy button. */
+export function KeyBox({ pluginKey }: { pluginKey: string }) {
+  const { t } = useLocale();
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(pluginKey); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* select it instead */ }
+  };
+  return (
+    <div className="key-box">
+      <p className="key-box-title">{t('plugin.key.title')}</p>
+      <div className="key-box-row">
+        <code className="key-box-key" onClick={(e) => window.getSelection()?.selectAllChildren(e.currentTarget)}>{pluginKey}</code>
+        <button type="button" className="btn btn--sm" onClick={copy}>{copied ? t('plugin.key.copied') : t('plugin.key.copy')}</button>
+      </div>
+      <p className="field-help">{t('plugin.key.note')}</p>
+    </div>
+  );
+}
 
 /** Source picker + address + "Check" button with the result. Also used in the dashboard. */
 export function SourceFields({ type, url, onType, onUrl, check, onCheck }: {
@@ -35,6 +72,7 @@ export function SourceFields({ type, url, onType, onUrl, check, onCheck }: {
           </label>
         ))}
       </div>
+      {type === 'plugin' ? <PluginSteps /> : <>
       <div className="field">
         <label htmlFor="source-url">{t(isFeed ? 'source.feed.label' : 'source.shop.label')}</label>
         <div className="field-row">
@@ -70,6 +108,7 @@ export function SourceFields({ type, url, onType, onUrl, check, onCheck }: {
           )}
         </div>
       )}
+      </>}
     </>
   );
 }
@@ -102,7 +141,9 @@ export function ShopsPage() {
   const { me } = useMe();
   useDocumentTitle(t('shops.meta'));
 
-  const [type, setType] = useState<SourceType>('feed');
+  const [params] = useSearchParams();
+  const [type, setType] = useState<SourceType>(params.get('source') === 'plugin' ? 'plugin' : 'feed');
+  const [pluginKey, setPluginKey] = useState<string | null>(null);
   const [url, setUrl] = useState('');
   const { check, run, reset } = useSourceCheck();
   const [f, setF] = useState({ name: '', website: '', company: '', vat: '', contactName: '', email: '', phone: '', defaultShipping: '', freeShippingOver: '', website2: '' });
@@ -118,12 +159,15 @@ export function ShopsPage() {
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    let ok = check.key === key && check.result?.ok;
-    if (!ok) ok = !!(await run(type, url))?.ok;
-    if (!ok) { setError(t('check.needed')); return; }
+    if (type !== 'plugin') {
+      let ok = check.key === key && check.result?.ok;
+      if (!ok) ok = !!(await run(type, url))?.ok;
+      if (!ok) { setError(t('check.needed')); return; }
+    }
     setSending(true);
     try {
-      await api('/shops/signup', { body: { ...f, countries, sourceType: type, sourceUrl: url.trim(), consent, lang } });
+      const r = await api<{ pluginKey?: string }>('/shops/signup', { body: { ...f, countries, sourceType: type, sourceUrl: type === 'plugin' ? f.website : url.trim(), consent, lang } });
+      setPluginKey(r.pluginKey ?? null);
       setDone(f.name);
       window.scrollTo({ top: document.getElementById('apply')?.offsetTop ?? 0, behavior: 'smooth' });
     } catch (err) {
@@ -167,6 +211,17 @@ export function ShopsPage() {
               <Icon name="check" />
               <h2>{t('shops.done.title')}</h2>
               <p>{t('shops.done.text', { shop: done })}</p>
+              {pluginKey && (
+                <div className="done-plugin">
+                  <p><strong>{t('plugin.done')}</strong></p>
+                  <KeyBox pluginKey={pluginKey} />
+                  <ol>
+                    <li>{t('plugin.step2')}</li>
+                    <li>{t('plugin.step3')}</li>
+                  </ol>
+                  <a href={PLUGIN_ZIP} className="btn btn--ghost" download>{t('plugin.download')}</a>
+                </div>
+              )}
               <Link to={path('/merchant/login')} className="btn">{t('shops.done.signin')}</Link>
             </div>
           ) : (
@@ -218,7 +273,7 @@ export function ShopsPage() {
               </label>
 
               {error && <p className="form-error" role="alert"><Icon name="alert" /> {error}</p>}
-              <button type="submit" className="btn btn--lg btn--block" disabled={sending || !consent || !f.name || !f.email || !f.website || !url || !countries.length}>
+              <button type="submit" className="btn btn--lg btn--block" disabled={sending || !consent || !f.name || !f.email || !f.website || (type !== 'plugin' && !url) || !countries.length}>
                 {sending ? t('shops.sending') : t('shops.submit')}
               </button>
             </form>

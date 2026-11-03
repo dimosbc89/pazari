@@ -4,7 +4,8 @@ import type { Product } from '../src/search/types.ts';
 export type { Product };
 
 /** How a shop's products reach Tagora. */
-export type SourceType = 'feed' | 'shopify' | 'woocommerce';
+/** plugin: the Tagora plugin for WooCommerce sends the products (Tagora does not read them). */
+export type SourceType = 'feed' | 'shopify' | 'woocommerce' | 'plugin';
 
 export interface ShopConfig {
   /** Slug, e.g. "meltemi-store". Prefixes every product id. */
@@ -69,6 +70,8 @@ export interface SyncReport {
   /** Items that passed the checks */
   products: Product[];
   skipped: number;
+  /** Ids (as stored, "<shop>-<id>") of the items that were left out, e.g. sold out */
+  skippedIds: string[];
   issues: Issue[];
 }
 

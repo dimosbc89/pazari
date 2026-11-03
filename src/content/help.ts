@@ -77,7 +77,7 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
     updated: 'Τελευταία ενημέρωση: 3 Νοεμβρίου 2026',
     intro: 'Πώς συνδέεις τα προϊόντα σου με το Tagora, τι χρειάζεται κάθε προϊόν και τι γίνεται μετά την έγκριση. Αν κολλήσεις κάπου, [γράψε μας](/pages/contact).',
     blocks: [
-      { type: 'h2', text: '1. Τρεις τρόποι σύνδεσης' },
+      { type: 'h2', text: '1. Τέσσερις τρόποι σύνδεσης' },
       { type: 'p', text: 'Στη [σελίδα για καταστήματα](/shops) διαλέγεις πώς συνδέεται το κατάστημά σου:' },
       {
         type: 'table',
@@ -86,6 +86,7 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
           ['**XML feed**', 'Το link του feed σου (XML, CSV ή TSV)', 'Έχεις ήδη feed για Skroutz, BestPrice ή Google, ή μπορεί να σου φτιάξει ένα η πλατφόρμα του e-shop σου. **Αυτό προτείνουμε.**'],
           ['**Shopify**', 'Τη διεύθυνση του καταστήματός σου', 'Δεν έχεις feed και θέλεις να ξεκινήσεις γρήγορα.'],
           ['**WooCommerce**', 'Τη διεύθυνση του καταστήματός σου', 'Δεν έχεις feed και θέλεις να ξεκινήσεις γρήγορα.'],
+          ['**WooCommerce plugin**', 'Τίποτα: εγκαθιστάς το plugin και βάζεις το κλειδί σύνδεσης', 'Έχεις WooCommerce. **Αυτό προτείνουμε για WooCommerce**: στέλνει barcode, MPN και μάρκες, ενημερώνει αμέσως και δουλεύει πίσω από firewall (δες την ενότητα 4).'],
         ],
       },
       { type: 'p', text: '**Προτείνουμε το XML feed**, γιατί συνήθως έχει barcode (EAN) και κωδικό κατασκευαστή (MPN). Αυτά βάζουν τα προϊόντα σου στη σύγκριση τιμών, δίπλα στο ίδιο προϊόν από άλλα καταστήματα. Ένα feed μπορεί να έχει και κόστος αποστολής για κάθε προϊόν. Οι λίστες προϊόντων του Shopify και του WooCommerce δεν έχουν κόστος αποστολής και συνήθως ούτε barcode, οπότε τα προϊόντα σου εμφανίζονται στην αναζήτηση, αλλά κατά κανόνα όχι στη σύγκριση τιμών.' },
@@ -121,7 +122,18 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
       },
 
       { type: 'h2', text: '4. WooCommerce' },
-      { type: 'p', text: 'Γράφεις μόνο τη διεύθυνση του καταστήματός σου. Διαβάζουμε το Store API, μια δημόσια λίστα προϊόντων που είναι ενσωματωμένη στο WooCommerce. Δεν εγκαθιστάς πρόσθετο (plugin) και δεν μας δίνεις κλειδιά API.' },
+      { type: 'p', text: '**Με το Tagora plugin (προτείνεται).** Το κατάστημά σου στέλνει μόνο του τα προϊόντα στο Tagora: κάθε παραλλαγή (χρώμα, μέγεθος) ως ξεχωριστή προσφορά, με barcode (EAN), MPN, μάρκα, τιμή προσφοράς και απόθεμα. Όταν αλλάζεις ένα προϊόν, η αλλαγή φτάνει στο Tagora μέσα σε ένα λεπτό, και κάθε 6 ώρες στέλνεται ολόκληρος ο κατάλογος. Δουλεύει και πίσω από firewall ή Cloudflare, γιατί δεν χρειάζεται να διαβάσουμε εμείς το site σου.' },
+      {
+        type: 'ul',
+        items: [
+          'Κάνε [αίτηση](/shops) και διάλεξε «WooCommerce plugin». Στο τέλος θα δεις το κλειδί σύνδεσης (το φτιάχνεις ξανά όποτε θέλεις από τον πίνακα καταστήματος).',
+          '[Κατέβασε το plugin](/downloads/tagora-woocommerce.zip) και ανέβασέ το στο WordPress: Πρόσθετα → Προσθήκη νέου → Μεταφόρτωση πρόσθετου. Ενεργοποίησέ το.',
+          'Στο WooCommerce → Tagora, επικόλλησε το κλειδί και πάτησε «Σύνδεση». Τα προϊόντα σου στέλνονται αμέσως και εμφανίζονται μόλις εγκριθεί η αίτηση.',
+          'Το barcode το βρίσκουμε στο πεδίο GTIN/EAN του WooCommerce και στα πεδία των πιο γνωστών plugins για EAN, τη μάρκα στις μάρκες (Brands) του WooCommerce και των γνωστών plugins. Αν τα δικά σου είναι αλλού, δήλωσέ τα στο WooCommerce → Tagora → «Για προχωρημένους».',
+          'Στέλνουμε μόνο δεδομένα προϊόντων, ποτέ πελάτες ή παραγγελίες.',
+        ],
+      },
+      { type: 'p', text: '**Χωρίς plugin.** Γράφεις μόνο τη διεύθυνση του καταστήματός σου. Διαβάζουμε το Store API, μια δημόσια λίστα προϊόντων που είναι ενσωματωμένη στο WooCommerce. Δεν εγκαθιστάς πρόσθετο (plugin) και δεν μας δίνεις κλειδιά API.' },
       {
         type: 'ul',
         items: [
@@ -247,7 +259,7 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
     updated: 'Last updated: 3 November 2026',
     intro: 'How to connect your products to Tagora, what each product needs, and what happens after we approve your shop. If you get stuck, [write to us](/pages/contact).',
     blocks: [
-      { type: 'h2', text: '1. Three ways to connect' },
+      { type: 'h2', text: '1. Four ways to connect' },
       { type: 'p', text: 'On the [page for shops](/shops) you choose how your shop connects:' },
       {
         type: 'table',
@@ -256,6 +268,7 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
           ['**XML feed**', 'The link to your feed (XML, CSV or TSV)', 'You already have a feed for Skroutz, BestPrice or Google, or your e-shop platform can make one. **This is the one we recommend.**'],
           ['**Shopify**', 'Your store address', 'You have no feed and want to start quickly.'],
           ['**WooCommerce**', 'Your shop address', 'You have no feed and want to start quickly.'],
+          ['**WooCommerce plugin**', 'Nothing: you install the plugin and enter the connection key', 'You use WooCommerce. **This is the one we recommend for WooCommerce**: it sends barcodes, MPN and brands, updates instantly and works behind firewalls (see section 4).'],
         ],
       },
       { type: 'p', text: '**We recommend the XML feed** because it usually carries barcodes (EAN) and manufacturer part numbers (MPN). These put your products into price comparisons, next to the same product from other shops. A feed can also carry a delivery cost for each product. The Shopify and WooCommerce product lists have no delivery costs and usually no barcodes, so your products appear in search but, as a rule, not in price comparisons.' },
@@ -291,7 +304,18 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
       },
 
       { type: 'h2', text: '4. WooCommerce' },
-      { type: 'p', text: 'Enter just your shop address. We read the Store API, a public product list built into WooCommerce. There is no plugin to install and no API keys to share.' },
+      { type: 'p', text: '**With the Tagora plugin (recommended).** Your shop sends its products to Tagora itself: each variation (colour, size) as its own offer, with barcode (EAN), MPN, brand, sale price and stock. When you change a product, Tagora has the change within a minute, and the whole catalogue is sent every 6 hours. It works behind firewalls and Cloudflare, because we do not need to read your site.' },
+      {
+        type: 'ul',
+        items: [
+          '[Apply](/shops) and choose “WooCommerce plugin”. At the end you will see your connection key (you can create a new one any time from your shop dashboard).',
+          '[Download the plugin](/downloads/tagora-woocommerce.zip) and upload it to WordPress: Plugins → Add New → Upload Plugin. Activate it.',
+          'In WooCommerce → Tagora, paste the key and press Connect. Your products are sent right away and appear once your application is approved.',
+          'We find barcodes in WooCommerce’s GTIN/EAN field and in the fields of the best-known EAN plugins, and brands in WooCommerce Brands and the well-known brand plugins. If yours are kept elsewhere, enter them in WooCommerce → Tagora → Advanced.',
+          'Only product data is sent, never customers or orders.',
+        ],
+      },
+      { type: 'p', text: '**Without the plugin.** Enter just your shop address. We read the Store API, a public product list built into WooCommerce. There is no plugin to install and no API keys to share.' },
       {
         type: 'ul',
         items: [

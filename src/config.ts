@@ -38,6 +38,9 @@ export const SEARCH_CONFIG = {
   },
 };
 
+/** The Tagora plugin for WooCommerce (built from plugins/woocommerce/tagora by scripts/build-plugin-zip.mjs). */
+export const PLUGIN_ZIP = '/downloads/tagora-woocommerce.zip';
+
 export const STORAGE_KEYS = {
   country: 'tagora_country',
   consent: 'tagora_consent',

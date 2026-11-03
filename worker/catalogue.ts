@@ -23,17 +23,17 @@ async function sha1(s: string) {
 interface Row {
   id: string; shop_id: string; group_id: string; match_key: string | null; shop: string; brand: string; category: string;
   color: string | null; size: string | null; discount: string | null; discount_pct: number; price: number; rank: number;
-  shuffle: number; countries: string; doc: string; hash: string;
+  shuffle: number; countries: string; doc: string; hash: string; listed: number;
   t_title: string; t_brand: string; t_color: string; t_category: string; t_other: string; updated_at: string;
 }
 
-async function toRow(p: Product, shopId: string, now: string): Promise<Row> {
+async function toRow(p: Product, shopId: string, now: string, listed: boolean): Promise<Row> {
   // syncId changes on every sync; leaving it out lets unchanged products be skipped.
   const doc = JSON.stringify({ ...p, syncId: undefined, shopId });
   return {
     id: p.id, shop_id: shopId, group_id: p.groupId, match_key: p.matchKey ?? p.mpn ?? null, shop: p.shop, brand: p.brand,
     category: p.category, color: p.color || null, size: first(p.size), discount: p.discount || null, discount_pct: p.discountPct ?? 0,
-    price: p.price, rank: p.rank ?? 0, shuffle: fnv(p.id), countries: `,${p.countries.join(',')},`, doc, hash: await sha1(doc),
+    price: p.price, rank: p.rank ?? 0, shuffle: fnv(p.id), countries: `,${p.countries.join(',')},`, doc, hash: await sha1(doc), listed: listed ? 1 : 0,
     t_title: searchable(text(p.title)), t_brand: searchable(p.brand), t_color: searchable(p.color ?? ''), t_category: searchable(p.category),
     t_other: searchable(`${text(p.summary)} ${p.shop} ${text(p.size)} ${p.mpn ?? ''} ${text(p.description).slice(0, 1500)}`),
     updated_at: now,
@@ -41,7 +41,7 @@ async function toRow(p: Product, shopId: string, now: string): Promise<Row> {
 }
 
 const COLUMNS = ['id', 'shop_id', 'group_id', 'match_key', 'shop', 'brand', 'category', 'color', 'size', 'discount', 'discount_pct', 'price', 'rank',
-  'shuffle', 'countries', 'doc', 'hash', 't_title', 't_brand', 't_color', 't_category', 't_other', 'updated_at'] as const;
+  'shuffle', 'countries', 'doc', 'hash', 'listed', 't_title', 't_brand', 't_color', 't_category', 't_other', 'updated_at'] as const;
 
 // Rows travel as one JSON parameter (D1 allows 100 bound parameters, not thousands),
 // so a shop of 5,000 products takes a few dozen queries instead of thousands.
@@ -53,8 +53,23 @@ const MAX_CHUNK_BYTES = 700_000;
 
 /** Saves a shop's products and removes the ones that are gone. Unchanged products are not rewritten. */
 export async function saveShopProducts(env: Env, shopId: string, products: Product[]) {
-  const { results } = await env.DB.prepare('SELECT id, hash FROM products WHERE shop_id = ?').bind(shopId).all<{ id: string; hash: string }>();
-  const existing = new Map(results.map((r) => [r.id, r.hash]));
+  const { written } = await upsertProducts(env, shopId, products, true);
+  const removed = await removeProductsExcept(env, shopId, products.map((p) => p.id));
+  return { written, removed };
+}
+
+/**
+ * Inserts or updates products (one batch, or a whole catalogue). Products whose content and
+ * visibility did not change are skipped. listed = false keeps them hidden (shop not approved yet).
+ */
+export async function upsertProducts(env: Env, shopId: string, products: Product[], listed: boolean) {
+  const existing = new Map<string, string>();
+  for (let i = 0; i < products.length; i += 2000) {
+    const ids = JSON.stringify(products.slice(i, i + 2000).map((p) => p.id));
+    const { results } = await env.DB.prepare('SELECT id, hash, listed FROM products WHERE shop_id = ? AND id IN (SELECT value FROM json_each(?))')
+      .bind(shopId, ids).all<{ id: string; hash: string; listed: number }>();
+    for (const r of results) existing.set(r.id, `${r.hash}:${r.listed}`);
+  }
   const now = nowIso();
 
   let chunk: Row[] = [];
@@ -67,23 +82,38 @@ export async function saveShopProducts(env: Env, shopId: string, products: Produ
     chunk = [];
     size = 0;
   };
-  const seen = new Set<string>();
   for (const p of products) {
-    seen.add(p.id);
-    const row = await toRow(p, shopId, now);
-    if (existing.get(row.id) === row.hash) continue;
+    const row = await toRow(p, shopId, now, listed);
+    if (existing.get(row.id) === `${row.hash}:${row.listed}`) continue;
     const bytes = row.doc.length * 2 + row.t_other.length + row.t_title.length + 500;
     if (size + bytes > MAX_CHUNK_BYTES) await flush();
     chunk.push(row);
     size += bytes;
   }
   await flush();
+  return { written };
+}
 
-  const stale = [...existing.keys()].filter((id) => !seen.has(id));
-  for (let i = 0; i < stale.length; i += 2000) {
-    await env.DB.prepare('DELETE FROM products WHERE id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(stale.slice(i, i + 2000))).run();
+/** Removes a shop's products whose ids are not in keep (deleted, sold out). Returns how many. */
+export async function removeProductsExcept(env: Env, shopId: string, keep: string[]) {
+  const { results } = await env.DB.prepare('SELECT id FROM products WHERE shop_id = ?').bind(shopId).all<{ id: string }>();
+  const keepSet = new Set(keep);
+  const stale = results.map((r) => r.id).filter((id) => !keepSet.has(id));
+  await removeProducts(env, stale);
+  return stale.length;
+}
+
+export async function removeProducts(env: Env, ids: string[]) {
+  for (let i = 0; i < ids.length; i += 2000) {
+    await env.DB.prepare('DELETE FROM products WHERE id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(ids.slice(i, i + 2000))).run();
   }
-  return { written, removed: stale.length };
+}
+
+/** Shows a shop's hidden products (on approval). Returns how many products the shop has online. */
+export async function listShopProducts(env: Env, shopId: string) {
+  await env.DB.prepare('UPDATE products SET listed = 1 WHERE shop_id = ? AND listed = 0').bind(shopId).run();
+  const r = await env.DB.prepare('SELECT COUNT(*) AS n FROM products WHERE shop_id = ?').bind(shopId).first<{ n: number }>();
+  return r?.n ?? 0;
 }
 
 /** Takes all of a shop's products off the site. */
@@ -161,7 +191,7 @@ export async function searchCatalogue(env: Env, q: CatalogueQuery): Promise<Sear
 async function runSearch(env: Env, q: CatalogueQuery, match: string | null): Promise<SearchResult> {
   const from = match ? 'products_fts JOIN products p ON p.rid = products_fts.rowid' : 'products p';
   const where = (except?: FacetKey) => {
-    const parts = ['p.countries LIKE ?'];
+    const parts = ['p.listed = 1', 'p.countries LIKE ?'];
     const args: unknown[] = [`%,${q.country},%`];
     if (match) { parts.unshift('products_fts MATCH ?'); args.unshift(match); }
     for (const f of FACETS) {
@@ -208,25 +238,25 @@ async function runSearch(env: Env, q: CatalogueQuery, match: string | null): Pro
 }
 
 export async function getProduct(env: Env, id: string): Promise<Product | null> {
-  const r = await env.DB.prepare('SELECT doc FROM products WHERE id = ?').bind(id).first<{ doc: string }>();
+  const r = await env.DB.prepare('SELECT doc FROM products WHERE id = ? AND listed = 1').bind(id).first<{ doc: string }>();
   return r ? (JSON.parse(r.doc) as Product) : null;
 }
 
 export async function getVariants(env: Env, groupId: string, country: string): Promise<Product[]> {
-  const { results } = await env.DB.prepare('SELECT doc FROM products WHERE group_id = ? AND countries LIKE ? ORDER BY rank, price LIMIT 200')
+  const { results } = await env.DB.prepare('SELECT doc FROM products WHERE group_id = ? AND listed = 1 AND countries LIKE ? ORDER BY rank, price LIMIT 200')
     .bind(groupId, `%,${country},%`).all<{ doc: string }>();
   return results.map((r) => JSON.parse(r.doc) as Product);
 }
 
 /** The same product in every shop, cheapest total (price + delivery) first. */
 export async function getOffers(env: Env, key: string, country: string): Promise<Product[]> {
-  const { results } = await env.DB.prepare('SELECT doc FROM products WHERE match_key = ? AND countries LIKE ? LIMIT 100')
+  const { results } = await env.DB.prepare('SELECT doc FROM products WHERE match_key = ? AND listed = 1 AND countries LIKE ? LIMIT 100')
     .bind(key, `%,${country},%`).all<{ doc: string }>();
   return results.map((r) => JSON.parse(r.doc) as Product).sort((a, b) => a.price + (a.shipping ?? 0) - (b.price + (b.shipping ?? 0)));
 }
 
 export async function getStats(env: Env, country: string): Promise<CatalogueStats> {
-  const r = await env.DB.prepare('SELECT COUNT(*) AS offers, COUNT(DISTINCT shop_id) AS shops, COUNT(DISTINCT brand) AS brands FROM products WHERE countries LIKE ?')
+  const r = await env.DB.prepare('SELECT COUNT(*) AS offers, COUNT(DISTINCT shop_id) AS shops, COUNT(DISTINCT brand) AS brands FROM products WHERE listed = 1 AND countries LIKE ?')
     .bind(`%,${country},%`).first<CatalogueStats>();
   return r ?? { offers: 0, shops: 0, brands: 0 };
 }

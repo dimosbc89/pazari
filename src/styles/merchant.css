@@ -237,3 +237,18 @@
 .faq-more { margin-top: 14px; }
 .dash-plan { display: flex; align-items: flex-start; gap: 8px; margin: 4px 0 18px; color: var(--muted); font-size: 14.5px; }
 .dash-plan .icon { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--mint-text); }
+
+/* ---------- WooCommerce plugin ---------- */
+@media (min-width: 641px) { .sources { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 641px) and (max-width: 900px) { .sources { grid-template-columns: repeat(2, 1fr); } }
+.plugin-steps { margin: 4px 0 18px; padding: 16px 18px; border-radius: var(--radius); background: var(--tint); }
+.plugin-steps h3 { margin: 10px 0 6px; font-size: 15px; }
+.plugin-steps ol, .done-plugin ol { margin: 0 0 14px; padding-left: 20px; line-height: 1.55; }
+.done-plugin { margin: 18px auto; max-width: 560px; text-align: left; }
+.key-box { margin: 12px 0; padding: 14px 16px; border-radius: var(--radius); background: var(--white); box-shadow: inset 0 0 0 1.5px var(--line-2); }
+.key-box-title { margin: 0 0 8px; font-weight: 700; }
+.key-box-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.key-box-key { flex: 1; min-width: 0; padding: 10px 12px; border-radius: var(--radius-s); background: var(--tint); font-size: 13.5px; overflow-wrap: anywhere; user-select: all; cursor: text; }
+.plugin-status { margin-bottom: 14px; }
+.plugin-status p { margin: 0 0 6px; }
+.plugin-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }

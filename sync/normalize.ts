@@ -34,10 +34,11 @@ export function normalize(source: SourceResult, shop: ShopConfig, syncId: string
   const seen = new Set<string>();
   const rankInGroup = new Map<string, number>();
   let skipped = 0;
+  const skippedIds: string[] = [];
 
   for (const it of source.items) {
     const label = it.title || it.id || it.url || '';
-    const skip = (code: IssueCode) => { note(code, label); skipped++; };
+    const skip = (code: IssueCode) => { note(code, label); skipped++; if (it.id && code !== 'duplicate_id') skippedIds.push(`${shop.id}-${slug(it.id)}`); };
     if (!it.id) { skip('missing_id'); continue; }
     if (!it.title) { skip('missing_title'); continue; }
     if (!it.price || it.price <= 0) { skip('missing_price'); continue; }
@@ -104,6 +105,7 @@ export function normalize(source: SourceResult, shop: ShopConfig, syncId: string
     found: source.items.length,
     products,
     skipped,
+    skippedIds,
     issues: [...issues.values()].sort((a, b) => order(a.code) - order(b.code) || b.count - a.count),
   };
 }

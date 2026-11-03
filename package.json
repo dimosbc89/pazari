@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run typecheck && vite build",
+    "build": "npm run typecheck && node scripts/build-plugin-zip.mjs && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.worker.json && tsc -p tsconfig.node.json",
     "demo:data": "node scripts/generate-demo-data.mjs",
@@ -17,7 +17,9 @@
     "dev:mocks": "node dev/mock-shops.mjs & node dev/mock-typesense.mjs",
     "db:migrate": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "plugin:zip": "node scripts/build-plugin-zip.mjs",
+    "plugin:test": "php plugins/woocommerce/tests/catalog-test.php"
   },
   "dependencies": {
     "@fontsource-variable/commissioner": "^5.3.0",
