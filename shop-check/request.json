@@ -1,0 +1,7 @@
+{
+  "shop": "https://www.danaos-stores.gr",
+  "candidates": [
+    { "type": "woocommerce", "url": "https://www.danaos-stores.gr" },
+    { "type": "shopify", "url": "https://www.danaos-stores.gr" }
+  ]
+}
