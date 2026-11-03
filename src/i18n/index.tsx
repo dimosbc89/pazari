@@ -1,5 +1,5 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
-import type { Country, Lang } from '../config';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { STORAGE_KEYS, type Country, type Lang } from '../config';
 import { STRINGS, type StringKey } from './strings';
 import type { Localized } from '../search/types';
 
@@ -21,6 +21,40 @@ export interface Locale {
 
 const Ctx = createContext<Locale | null>(null);
 
+// ---------- language choice ----------
+// The language follows the country (Greece/Cyprus: Greek, Ireland/Malta: English) until the
+// visitor picks one with the ΕΛ | EN switch. The choice is remembered and kept across countries.
+// A link with ?lang=en or ?lang=el sets it too.
+
+const LANGS: Lang[] = ['el', 'en'];
+const isLang = (v: unknown): v is Lang => LANGS.includes(v as Lang);
+
+function initialChoice(): Lang | null {
+  try {
+    const fromUrl = new URLSearchParams(window.location.search).get('lang');
+    if (isLang(fromUrl)) { localStorage.setItem(STORAGE_KEYS.lang, fromUrl); return fromUrl; }
+    const saved = localStorage.getItem(STORAGE_KEYS.lang);
+    return isLang(saved) ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+const LangChoice = createContext<{ choice: Lang | null; choose: (l: Lang) => void }>({ choice: null, choose: () => {} });
+
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  const [choice, setChoice] = useState<Lang | null>(initialChoice);
+  const choose = useCallback((l: Lang) => {
+    setChoice(l);
+    try { localStorage.setItem(STORAGE_KEYS.lang, l); } catch { /* storage blocked */ }
+  }, []);
+  const value = useMemo(() => ({ choice, choose }), [choice, choose]);
+  return <LangChoice.Provider value={value}>{children}</LangChoice.Provider>;
+}
+
+/** Switches the interface language (keeps the country, its prices and shops). */
+export const useChooseLanguage = () => useContext(LangChoice).choose;
+
 export function pickLang(v: Localized | undefined, lang: Lang): string {
   if (v == null) return '';
   if (typeof v === 'string') return v;
@@ -28,11 +62,15 @@ export function pickLang(v: Localized | undefined, lang: Lang): string {
 }
 
 export function LocaleProvider({ country, children }: { country: Country; children: ReactNode }) {
+  const { choice } = useContext(LangChoice);
+  const lang: Lang = choice ?? country.lang;
+  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   const value = useMemo<Locale>(() => {
-    const lang = country.lang;
     const dict = STRINGS[lang];
-    const money = new Intl.NumberFormat(country.locale, { style: 'currency', currency: country.currency });
-    const number = new Intl.NumberFormat(country.locale);
+    // English in Greece formats like "€1,234.50"; Greek like "1.234,50 €".
+    const locale = lang === country.lang ? country.locale : `${lang}-${country.code.toUpperCase()}`;
+    const money = new Intl.NumberFormat(locale, { style: 'currency', currency: country.currency });
+    const number = new Intl.NumberFormat(locale);
     const t: Locale['t'] = (key, vars) => {
       let s = dict[key] ?? key;
       if (vars) for (const [k, v] of Object.entries(vars)) s = s.split(`{${k}}`).join(String(v));
@@ -51,7 +89,7 @@ export function LocaleProvider({ country, children }: { country: Country; childr
       loc: (v) => pickLang(v, lang),
       path: (p = '') => `/${country.code}${p ? (p.startsWith('/') ? p : `/${p}`) : ''}`,
     };
-  }, [country]);
+  }, [country, lang]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

@@ -41,4 +41,5 @@ export const SEARCH_CONFIG = {
 export const STORAGE_KEYS = {
   country: 'tagora_country',
   consent: 'tagora_consent',
+  lang: 'tagora_lang',
 };
