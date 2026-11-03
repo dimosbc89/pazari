@@ -48,7 +48,8 @@ function rich(text: string, path: (p: string) => string): ReactNode {
     const link = part.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/);
     if (link) {
       const [, label, href] = link;
-      return href.startsWith('/') ? <Link key={i} to={path(href)}>{label}</Link> : <a key={i} href={href}>{label}</a>;
+      // Site pages get the country prefix; files (e.g. /downloads/…) and other sites do not.
+      return href.startsWith('/') && !href.startsWith('/downloads/') ? <Link key={i} to={path(href)}>{label}</Link> : <a key={i} href={href}>{label}</a>;
     }
     if (/^\[[A-Z]/.test(part)) return <mark key={i} className="placeholder">{part}</mark>;
     return <Fragment key={i}>{part}</Fragment>;

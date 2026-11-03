@@ -50,6 +50,7 @@ Shops join by themselves and their products stay up to date without anyone at Ta
    * **XML feed:** the Skroutz, BestPrice or Google Shopping feed it already has (XML or CSV/TSV). Recommended: it carries barcodes (EAN) and MPNs, which is what puts the shop in price comparisons.
    * **Shopify:** just the shop address. Tagora reads the store's public `/products.json` (no app to install; no barcodes or delivery costs).
    * **WooCommerce:** just the shop address. Tagora reads WooCommerce's built-in public Store API (no plugin or keys; no barcodes or delivery costs).
+   * **WooCommerce plugin** (recommended for WooCommerce): the shop installs the Tagora plugin and pastes its connection key. The shop then *sends* its products, so firewalls and Cloudflare don't get in the way, with barcodes, MPN and brands. See "WooCommerce plugin" below.
 2. "Check" reads the source on the spot: how many products are ready, samples, and problems (no price, sold out, no barcode…).
 3. The shop fills in its details, the countries it delivers to, and an optional delivery cost / free-delivery threshold (used when the source has none). The application is saved as **pending** and both the shop and the admins get an email.
 4. An admin approves it on `/gr/admin`. That runs the first sync, so the products are live within seconds, and emails the shop.
@@ -90,6 +91,17 @@ npm run dev:api                                    # site + API on http://localh
 ```
 
 Open `http://localhost:8787/gr/shops` and apply with `http://localhost:9100/feeds/skroutz.xml` (also `google.xml`, `bestprice.xml`, `products.tsv`, a Shopify store at `http://localhost:9100` and a WooCommerce shop at `http://localhost:9100/woo`). Sign in as `admin@example.com` at `/gr/merchant/login`: without an email key the sign-in link is shown on screen. Approve the shops in `/gr/admin`, then press "Show real products". Run the scheduled sync by hand with `curl -X POST "http://localhost:8787/cdn-cgi/local/explorer/api/local/scheduled?worker=tagora" -H 'Content-Type: application/json' -d '{"cron":"*/10 * * * *"}'`.
+
+### WooCommerce plugin
+
+`plugins/woocommerce/tagora` is a WordPress plugin. `npm run build` packs it into `public/downloads/tagora-woocommerce.zip`, served at `/downloads/tagora-woocommerce.zip` and linked from the sign-up page, the dashboard and the help page.
+
+* **Connecting:** a shop applies with "WooCommerce plugin" and gets a connection key (`tgr_…`, shown once; Tagora keeps only its SHA-256). It can make a new key from its dashboard. In WordPress: WooCommerce → Tagora → paste the key → Connect.
+* **What it sends:** every published, visible product; one offer per enabled variation (grouped by the parent); price and sale price including VAT, stock, images, category path, colour and size from attributes, brand (WooCommerce Brands, popular brand plugins or a "Brand/Μάρκα" attribute), barcode (WooCommerce's GTIN field and common EAN plugins' fields) and MPN. Shops can point to their own meta keys under Advanced.
+* **When:** every hour the plugin asks Tagora whether to send the whole catalogue (new or approved shop, or older than `SYNC_INTERVAL_HOURS`), and then sends it in the background with Action Scheduler, 50 products per step. A saved, sold-out or deleted product reaches Tagora within a minute. Admins get an email when a plugin has been silent for two days.
+* **On Tagora:** `worker/plugin.ts` (`POST /api/plugin/hello`, `/plugin/products`, `/plugin/finish`). The same checks as the other sources run on what arrives. Products of shops not yet approved are kept but hidden (`products.listed = 0`) and appear the moment the shop is approved.
+* **WP-CLI:** `wp tagora connect <key>`, `wp tagora sync`, `wp tagora status`. For testing against another Tagora, add `define( 'TAGORA_API', 'http://localhost:8787/api' );` to `wp-config.php`.
+* **Tests:** `npm run plugin:test` (product conversion, no WordPress needed). `.github/workflows/woocommerce-plugin.yml` installs real WordPress + WooCommerce on GitHub, runs a local Tagora, and checks sign-up, full sync, approval, what search shows, live updates, removals, the settings page in Greek, and PHP notices.
 
 ### Import from the command line
 

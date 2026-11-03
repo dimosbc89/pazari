@@ -3,17 +3,18 @@ import { readFeed } from './feed.ts';
 import { normalize } from './normalize.ts';
 import { readShopify } from './shopify.ts';
 import { readWooCommerce } from './woocommerce.ts';
-import type { ShopConfig, SourceResult, SourceType, SyncReport } from './types.ts';
+import { SyncError, type ShopConfig, type SourceResult, type SourceType, type SyncReport } from './types.ts';
 
 export * from './types.ts';
 export { checkUrl } from './fetch.ts';
 export { typesenseClient } from './typesense.ts';
-export { matchKeyOf } from './normalize.ts';
+export { matchKeyOf, normalize } from './normalize.ts';
 
 export function readSource(type: SourceType, url: string, opts: FetchOptions = {}): Promise<SourceResult> {
   switch (type) {
     case 'shopify': return readShopify(url, opts);
     case 'woocommerce': return readWooCommerce(url, opts);
+    case 'plugin': throw new SyncError('plugin_source', 'This shop sends its products with the Tagora plugin for WooCommerce.');
     default: return readFeed(url, opts);
   }
 }

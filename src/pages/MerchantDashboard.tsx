@@ -6,12 +6,12 @@ import { Icon } from '../components/Icons';
 import { IssueList } from '../components/IssueList';
 import { MerchantHeader } from '../components/MerchantHeader';
 import { Loader } from '../components/ui';
-import { COUNTRIES } from '../config';
+import { COUNTRIES, PLUGIN_ZIP } from '../config';
 import { useLocale } from '../i18n';
 import type { StringKey } from '../i18n/strings';
 import { api, useErrorText, useMe, useRelativeTime, type Run, type RunResult, type Shop } from '../lib/api';
 import { useAsync, useDocumentTitle } from '../lib/hooks';
-import { SourceFields, useSourceCheck } from './ShopsPage';
+import { KeyBox, SourceFields, useSourceCheck } from './ShopsPage';
 
 /** Shops are free for 12 months from approval (shop terms, section 8). */
 export const FREE_MONTHS = 12;
@@ -77,12 +77,24 @@ function ShopPanel({ id }: { id: string }) {
   const [syncing, setSyncing] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
   const [editing, setEditing] = useState(false);
+  const [pluginKey, setPluginKey] = useState<string | null>(null);
 
   if (!data && loading) return <Loader />;
   if (error && !data) return <p className="notice notice--error">{errText(error)}</p>;
   const { shop, runs, clicks, syncEveryHours } = data!;
   const totalClicks = clicks.reduce((n, c) => n + c.clicks, 0);
   const dt = new Intl.DateTimeFormat(country.locale, { dateStyle: 'short', timeStyle: 'short' });
+
+  const newKey = async () => {
+    if (!window.confirm(t('plugin.newKey.confirm'))) return;
+    setNotice(null);
+    try {
+      const r = await api<{ pluginKey: string }>(`/shops/${shop.id}/plugin-key`, { body: {} });
+      setPluginKey(r.pluginKey);
+    } catch (e) {
+      setNotice({ ok: false, text: errText(e) });
+    }
+  };
 
   const syncNow = async () => {
     setSyncing(true);
@@ -107,7 +119,7 @@ function ShopPanel({ id }: { id: string }) {
           <h1>{shop.name} <StatusPill status={shop.status} /></h1>
           <a href={shop.website} target="_blank" rel="noopener" className="dash-site">{shop.website.replace(/^https?:\/\//, '')} <Icon name="external" /></a>
         </div>
-        {shop.status === 'active' && (
+        {shop.status === 'active' && shop.sourceType !== 'plugin' && (
           <button type="button" className="btn" onClick={syncNow} disabled={syncing}>
             <Icon name="refresh" /> {syncing ? t('dash.syncing') : t('dash.syncNow')}
           </button>
@@ -168,14 +180,28 @@ function ShopPanel({ id }: { id: string }) {
           {!editing && <button type="button" className="btn btn--ghost" onClick={() => setEditing(true)}>{t('dash.edit')}</button>}
         </div>
         {editing ? (
-          <ConnectionForm shop={shop} onDone={(saved) => { setEditing(false); if (saved) { setNotice({ ok: true, text: t('dash.saved') }); setVersion((v) => v + 1); } }} />
+          <ConnectionForm shop={shop} onDone={(saved, key) => { setEditing(false); if (key) setPluginKey(key); if (saved) { setNotice({ ok: true, text: t('dash.saved') }); setVersion((v) => v + 1); } }} />
         ) : (
+          <>
+          {shop.sourceType === 'plugin' && (
+            <div className="plugin-status">
+              <p>{shop.pluginSeenAt ? t('plugin.seen', { when: ago(shop.pluginSeenAt) }) : t('plugin.never')}
+                {shop.pluginInfo?.plugin && <span className="muted"> · {t('plugin.versions', { plugin: shop.pluginInfo.plugin, wc: shop.pluginInfo.woocommerce ?? '–' })}</span>}</p>
+              <p className="field-help">{t('plugin.syncFromWp')}</p>
+              {pluginKey && <KeyBox pluginKey={pluginKey} />}
+              <div className="plugin-actions">
+                <button type="button" className="btn btn--ghost" onClick={newKey}>{t('plugin.newKey')}</button>
+                <a href={PLUGIN_ZIP} className="btn btn--ghost" download>{t('plugin.download')}</a>
+              </div>
+            </div>
+          )}
           <dl className="facts">
             <div><dt>{t('dash.source')}</dt><dd>{t(`source.${shop.sourceType}` as StringKey)} · <span className="mono">{shop.sourceUrl}</span></dd></div>
             {shop.sourceFormat && <div><dt>{t('dash.format')}</dt><dd>{t(`format.${shop.sourceFormat}` as StringKey)}</dd></div>}
             <div><dt>{t('field.countries')}</dt><dd>{shop.countries.map((c) => COUNTRIES.find((x) => x.code === c)?.label ?? c).join(', ')}</dd></div>
             <div><dt>{t('field.shipping')}</dt><dd>{shop.defaultShipping != null ? price(shop.defaultShipping) : t('dash.noShipping')}{shop.freeShippingOver != null && <> · {t('field.freeOver')}: {price(shop.freeShippingOver)}</>}</dd></div>
           </dl>
+          </>
         )}
       </section>
 
@@ -208,7 +234,7 @@ function ShopPanel({ id }: { id: string }) {
   );
 }
 
-function ConnectionForm({ shop, onDone }: { shop: Shop; onDone: (saved: boolean) => void }) {
+function ConnectionForm({ shop, onDone }: { shop: Shop; onDone: (saved: boolean, pluginKey?: string) => void }) {
   const { t } = useLocale();
   const errText = useErrorText();
   const [type, setType] = useState(shop.sourceType);
@@ -223,8 +249,8 @@ function ConnectionForm({ shop, onDone }: { shop: Shop; onDone: (saved: boolean)
     setSaving(true);
     setError('');
     try {
-      await api(`/shops/${shop.id}`, { method: 'PATCH', body: { sourceType: type, sourceUrl: url, defaultShipping: ship, freeShippingOver: free } });
-      onDone(true);
+      const r = await api<{ pluginKey?: string }>(`/shops/${shop.id}`, { method: 'PATCH', body: { sourceType: type, sourceUrl: type === 'plugin' ? shop.website : url, defaultShipping: ship, freeShippingOver: free } });
+      onDone(true, r.pluginKey);
     } catch (e) {
       setError(errText(e));
     } finally {

@@ -2,14 +2,15 @@ import { COUNTRIES } from '../shared/markets.ts';
 import { buildReport, checkUrl, SyncError, type Issue, type SourceType } from '../sync/index.ts';
 import { slug } from '../sync/text.ts';
 import { FACETS, SORTS, type Refinements, type SortKey } from '../src/search/types.ts';
-import { catalogueMode, getOffers, getProduct, getSetting, getStats, getVariants, searchCatalogue, setSetting } from './catalogue.ts';
+import { catalogueMode, getOffers, getProduct, getSetting, getStats, getVariants, listShopProducts, searchCatalogue, setSetting } from './catalogue.ts';
+import { PLUGIN_FORMAT, pluginFinish, pluginHello, pluginProducts, setPluginKey } from './plugin.ts';
 import { createLoginToken, endSession, getSession, redeemLoginToken, requireSession, type Session } from './auth.ts';
-import { mailFor, sendMail } from './email.ts';
+import { mailFor, sendMail, updateEvery } from './email.ts';
 import { adminEmails, isDev, type Env } from './env.ts';
 import { body, checkSameOrigin, errorResponse, HttpError, isEmail, json, nowIso, num, str } from './http.ts';
 import { getShop, intervalHours, shopDto, siteLink, syncShop, unlistShop, type ShopRow, type ShopStatus } from './shops.ts';
 
-const SOURCE_TYPES: SourceType[] = ['feed', 'shopify', 'woocommerce'];
+const SOURCE_TYPES: SourceType[] = ['feed', 'shopify', 'woocommerce', 'plugin'];
 /** Bump when the shop terms (src/content/terms.ts) change, and email shops 15 days before. */
 const SHOP_TERMS_VERSION = '2026-11';
 const MARKETS = COUNTRIES.map((c) => c.code);
@@ -51,7 +52,8 @@ async function preview(env: Env, type: SourceType, url: string, name = 'preview'
 function sourceFrom(b: Record<string, unknown>, env: Env): { type: SourceType; url: string } {
   const type = b.sourceType as SourceType;
   if (!SOURCE_TYPES.includes(type)) throw new HttpError(400, 'bad_source_type');
-  const raw = str(b.sourceUrl, 1000);
+  // The plugin sends the products itself; the "source" is just the shop's website.
+  const raw = type === 'plugin' ? str(b.sourceUrl ?? b.website, 1000) : str(b.sourceUrl, 1000);
   if (!raw) throw new HttpError(400, 'missing_source_url', 'Enter the address of your feed or shop.');
   try {
     return { type, url: checkUrl(raw, { allowPrivate: isDev(env) }).toString() };
@@ -114,7 +116,7 @@ const signup: Handler = async ({ req, env, origin }) => {
   const dupe = await env.DB.prepare('SELECT id FROM shops WHERE website = ? AND status != ?').bind(website, 'rejected').first();
   if (dupe) throw new HttpError(409, 'already_registered', 'This website is already registered. Sign in instead.');
 
-  const check = await preview(env, type, url, name, countries);
+  const check: Preview = type === 'plugin' ? { ok: true, format: PLUGIN_FORMAT } : await preview(env, type, url, name, countries);
   if (!check.ok) throw new HttpError(422, check.code ?? 'source_failed', check.message ?? 'We could not read your products.');
 
   const id = await uniqueId(env, name);
@@ -125,13 +127,15 @@ const signup: Handler = async ({ req, env, origin }) => {
       JSON.stringify(countries), lang, type, url, check.format ?? null, num(b.defaultShipping), num(b.freeShippingOver), now, SHOP_TERMS_VERSION, now)
     .run();
 
+  // Plugin shops get their connection key now, shown once on the confirmation screen.
+  const pluginKey = type === 'plugin' ? await setPluginKey(env, id) : undefined;
   const shop = { countries: JSON.stringify(countries) };
   await sendMail(env, mailFor('received', lang, email, { shop: name }, siteLink(env, shop, '/merchant/login', origin)));
   const admins = adminEmails(env);
   if (admins.length) {
     await sendMail(env, mailFor('newShop', 'el', admins, { shop: name, website, source: `${type} ${url}`, count: check.ready ?? 0 }, siteLink(env, shop, '/admin', origin)));
   }
-  return json({ ok: true, id, ready: check.ready });
+  return json({ ok: true, id, ready: check.ready, ...(pluginKey ? { pluginKey } : {}) });
 };
 
 const login: Handler = async ({ req, env, origin }) => {
@@ -203,6 +207,7 @@ const syncNow: Handler = async ({ req, env, params, origin }) => {
   const s = await requireSession(env, req);
   const shop = await ownedShop(env, s, params[0]);
   if (shop.status !== 'active') throw new HttpError(409, 'not_active', 'Only approved shops can sync.');
+  if (shop.source_type === 'plugin') throw new HttpError(409, 'plugin_shop', 'This shop sends its products with the Tagora plugin: use "Sync now" in WordPress → WooCommerce → Tagora.');
   if (!s.admin && shop.last_manual_sync_at && Date.now() - Date.parse(shop.last_manual_sync_at) < 5 * 60_000) {
     throw new HttpError(429, 'too_soon', 'You can sync again in a few minutes.');
   }
@@ -218,9 +223,13 @@ const updateShop: Handler = async ({ req, env, params }) => {
   const sets: string[] = [];
   const vals: unknown[] = [];
   const set = (col: string, v: unknown) => { sets.push(`${col} = ?`); vals.push(v); };
+  let pluginKey: string | undefined;
   if ('sourceType' in b || 'sourceUrl' in b) {
     const { type, url } = sourceFrom({ sourceType: b.sourceType ?? shop.source_type, sourceUrl: b.sourceUrl ?? shop.source_url }, env);
-    if (type !== shop.source_type || url !== shop.source_url) {
+    if (type === 'plugin' && shop.source_type !== 'plugin') {
+      set('source_type', type); set('source_url', url); set('source_format', PLUGIN_FORMAT);
+      pluginKey = await setPluginKey(env, shop.id);
+    } else if (type !== 'plugin' && (type !== shop.source_type || url !== shop.source_url)) {
       const check = await preview(env, type, url, shop.name);
       if (!check.ok) throw new HttpError(422, check.code ?? 'source_failed', check.message ?? 'We could not read your products.');
       set('source_type', type); set('source_url', url); set('source_format', check.format ?? null);
@@ -233,7 +242,15 @@ const updateShop: Handler = async ({ req, env, params }) => {
   if ('contactName' in b) set('contact_name', str(b.contactName, 120) ?? null);
   if ('phone' in b) set('phone', str(b.phone, 40) ?? null);
   if (sets.length) await env.DB.prepare(`UPDATE shops SET ${sets.join(', ')} WHERE id = ?`).bind(...vals, shop.id).run();
-  return json({ ok: true, shop: shopDto(await getShop(env, shop.id)) });
+  return json({ ok: true, shop: shopDto(await getShop(env, shop.id)), ...(pluginKey ? { pluginKey } : {}) });
+};
+
+/** A new connection key for the WooCommerce plugin (the old one stops working). */
+const newPluginKeyRoute: Handler = async ({ req, env, params }) => {
+  const s = await requireSession(env, req);
+  const shop = await ownedShop(env, s, params[0]);
+  if (shop.source_type !== 'plugin') throw new HttpError(409, 'not_plugin_shop', 'This shop is not connected with the plugin.');
+  return json({ ok: true, pluginKey: await setPluginKey(env, shop.id) });
 };
 
 // ---------------------------------------------------------------- admin
@@ -243,7 +260,7 @@ const adminList: Handler = async ({ req, env }) => {
   const since = new Date(Date.now() - 29 * 86_400_000).toISOString().slice(0, 10);
   const { results } = await env.DB.prepare(`SELECT s.*, COALESCE((SELECT SUM(clicks) FROM clicks c WHERE c.shop_id = s.id AND c.day >= ?), 0) AS clicks30
     FROM shops s ORDER BY CASE s.status WHEN 'pending' THEN 0 WHEN 'active' THEN 1 WHEN 'paused' THEN 2 ELSE 3 END, s.created_at DESC`).bind(since).all<ShopRow & { clicks30: number }>();
-  const [mode, live] = await Promise.all([catalogueMode(env), env.DB.prepare('SELECT COUNT(*) AS n FROM products').first<{ n: number }>()]);
+  const [mode, live] = await Promise.all([catalogueMode(env), env.DB.prepare('SELECT COUNT(*) AS n FROM products WHERE listed = 1').first<{ n: number }>()]);
   return json({ ok: true, shops: results.map((r) => ({ ...shopDto(r), clicks30: r.clicks30 })), catalogue: { mode, products: live?.n ?? 0 } });
 };
 
@@ -268,11 +285,18 @@ const adminAction: Handler = async ({ req, env, params, origin }) => {
 
   if (action === 'approve' || action === 'resume') {
     await env.DB.prepare("UPDATE shops SET status = 'active', status_reason = NULL, approved_at = COALESCE(approved_at, ?), next_sync_at = ? WHERE id = ?").bind(nowIso(), nowIso(), id).run();
-    const result = await syncShop(env, { ...shop, status: 'active' }, 'approve', origin);
+    // Plugin shops: show what the plugin already sent; an empty shop gets a full sync at the plugin's next hourly check.
+    const result = shop.source_type === 'plugin'
+      ? await (async () => {
+          const n = await listShopProducts(env, id);
+          await env.DB.prepare('UPDATE shops SET product_count = ? WHERE id = ?').bind(n, id).run();
+          return { status: 'ok' as const, found: n, imported: n, skipped: 0, removed: 0, message: n ? null : 'Waiting for the plugin to send the products (within the hour).', issues: [] };
+        })()
+      : await syncShop(env, { ...shop, status: 'active' }, 'approve', origin);
     // A shop that was paused hears it is back; a pending one hears it was approved.
     const kind = action === 'approve' ? 'approved' : shop.status === 'paused' ? 'resumed' : null;
     if (kind) {
-      await sendMail(env, mailFor(kind, lang, shop.email, { shop: shop.name, count: result.imported, hours: intervalHours(env) }, siteLink(env, shop, '/merchant/login', origin)));
+      await sendMail(env, mailFor(kind, lang, shop.email, { shop: shop.name, count: result.imported, every: updateEvery(lang, shop.source_type === 'plugin', intervalHours(env)) }, siteLink(env, shop, '/merchant/login', origin)));
     }
     return json({ ok: true, result });
   }
@@ -383,6 +407,7 @@ const ROUTES: [string, RegExp, Handler][] = [
   ['GET', /^\/shops\/([a-z0-9-]+)$/, shopDetail],
   ['PATCH', /^\/shops\/([a-z0-9-]+)$/, updateShop],
   ['POST', /^\/shops\/([a-z0-9-]+)\/sync$/, syncNow],
+  ['POST', /^\/shops\/([a-z0-9-]+)\/plugin-key$/, newPluginKeyRoute],
   ['GET', /^\/admin\/shops$/, adminList],
   ['POST', /^\/admin\/shops\/([a-z0-9-]+)\/(approve|reject|pause|resume)$/, adminAction],
   ['POST', /^\/admin\/catalogue$/, adminCatalogue],
@@ -400,6 +425,10 @@ export async function handleApi(req: Request, env: Env, exec: ExecutionContext):
   const path = url.pathname.replace(/^\/api/, '');
   try {
     if (path === '/click' && req.method === 'POST') return await click({ req, env, params: [], origin: url.origin, exec });
+    // Called by the WooCommerce plugin from the shop's server, authenticated by its connection key.
+    if (req.method === 'POST' && path === '/plugin/hello') return await pluginHello(env, req, url.origin);
+    if (req.method === 'POST' && path === '/plugin/products') return await pluginProducts(env, req);
+    if (req.method === 'POST' && path === '/plugin/finish') return await pluginFinish(env, req);
     checkSameOrigin(req);
     for (const [method, re, handler] of ROUTES) {
       const m = path.match(re);

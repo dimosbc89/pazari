@@ -17,10 +17,10 @@ export function json(data: unknown, status = 200, headers: HeadersInit = {}): Re
 
 export const errorResponse = (e: HttpError) => json({ ok: false, code: e.code, message: e.message }, e.status);
 
-/** Reads a JSON body (max 64 KB). */
-export async function body<T = Record<string, unknown>>(req: Request): Promise<T> {
+/** Reads a JSON body (max 64 KB unless a larger limit is given). */
+export async function body<T = Record<string, unknown>>(req: Request, maxBytes = 65_536): Promise<T> {
   const text = await req.text();
-  if (text.length > 65_536) throw new HttpError(413, 'too_large');
+  if (text.length > maxBytes) throw new HttpError(413, 'too_large');
   try {
     return (text ? JSON.parse(text) : {}) as T;
   } catch {

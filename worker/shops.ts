@@ -16,6 +16,7 @@ export interface ShopRow {
   last_sync_at: string | null; last_sync_status: string | null; last_sync_message: string | null; last_issues: string | null;
   product_count: number; next_sync_at: string | null; last_manual_sync_at: string | null;
   terms_version: string | null; terms_accepted_at: string | null;
+  plugin_key_hash: string | null; plugin_seen_at: string | null; plugin_info: string | null;
 }
 
 export interface RunResult {
@@ -41,6 +42,7 @@ export function shopDto(r: ShopRow) {
     lastSyncAt: r.last_sync_at, lastSyncStatus: r.last_sync_status, lastSyncMessage: r.last_sync_message,
     lastIssues: parse<Issue[]>(r.last_issues, []), productCount: r.product_count, nextSyncAt: r.next_sync_at,
     termsVersion: r.terms_version, termsAcceptedAt: r.terms_accepted_at,
+    pluginConnected: !!r.plugin_key_hash, pluginSeenAt: r.plugin_seen_at, pluginInfo: parse<Record<string, unknown> | null>(r.plugin_info, null),
   };
 }
 
@@ -144,7 +146,7 @@ export async function syncShop(env: Env, shop: ShopRow, trigger: 'schedule' | 'm
 /** Runs from the cron trigger: syncs the shops that are due, a few at a time. */
 export async function syncDueShops(env: Env) {
   const batch = Math.max(1, Number(env.SYNC_BATCH || 3));
-  const { results } = await env.DB.prepare("SELECT * FROM shops WHERE status = 'active' AND (next_sync_at IS NULL OR next_sync_at <= ?) ORDER BY next_sync_at LIMIT ?")
+  const { results } = await env.DB.prepare("SELECT * FROM shops WHERE status = 'active' AND source_type != 'plugin' AND (next_sync_at IS NULL OR next_sync_at <= ?) ORDER BY next_sync_at LIMIT ?")
     .bind(nowIso(), batch).all<ShopRow>();
   for (const shop of results) {
     const r = await syncShop(env, shop, 'schedule');

@@ -56,7 +56,7 @@ export function useErrorText() {
 // ---------- types (mirror worker/shops.ts) ----------
 
 export type ShopStatus = 'pending' | 'active' | 'paused' | 'rejected';
-export type SourceType = 'feed' | 'shopify' | 'woocommerce';
+export type SourceType = 'feed' | 'shopify' | 'woocommerce' | 'plugin';
 export interface Issue { code: string; count: number; examples: string[] }
 
 export interface Shop {
@@ -68,11 +68,12 @@ export interface Shop {
   lastSyncAt: string | null; lastSyncStatus: 'ok' | 'warning' | 'error' | null; lastSyncMessage: string | null;
   lastIssues: Issue[]; productCount: number; nextSyncAt: string | null;
   termsVersion: string | null; termsAcceptedAt: string | null;
+  pluginConnected: boolean; pluginSeenAt: string | null; pluginInfo: { plugin?: string; woocommerce?: string; site?: string } | null;
   clicks30?: number;
 }
 
 export interface Run {
-  id: number; trigger: 'schedule' | 'manual' | 'approve'; started_at: string; finished_at: string | null;
+  id: number; trigger: 'schedule' | 'manual' | 'approve' | 'plugin'; started_at: string; finished_at: string | null;
   status: 'running' | 'ok' | 'warning' | 'error'; found: number | null; imported: number | null; skipped: number | null; removed: number | null; message: string | null;
 }
 

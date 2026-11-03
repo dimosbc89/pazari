@@ -133,7 +133,7 @@ function ShopsAdmin() {
                         <>
                           {s.status === 'pending' && <><button type="button" className="btn btn--sm" onClick={() => act(s, 'approve')}>{t('admin.approve')}</button>
                             <button type="button" className="btn btn--sm btn--ghost" onClick={() => act(s, 'reject')}>{t('admin.reject')}</button></>}
-                          {s.status === 'active' && <><button type="button" className="btn btn--sm btn--ghost" onClick={() => act(s, 'sync')}>{t('admin.sync')}</button>
+                          {s.status === 'active' && <>{s.sourceType !== 'plugin' && <button type="button" className="btn btn--sm btn--ghost" onClick={() => act(s, 'sync')}>{t('admin.sync')}</button>}
                             <button type="button" className="btn btn--sm btn--ghost" onClick={() => act(s, 'pause')}>{t('admin.pause')}</button></>}
                           {(s.status === 'paused' || s.status === 'rejected') && <button type="button" className="btn btn--sm btn--ghost" onClick={() => act(s, 'resume')}>{t('admin.resume')}</button>}
                           <Link className="btn btn--sm btn--ghost" to={`${path('/merchant')}?shop=${s.id}`}>{t('admin.open')}</Link>
