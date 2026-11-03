@@ -4,7 +4,7 @@ import { Footer } from '../components/Footer';
 import { Icon, type IconName } from '../components/Icons';
 import { MerchantHeader } from '../components/MerchantHeader';
 import { IssueList } from '../components/IssueList';
-import { COUNTRIES, PLUGIN_ZIP } from '../config';
+import { COUNTRIES, PLUGIN_ZIP, SHOPIFY_APP_URL } from '../config';
 import { useLocale } from '../i18n';
 import type { StringKey } from '../i18n/strings';
 import { api, useErrorText, useMe, type Preview, type SourceType } from '../lib/api';
@@ -83,6 +83,9 @@ export function SourceFields({ type, url, onType, onUrl, check, onCheck }: {
           </button>
         </div>
         <p className="field-help">{t(`source.${isFeed ? 'feed' : type}.help` as StringKey)}</p>
+        {type === 'shopify' && SHOPIFY_APP_URL && (
+          <p className="field-help"><strong>{t('source.shopifyApp.better')}</strong> <a href={SHOPIFY_APP_URL} target="_blank" rel="noopener">{t('source.shopifyApp.link')}</a></p>
+        )}
       </div>
       {check.state === 'done' && check.result && (
         <div className={`check ${check.result.ok ? 'is-ok' : 'is-bad'}`} aria-live="polite">

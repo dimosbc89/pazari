@@ -41,6 +41,9 @@ export const SEARCH_CONFIG = {
 /** The Tagora plugin for WooCommerce (built from plugins/woocommerce/tagora by scripts/build-plugin-zip.mjs). */
 export const PLUGIN_ZIP = '/downloads/tagora-woocommerce.zip';
 
+/** The Tagora app's page in the Shopify App Store. Empty until Shopify lists the app; the sign-up page links to it once set. */
+export const SHOPIFY_APP_URL = '';
+
 export const STORAGE_KEYS = {
   country: 'tagora_country',
   consent: 'tagora_consent',

@@ -1,0 +1,41 @@
+# The Tagora app for Shopify: its configuration at Shopify.
+# 1. Create the app in the Shopify Dev Dashboard and paste its Client ID below.
+# 2. From this folder, `shopify app deploy` (Shopify CLI) uploads this file as a new app version.
+#    Or type the same values into the Dev Dashboard by hand.
+# Setup steps: README.md → "Tagora app for Shopify".
+
+client_id = "PASTE-THE-CLIENT-ID-HERE"
+name = "Tagora"
+application_url = "https://tagora.online/shopify"
+embedded = true
+
+[access_scopes]
+# Read-only: products (prices, barcodes, images, Online Store links) and stock.
+scopes = "read_products,read_inventory"
+
+[auth]
+# The app uses Shopify-managed installation and token exchange, so no redirect is used;
+# Shopify still needs one address here.
+redirect_urls = ["https://tagora.online/shopify"]
+
+[webhooks]
+api_version = "2026-07"
+
+  [[webhooks.subscriptions]]
+  topics = [
+    "products/create",
+    "products/update",
+    "products/delete",
+    "inventory_levels/update",
+    "app/uninstalled",
+    "bulk_operations/finish",
+  ]
+  uri = "https://tagora.online/api/shopify/webhooks"
+
+  # Privacy (GDPR) webhooks, required for the Shopify App Store.
+  [[webhooks.subscriptions]]
+  compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+  uri = "https://tagora.online/api/shopify/webhooks"
+
+[pos]
+embedded = false

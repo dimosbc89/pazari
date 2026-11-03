@@ -100,8 +100,9 @@ function ShopPanel({ id }: { id: string }) {
     setSyncing(true);
     setNotice(null);
     try {
-      const { result } = await api<{ result: RunResult }>(`/shops/${id}/sync`, { body: {} });
-      setNotice(result.status === 'error'
+      const { result, started } = await api<{ result?: RunResult; started?: boolean }>(`/shops/${id}/sync`, { body: {} });
+      if (started || !result) setNotice({ ok: true, text: t('dash.syncStarted') });
+      else setNotice(result.status === 'error'
         ? { ok: false, text: result.message ?? t('sync.error') }
         : { ok: true, text: t('dash.syncDone', { imported: num(result.imported), removed: num(result.removed) }) });
       setVersion((v) => v + 1);
@@ -138,7 +139,7 @@ function ShopPanel({ id }: { id: string }) {
         <div className="tile">
           <span className="tile-label">{t('dash.products')}</span>
           <strong className="tile-value">{num(shop.productCount)}</strong>
-          <span className="tile-sub">{t('dash.every', { hours: syncEveryHours })}</span>
+          <span className="tile-sub">{shop.sourceType === 'plugin' || shop.sourceType === 'shopify-app' ? t('dash.everyChange') : t('dash.every', { hours: syncEveryHours })}</span>
         </div>
         <div className="tile">
           <span className="tile-label">{t('dash.lastSync')}</span>
@@ -196,7 +197,8 @@ function ShopPanel({ id }: { id: string }) {
             </div>
           )}
           <dl className="facts">
-            <div><dt>{t('dash.source')}</dt><dd>{t(`source.${shop.sourceType}` as StringKey)} · <span className="mono">{shop.sourceUrl}</span></dd></div>
+            <div><dt>{t('dash.source')}</dt><dd>{t(`source.${shop.sourceType}` as StringKey)} · <span className="mono">{shop.sourceUrl}</span>
+              {shop.sourceType === 'shopify-app' && <div className="field-help">{t('shopify.note')}</div>}</dd></div>
             {shop.sourceFormat && <div><dt>{t('dash.format')}</dt><dd>{t(`format.${shop.sourceFormat}` as StringKey)}</dd></div>}
             <div><dt>{t('field.countries')}</dt><dd>{shop.countries.map((c) => COUNTRIES.find((x) => x.code === c)?.label ?? c).join(', ')}</dd></div>
             <div><dt>{t('field.shipping')}</dt><dd>{shop.defaultShipping != null ? price(shop.defaultShipping) : t('dash.noShipping')}{shop.freeShippingOver != null && <> · {t('field.freeOver')}: {price(shop.freeShippingOver)}</>}</dd></div>
@@ -244,12 +246,15 @@ function ConnectionForm({ shop, onDone }: { shop: Shop; onDone: (saved: boolean,
   const { check, run, reset } = useSourceCheck();
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const shopifyApp = shop.sourceType === 'shopify-app';
 
   const save = async () => {
     setSaving(true);
     setError('');
     try {
-      const r = await api<{ pluginKey?: string }>(`/shops/${shop.id}`, { method: 'PATCH', body: { sourceType: type, sourceUrl: type === 'plugin' ? shop.website : url, defaultShipping: ship, freeShippingOver: free } });
+      // The Shopify app's connection is managed in Shopify: only the delivery costs change here.
+      const source = shopifyApp ? {} : { sourceType: type, sourceUrl: type === 'plugin' ? shop.website : url };
+      const r = await api<{ pluginKey?: string }>(`/shops/${shop.id}`, { method: 'PATCH', body: { ...source, defaultShipping: ship, freeShippingOver: free } });
       onDone(true, r.pluginKey);
     } catch (e) {
       setError(errText(e));
@@ -260,7 +265,9 @@ function ConnectionForm({ shop, onDone }: { shop: Shop; onDone: (saved: boolean,
 
   return (
     <div className="form">
-      <SourceFields type={type} url={url} check={check} onType={(v) => { setType(v); reset(); }} onUrl={(v) => { setUrl(v); reset(); }} onCheck={() => run(type, url)} />
+      {shopifyApp
+        ? <p className="field-help">{t('shopify.note')}</p>
+        : <SourceFields type={type} url={url} check={check} onType={(v) => { setType(v); reset(); }} onUrl={(v) => { setUrl(v); reset(); }} onCheck={() => run(type, url)} />}
       <div className="grid2">
         <div className="field"><label htmlFor="c-ship">{t('field.shipping')}</label><input id="c-ship" inputMode="decimal" value={ship} onChange={(e) => setShip(e.target.value)} /></div>
         <div className="field"><label htmlFor="c-free">{t('field.freeOver')}</label><input id="c-free" inputMode="decimal" value={free} onChange={(e) => setFree(e.target.value)} /></div>

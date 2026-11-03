@@ -5,12 +5,16 @@ import { getSetting, setSetting } from './catalogue.ts';
 import { mailFor, sendMail } from './email.ts';
 import { adminEmails, type Env } from './env.ts';
 import { handleApi } from './routes.ts';
+import { shopifyPage } from './shopify-page.ts';
+import { shopifyCron } from './shopify.ts';
 import { syncDueShops } from './shops.ts';
 
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
     if (url.pathname.startsWith('/api/')) return handleApi(req, env, ctx);
+    // The Tagora app's page inside the Shopify admin.
+    if (url.pathname === '/shopify' || url.pathname.startsWith('/shopify/')) return shopifyPage(req, env);
     return env.ASSETS.fetch(req);
   },
 
@@ -19,6 +23,7 @@ export default {
     await setSetting(env, 'last_cron_at', new Date().toISOString());
     ctx.waitUntil(purgeExpired(env));
     await syncDueShops(env);
+    await shopifyCron(env).catch((e) => console.error('shopify cron failed', e));
     await alertAdmins(env);
   },
 } satisfies ExportedHandler<Env>;

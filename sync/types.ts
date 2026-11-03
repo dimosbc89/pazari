@@ -4,8 +4,9 @@ import type { Product } from '../src/search/types.ts';
 export type { Product };
 
 /** How a shop's products reach Tagora. */
-/** plugin: the Tagora plugin for WooCommerce sends the products (Tagora does not read them). */
-export type SourceType = 'feed' | 'shopify' | 'woocommerce' | 'plugin';
+/** plugin: the Tagora plugin for WooCommerce sends the products (Tagora does not read them).
+ *  shopify-app: the Tagora app for Shopify (Tagora reads the store through Shopify's Admin API). */
+export type SourceType = 'feed' | 'shopify' | 'woocommerce' | 'plugin' | 'shopify-app';
 
 export interface ShopConfig {
   /** Slug, e.g. "meltemi-store". Prefixes every product id. */
