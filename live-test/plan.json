@@ -1,0 +1,24 @@
+{
+  "phase": "verify",
+  "candidates": [
+    {
+      "type": "feed",
+      "url": "https://raw.githubusercontent.com/dimosbc89/pazari/claude/tagora-rebrand/live-test/feed-a.xml",
+      "name": "ΔΟΚΙΜΗ Α (Tagora test)",
+      "website": "https://tagora.online"
+    },
+    {
+      "type": "feed",
+      "url": "https://raw.githubusercontent.com/dimosbc89/pazari/claude/tagora-rebrand/live-test/feed-b.xml",
+      "name": "ΔΟΚΙΜΗ Β (Tagora test)",
+      "website": "https://growagency.online"
+    }
+  ],
+  "queries": [
+    "sonaro q40 μαύρα",
+    "akoustika",
+    "nexa",
+    "φωτιστικο",
+    "aero runner"
+  ]
+}
