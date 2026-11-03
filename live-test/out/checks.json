@@ -1,0 +1,50 @@
+[
+  {
+    "type": "shopify",
+    "url": "https://www.ancient-greek-sandals.com",
+    "name": "Ancient Greek Sandals",
+    "status": 200,
+    "ms": 490,
+    "ok": false,
+    "code": "not_shopify",
+    "message": "This does not look like a Shopify store (no /products.json).",
+    "issues": [],
+    "sample": []
+  },
+  {
+    "type": "shopify",
+    "url": "https://zeusndione.com",
+    "name": "Zeus+Dione",
+    "status": 200,
+    "ms": 80,
+    "ok": false,
+    "code": "not_shopify",
+    "message": "This store does not share its product list. Use an XML feed instead.",
+    "issues": [],
+    "sample": []
+  },
+  {
+    "type": "shopify",
+    "url": "https://www.korres.com",
+    "name": "Korres",
+    "status": 200,
+    "ms": 177,
+    "ok": false,
+    "code": "not_shopify",
+    "message": "This does not look like a Shopify store (no /products.json).",
+    "issues": [],
+    "sample": []
+  },
+  {
+    "type": "shopify",
+    "url": "https://www.allbirds.com",
+    "name": "Allbirds",
+    "status": 200,
+    "ms": 117,
+    "ok": false,
+    "code": "not_shopify",
+    "message": "This does not look like a Shopify store (no /products.json).",
+    "issues": [],
+    "sample": []
+  }
+]
