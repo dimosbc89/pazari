@@ -40,30 +40,31 @@ if (plan.phase === 'signup') {
     log('check', c.url, '->', r.status, `${r.ms}ms`, j.ok ? `found=${j.found} ready=${j.ready} format=${j.format}` : `${j.code} ${j.message ?? ''}`);
   }
   save('checks.json', checks);
-  const pick = checks.filter((c) => c.ok && c.ready >= 5).sort((a, b) => a.ready - b.ready)[0] ?? checks.find((c) => c.ok);
-  if (!pick) { log('No candidate passed the check.'); await browser.close(); process.exit(0); }
-  log('picked', pick.url);
-
-  await page.goto(SITE + '/gr/shops', { waitUntil: 'networkidle' });
-  await page.screenshot({ path: `${OUT}/1-shops.png` });
-  const idx = { feed: 1, shopify: 2, woocommerce: 3 }[pick.type];
-  await page.click(`label.source:nth-child(${idx})`);
-  await page.fill('#source-url', pick.url);
-  await page.click('.field-row .btn');
-  await page.waitForSelector('.check', { timeout: 120000 });
-  log('form check:', (await page.textContent('.check-title')).trim());
-  await page.locator('#apply').screenshot({ path: `${OUT}/2-check.png` });
-  await page.fill('#f-name', `ΔΟΚΙΜΗ – ${pick.name}`);
-  await page.fill('#f-web', pick.url);
-  await page.fill('#f-contact', 'Tagora live test');
-  await page.fill('#f-email', 'hello@tagora.online');
-  await page.check('.consent input');
-  await page.click('form.form button[type=submit]');
-  await page.waitForSelector('.done, .form-error', { timeout: 180000 });
-  const done = await page.$('.done');
-  log('signup:', done ? (await page.textContent('.done h2')).trim() : 'ERROR ' + (await page.textContent('.form-error')));
-  await page.locator('#apply').screenshot({ path: `${OUT}/3-signup.png` });
-  save('signup.json', { picked: pick, signedUp: !!done, errors });
+  const results = [];
+  for (const pick of checks.filter((c) => c.ok)) {
+    const n = results.length + 1;
+    await page.goto(SITE + '/gr/shops', { waitUntil: 'networkidle' });
+    if (n === 1) await page.screenshot({ path: `${OUT}/1-shops.png` });
+    const idx = { feed: 1, shopify: 2, woocommerce: 3 }[pick.type];
+    await page.click(`label.source:nth-child(${idx})`);
+    await page.fill('#source-url', pick.url);
+    await page.click('.field-row .btn');
+    await page.waitForSelector('.check', { timeout: 120000 });
+    log('form check:', pick.name, (await page.textContent('.check-title')).trim());
+    await page.locator('#apply').screenshot({ path: `${OUT}/2-check-${n}.png` });
+    await page.fill('#f-name', pick.name);
+    await page.fill('#f-web', pick.website);
+    await page.fill('#f-contact', 'Tagora live test');
+    await page.fill('#f-email', 'hello@tagora.online');
+    await page.check('.consent input');
+    await page.click('form.form button[type=submit]');
+    await page.waitForSelector('.done, .form-error', { timeout: 180000 });
+    const done = await page.$('.done');
+    log('signup:', pick.name, done ? (await page.textContent('.done h2')).trim() : 'ERROR ' + (await page.textContent('.form-error')));
+    await page.locator('#apply').screenshot({ path: `${OUT}/3-signup-${n}.png` });
+    results.push({ name: pick.name, signedUp: !!done });
+  }
+  save('signup.json', { results, errors });
 }
 
 if (plan.phase === 'verify') {

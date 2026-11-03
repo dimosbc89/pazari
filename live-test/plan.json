@@ -1,9 +1,17 @@
 {
   "phase": "signup",
   "candidates": [
-    { "type": "shopify", "url": "https://www.ancient-greek-sandals.com", "name": "Ancient Greek Sandals" },
-    { "type": "shopify", "url": "https://zeusndione.com", "name": "Zeus+Dione" },
-    { "type": "shopify", "url": "https://www.korres.com", "name": "Korres" },
-    { "type": "shopify", "url": "https://www.allbirds.com", "name": "Allbirds" }
+    {
+      "type": "feed",
+      "url": "https://raw.githubusercontent.com/dimosbc89/pazari/claude/tagora-rebrand/live-test/feed-a.xml",
+      "name": "ΔΟΚΙΜΗ Α (Tagora test)",
+      "website": "https://tagora.online"
+    },
+    {
+      "type": "feed",
+      "url": "https://raw.githubusercontent.com/dimosbc89/pazari/claude/tagora-rebrand/live-test/feed-b.xml",
+      "name": "ΔΟΚΙΜΗ Β (Tagora test)",
+      "website": "https://growagency.online"
+    }
   ]
 }
