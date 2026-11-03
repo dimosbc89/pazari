@@ -1,5 +1,5 @@
 {
-  "phase": "signup",
+  "phase": "verify",
   "candidates": [
     {
       "type": "feed",
@@ -13,5 +13,12 @@
       "name": "ΔΟΚΙΜΗ Β (Tagora test)",
       "website": "https://growagency.online"
     }
+  ],
+  "queries": [
+    "sonaro q40 μαύρα",
+    "akoustika",
+    "nexa",
+    "φωτιστικο",
+    "aero runner"
   ]
 }

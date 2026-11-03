@@ -87,6 +87,7 @@ if (plan.phase === 'verify') {
     await page.waitForTimeout(800);
     await page.screenshot({ path: `${OUT}/6-product-live.png`, fullPage: true });
     out.productUrl = page.url();
+    out.offers = await page.$$eval('.offer', (e) => e.map((x) => x.innerText.replace(/\s+/g, ' ').trim()));
   }
   const m = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const mp = await m.newPage();
