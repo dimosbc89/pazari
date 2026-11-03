@@ -34,6 +34,9 @@ TOKEN=$(echo "$LINK" | sed -E 's/.*token=([^&]+).*/\1/')
 api -c cookies.txt -X POST "$T/auth/verify" -d "{\"token\":\"$TOKEN\"}" >/dev/null
 APPROVE=$(api -b cookies.txt -X POST "$T/admin/shops/$SHOP/approve" -d '{}')
 check "approve lists the products" "$(echo "$APPROVE" | jq -r .result.imported)" "4"
+if [ -f wrangler.log ]; then # emails are only logged locally
+  check "approval email: updates on every change" "$(grep -c 'λίγα λεπτά μετά από κάθε αλλαγή' wrangler.log)" "1"
+fi
 
 echo "== What Tagora shows"
 S=$(curl -sS "$T/catalogue/search?country=gr&q=sonaro")

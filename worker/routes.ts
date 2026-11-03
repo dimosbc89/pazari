@@ -5,7 +5,7 @@ import { FACETS, SORTS, type Refinements, type SortKey } from '../src/search/typ
 import { catalogueMode, getOffers, getProduct, getSetting, getStats, getVariants, listShopProducts, searchCatalogue, setSetting } from './catalogue.ts';
 import { PLUGIN_FORMAT, pluginFinish, pluginHello, pluginProducts, setPluginKey } from './plugin.ts';
 import { createLoginToken, endSession, getSession, redeemLoginToken, requireSession, type Session } from './auth.ts';
-import { mailFor, sendMail } from './email.ts';
+import { mailFor, sendMail, updateEvery } from './email.ts';
 import { adminEmails, isDev, type Env } from './env.ts';
 import { body, checkSameOrigin, errorResponse, HttpError, isEmail, json, nowIso, num, str } from './http.ts';
 import { getShop, intervalHours, shopDto, siteLink, syncShop, unlistShop, type ShopRow, type ShopStatus } from './shops.ts';
@@ -296,7 +296,7 @@ const adminAction: Handler = async ({ req, env, params, origin }) => {
     // A shop that was paused hears it is back; a pending one hears it was approved.
     const kind = action === 'approve' ? 'approved' : shop.status === 'paused' ? 'resumed' : null;
     if (kind) {
-      await sendMail(env, mailFor(kind, lang, shop.email, { shop: shop.name, count: result.imported, hours: intervalHours(env) }, siteLink(env, shop, '/merchant/login', origin)));
+      await sendMail(env, mailFor(kind, lang, shop.email, { shop: shop.name, count: result.imported, every: updateEvery(lang, shop.source_type === 'plugin', intervalHours(env)) }, siteLink(env, shop, '/merchant/login', origin)));
     }
     return json({ ok: true, result });
   }

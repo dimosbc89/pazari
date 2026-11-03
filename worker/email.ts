@@ -45,8 +45,8 @@ const T = {
     en: { subject: 'We received your shop application', lines: ['Thank you! We received the application for “{shop}” and will review it shortly.', 'Once approved, your products appear on Tagora and update automatically. We will email you.'], button: 'See the status' },
   },
   approved: {
-    el: { subject: 'Το «{shop}» είναι πλέον στο Tagora', lines: ['Η αίτησή σου εγκρίθηκε. {count} προϊόντα είναι ήδη online και ενημερώνονται αυτόματα κάθε {hours} ώρες.', 'Στον πίνακα του καταστήματος βλέπεις τον τελευταίο συγχρονισμό, τα προϊόντα που χρειάζονται διόρθωση και πόσους επισκέπτες σού στείλαμε.'], button: 'Άνοιξε τον πίνακα' },
-    en: { subject: '“{shop}” is now on Tagora', lines: ['Your application was approved. {count} products are already live and update automatically every {hours} hours.', 'Your shop dashboard shows the last sync, products that need fixing and how many visitors we sent you.'], button: 'Open the dashboard' },
+    el: { subject: 'Το «{shop}» είναι πλέον στο Tagora', lines: ['Η αίτησή σου εγκρίθηκε. {count} προϊόντα είναι ήδη online και ενημερώνονται αυτόματα {every}.', 'Στον πίνακα του καταστήματος βλέπεις τον τελευταίο συγχρονισμό, τα προϊόντα που χρειάζονται διόρθωση και πόσους επισκέπτες σού στείλαμε.'], button: 'Άνοιξε τον πίνακα' },
+    en: { subject: '“{shop}” is now on Tagora', lines: ['Your application was approved. {count} products are already live and update automatically {every}.', 'Your shop dashboard shows the last sync, products that need fixing and how many visitors we sent you.'], button: 'Open the dashboard' },
   },
   rejected: {
     el: { subject: 'Η αίτηση του «{shop}»', lines: ['Δυστυχώς δεν μπορούμε να εγκρίνουμε την αίτηση αυτή τη στιγμή.', 'Αιτία: {reason}', 'Μπορείς να απαντήσεις σε αυτό το email για οποιαδήποτε ερώτηση.'] },
@@ -57,8 +57,8 @@ const T = {
     en: { subject: 'Products of “{shop}” temporarily removed', lines: ['We have temporarily removed the products of “{shop}” from Tagora.', 'Reason: {reason}', 'Once it is fixed, reply to this email and we will bring them back. You can also reply if you disagree with the decision.'], button: 'Open the dashboard' },
   },
   resumed: {
-    el: { subject: 'Το «{shop}» εμφανίζεται ξανά στο Tagora', lines: ['Τα προϊόντα του «{shop}» είναι ξανά online: {count} προϊόντα.', 'Ενημερώνονται αυτόματα κάθε {hours} ώρες, όπως πριν.'], button: 'Άνοιξε τον πίνακα' },
-    en: { subject: '“{shop}” is back on Tagora', lines: ['The products of “{shop}” are live again: {count} products.', 'They update automatically every {hours} hours, as before.'], button: 'Open the dashboard' },
+    el: { subject: 'Το «{shop}» εμφανίζεται ξανά στο Tagora', lines: ['Τα προϊόντα του «{shop}» είναι ξανά online: {count} προϊόντα.', 'Ενημερώνονται αυτόματα {every}, όπως πριν.'], button: 'Άνοιξε τον πίνακα' },
+    en: { subject: '“{shop}” is back on Tagora', lines: ['The products of “{shop}” are live again: {count} products.', 'They update automatically {every}, as before.'], button: 'Open the dashboard' },
   },
   syncFailed: {
     el: { subject: 'Πρόβλημα στον συγχρονισμό του «{shop}»', lines: ['Δεν μπορέσαμε να διαβάσουμε τα προϊόντα του καταστήματός σου: {message}', 'Τα προϊόντα που ήδη έχουμε μένουν online. Θα ξαναδοκιμάσουμε σε μία ώρα.'], button: 'Δες λεπτομέρειες' },
@@ -75,6 +75,12 @@ const T = {
 } as const;
 
 type Kind = keyof typeof T;
+
+/** How often a shop's products update, for the emails: feeds on a timer, the plugin on every change. */
+export function updateEvery(lang: Lang, plugin: boolean, hours: number): string {
+  if (lang === 'en') return plugin ? 'a few minutes after each change in your shop' : `every ${hours} hours`;
+  return plugin ? 'λίγα λεπτά μετά από κάθε αλλαγή στο κατάστημά σου' : `κάθε ${hours} ώρες`;
+}
 
 export function mailFor(kind: Kind, lang: Lang, to: string | string[], vars: Record<string, string | number>, url?: string): Mail {
   const t = T[kind][lang === 'en' ? 'en' : 'el'];
