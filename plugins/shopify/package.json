@@ -1,0 +1,6 @@
+{
+  "name": "tagora-shopify-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Shopify app configuration for Tagora (the app itself runs in the Tagora Worker: worker/shopify.ts). Shopify CLI needs this file next to shopify.app.toml."
+}

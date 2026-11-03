@@ -1,0 +1,38 @@
+# Uploads plugins/shopify/shopify.app.toml to Shopify (App URL, scopes, webhooks, privacy webhooks)
+# as a new version of the Tagora app, whenever it changes on main, or by hand (Actions → Run workflow).
+# Needs the repository secret SHOPIFY_APP_AUTOMATION_TOKEN:
+# Shopify Dev Dashboard → Tagora → App settings → App Automation Token → Create token.
+name: Shopify app config
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugins/shopify/shopify.app.toml'
+      - '.github/workflows/shopify-app-config.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SHOPIFY_APP_AUTOMATION_TOKEN: ${{ secrets.SHOPIFY_APP_AUTOMATION_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Upload the configuration to Shopify
+        working-directory: plugins/shopify
+        run: |
+          if [ -z "$SHOPIFY_APP_AUTOMATION_TOKEN" ]; then
+            echo "::warning::Not uploaded: add the repository secret SHOPIFY_APP_AUTOMATION_TOKEN (Shopify Dev Dashboard → Tagora → App settings → App Automation Token), then run this workflow again."
+            exit 0
+          fi
+          npx --yes @shopify/cli@5.0.0 app deploy --allow-updates --no-input --no-build \
+            --message "Tagora ${GITHUB_SHA::7}" \
+            --source-control-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
