@@ -1,20 +1,116 @@
-[
-  {
-    "type": "woocommerce",
-    "url": "https://www.danaos-stores.gr",
-    "status": 200,
-    "ms": 364,
-    "ok": false,
-    "code": "not_woocommerce",
-    "message": "This does not look like a WooCommerce shop, or its Store API is switched off. Use an XML feed instead."
+{
+  "home": {
+    "status": 403,
+    "final": "https://www.danaos-stores.gr/",
+    "server": "cloudflare",
+    "poweredBy": null,
+    "hints": {
+      "wordpress": false,
+      "woocommerce": false,
+      "shopify": false,
+      "opencart": false,
+      "magento": false,
+      "prestashop": false,
+      "generator": ""
+    },
+    "links": [],
+    "title": "Attention Required! | Cloudflare"
   },
-  {
-    "type": "shopify",
-    "url": "https://www.danaos-stores.gr",
-    "status": 200,
-    "ms": 73,
-    "ok": false,
-    "code": "not_shopify",
-    "message": "This store does not share its product list. Use an XML feed instead."
-  }
-]
+  "robots": {
+    "status": 403,
+    "lines": []
+  },
+  "paths": [
+    {
+      "path": "/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/bestprice.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/google.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/feed.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/feeds/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/xml/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/feed/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/skroutz/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/wp-content/uploads/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/wp-content/uploads/webexpert-skroutz-xml/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/wp-content/uploads/xml-feeds/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/index.php?route=extension/feed/skroutz",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/index.php?route=feed/skroutz",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/media/feeds/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    },
+    {
+      "path": "/media/skroutz.xml",
+      "status": 403,
+      "type": "text/html; charset=UTF-8",
+      "looksFeed": false
+    }
+  ],
+  "checks": []
+}
