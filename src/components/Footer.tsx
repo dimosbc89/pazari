@@ -4,6 +4,7 @@ import { useLocale } from '../i18n';
 import { openCookieSettings } from '../lib/consent';
 import { useIsDemo } from '../search';
 import { CountryPicker } from './CountryPicker';
+import { LangSwitch } from './LangSwitch';
 
 export function Footer() {
   const { t, path } = useLocale();
@@ -13,7 +14,7 @@ export function Footer() {
     <footer className="footer">
       <div className="footer-inner container">
         <div className="footer-row">
-          <CountryPicker />
+          <div className="footer-locale"><CountryPicker /><LangSwitch className="lang-switch--full" /></div>
           <nav className="footer-links" aria-label="Footer">
             <Link to={path('/pages/about')}>{t('footer.about')}</Link>
             <Link to={path('/shops')}>{t('footer.forShops')}</Link>

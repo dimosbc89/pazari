@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLocale } from '../i18n';
+import { LangSwitch } from './LangSwitch';
 import { Wordmark } from './Logo';
 import { SearchInput } from './SearchInput';
 
@@ -13,6 +14,7 @@ export function Header({ query = '' }: { query?: string }) {
           <Wordmark />
         </Link>
         <SearchInput defaultValue={query} />
+        <LangSwitch className="header-lang" />
       </div>
     </header>
   );

@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useParams 
 import { CookieBanner } from './components/CookieBanner';
 import { IconSprite } from './components/Icons';
 import { DEFAULT_COUNTRY, STORAGE_KEYS, findCountry } from './config';
-import { LocaleProvider } from './i18n';
+import { LanguageProvider, LocaleProvider } from './i18n';
 import { Home } from './pages/Home';
 import { NotFound } from './pages/NotFound';
 import { ProductPage } from './pages/ProductPage';
@@ -37,7 +37,6 @@ function CountryLayout() {
 
   useEffect(() => {
     if (!country) return;
-    document.documentElement.lang = country.lang;
     try { localStorage.setItem(STORAGE_KEYS.country, country.code); } catch { /* ignore */ }
   }, [country]);
 
@@ -58,6 +57,7 @@ function CountryLayout() {
 export function App() {
   return (
     <BrowserRouter>
+      <LanguageProvider>
       <IconSprite />
       <Routes>
         <Route path="/" element={<RootRedirect />} />
@@ -80,6 +80,7 @@ export function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
+      </LanguageProvider>
     </BrowserRouter>
   );
 }

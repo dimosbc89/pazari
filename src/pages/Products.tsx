@@ -15,6 +15,8 @@ import { backend, FACETS } from '../search';
 
 export function Products() {
   const { t, num, country, lang, path } = useLocale();
+  // Right after launch the catalogue can be empty: say so instead of "no results".
+  const catalogueEmpty = useAsync(() => backend.stats(country.code), [country.code]).data?.offers === 0;
   const { query, sort, refinements, toggle, remove, clear, setSort } = useSearchState();
   const [drawer, setDrawer] = useState(false);
   useScrollLock(drawer);
@@ -81,12 +83,21 @@ export function Products() {
           {!data && loading && <Loader />}
 
           {data && total === 0 && !loading && (
-            <div className="empty">
-              <Icon name="search" />
-              <h2>{t('results.empty.title')}</h2>
-              <p>{t('results.empty.text')}</p>
-              {hasFilters && <button type="button" className="btn" onClick={clear}>{t('results.empty.clear')}</button>}
-            </div>
+            catalogueEmpty ? (
+              <div className="empty">
+                <Icon name="store" />
+                <h2>{t('launch.results.title')}</h2>
+                <p>{t('launch.results.text')}</p>
+                <Link to={path('/shops')} className="btn btn--ghost">{t('launch.shops')}</Link>
+              </div>
+            ) : (
+              <div className="empty">
+                <Icon name="search" />
+                <h2>{t('results.empty.title')}</h2>
+                <p>{t('results.empty.text')}</p>
+                {hasFilters && <button type="button" className="btn" onClick={clear}>{t('results.empty.clear')}</button>}
+              </div>
+            )
           )}
 
           {data && data.hits.length > 0 && (
