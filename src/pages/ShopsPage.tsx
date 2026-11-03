@@ -143,6 +143,7 @@ export function ShopsPage() {
             <p className="eyebrow">{t('shops.eyebrow')}</p>
             <h1>{t('shops.title')}</h1>
             <p className="shops-lead">{t('shops.lead')}</p>
+            <p className="shops-free"><Icon name="check" /> {t('shops.free')}</p>
             <div className="shops-cta">
               <a href="#apply" className="btn btn--lg">{t('shops.start')}</a>
               <span>{t('shops.haveAccount')} <Link to={path('/merchant/login')}>{t('shops.signinLink')}</Link></span>
@@ -226,12 +227,13 @@ export function ShopsPage() {
 
         <section className="container faq">
           <h2>{t('shops.faq.title')}</h2>
-          {[1, 2, 3, 4].map((n) => (
+          {[5, 1, 2, 3, 4].map((n) => (
             <details key={n}>
               <summary>{t(`shops.faq.q${n}` as StringKey)}</summary>
               <p>{t(`shops.faq.a${n}` as StringKey)}</p>
             </details>
           ))}
+          <p className="faq-more"><Link to={path('/pages/shop-help')}>{t('shops.faq.more')}</Link></p>
         </section>
       </main>
       <Footer />

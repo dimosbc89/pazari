@@ -16,16 +16,18 @@
 | Legal | `/gr/pages/privacy-policy`, `/gr/pages/cookies-policy`, `/gr/pages/terms`, `/gr/pages/shop-terms` | Privacy and cookie policies, terms of use, and terms for shops (Greek and English), with `[PLACEHOLDERS]` highlighted. |
 | How we rank | `/gr/pages/ranking` | How results and offers are ordered, which shops appear, no paid placements. Linked from the results and the price comparison. |
 | Contact | `/gr/pages/contact` | Customer service, company details, links for shops and for data requests. |
+| About | `/gr/pages/about` | What Tagora is, how it works, how ranking stays fair, who runs it. |
+| Help for shops | `/gr/pages/shop-help` | How to connect a feed, Shopify or WooCommerce, what each product needs, the checks, sync and cost. |
 | For shops | `/gr/shops` | Shops apply: connect an XML feed, Shopify or WooCommerce, see a live check of their products, send the application. |
 | Shop dashboard | `/gr/merchant` (sign-in: `/gr/merchant/login`) | Products online, last and next sync, what needs fixing, visitors sent per day, "Sync now", change the connection. |
-| Admin | `/gr/admin` | Review applications, approve (runs the first sync), reject, pause, resume, sync. |
+| Admin | `/gr/admin` | Review applications, approve (runs the first sync), reject, pause, resume, sync. Switch the website between the demo catalogue and the partner shops' products ("Show real products"), with a preview first. |
 
 The other pieces:
 
 * **Countries:** Greece, Cyprus (Greek UI), Ireland and Malta (English UI), switched from the footer. `/` remembers the last country. Add more in `src/config.ts`.
-* **Search:** weighted fields, prefix matching, one-typo tolerance, accent-insensitive Greek, and **Greeklish** (`akoustika` finds ακουστικά). Filter counts stay correct when several filters are combined.
+* **Search:** the partner shops' products live in the Cloudflare database (D1) and are searched with SQLite full-text search (`worker/catalogue.ts`): weighted fields, prefix matching, one-typo correction, accent-insensitive Greek, and **Greeklish** (`akoustika` finds ακουστικά). Filter counts stay correct when several filters are combined. Answers are cached at Cloudflare's edge for 5 minutes. No search service or extra account is needed; Typesense remains an option for much larger catalogues (below).
 * **Cookie consent:** Google Tag Manager loads only after "Accept all" (set `VITE_GTM_ID`). Click-outs are pushed as a `click_out` event.
-* **Demo catalogue:** 347 offers, 20 brands and 8 shops, with drawn product images. **All fictional**, and the footer says so while the demo backend is on.
+* **Demo catalogue:** 347 offers, 20 brands and 8 shops, with drawn product images. **All fictional**, and the footer says so. The site shows it until an admin presses "Show real products" in `/admin` (preview first with `?catalogue=live`, only in your own tab).
 
 ## Run it
 
@@ -56,7 +58,8 @@ Shops join by themselves and their products stay up to date without anyone at Ta
 **How products stay in sync**
 
 * A Cloudflare cron runs every 10 minutes and syncs the shops that are due, a few at a time. Each shop is synced every `SYNC_INTERVAL_HOURS` (default 6). Shops can also press "Sync now" (once per 5 minutes).
-* Each sync reads the whole source, checks every product, uploads them to Typesense, then **removes that shop's products that were not in this sync** (deleted, sold out). Out-of-stock items are left out on purpose.
+* Each sync reads the whole source, checks every product, saves them in the database (unchanged products are skipped, so a sync costs little), then **removes that shop's products that were not in this sync** (deleted, sold out). Out-of-stock items are left out on purpose.
+* **Cost for shops:** free for 12 months from approval, then €19 a month + VAT (shop terms, section 8). The dashboard shows each shop's free-until date.
 * If a source fails (site down, broken feed), the products already online stay online, the shop gets one email, and Tagora retries in an hour.
 * **Same product in different shops** = same barcode (EAN/GTIN), or same brand + MPN. Shop SKUs are never used for matching.
 * Every product-page click-out is counted per shop per day (no visitor data) for the shop dashboard.
@@ -69,9 +72,10 @@ Secrets (Cloudflare → Workers & Pages → tagora → Settings → Variables an
 
 * `ADMIN_EMAILS`: who can open `/admin` (comma-separated). Kept out of the repo.
 * `RESEND_API_KEY`: sends sign-in and notification emails ([resend.com](https://resend.com)).
-* `TYPESENSE_ADMIN_KEY`: writes the search index.
 
-In `wrangler.jsonc` → `vars`: `SITE_URL`, `MAIL_FROM` (a sender on a domain verified in Resend) and the `TYPESENSE_*` host settings. The website needs the search-only key in `VITE_TYPESENSE_SEARCH_KEY` and `VITE_SEARCH_BACKEND=typesense` at build time (Cloudflare: Settings → Build → Variables). Deploy with `npm run deploy`, or connect the repo in the Cloudflare dashboard.
+In `wrangler.jsonc` → `vars`: `SITE_URL` and `MAIL_FROM` (a sender on a domain verified in Resend). Every push to `main` deploys through Workers Builds.
+
+Optional, for much larger catalogues: a [Typesense](https://typesense.org) cluster. Set `TYPESENSE_HOST` (var) and `TYPESENSE_ADMIN_KEY` (secret) and the sync also copies every product there; build with `VITE_SEARCH_BACKEND=typesense` and the `VITE_TYPESENSE_*` settings to search it from the browser.
 
 The scheduled sync needs the **Workers Paid plan** (the free plan's limits on CPU time and outgoing requests are too low for reading catalogues). Feeds up to ~80 MB and Shopify stores up to 25,000 products are read in one go; for much bigger catalogues, move the sync to Cloudflare Queues.
 
@@ -80,13 +84,12 @@ The scheduled sync needs the **Workers Paid plan** (the free plan's limits on CP
 ```bash
 cp .dev.vars.example .dev.vars
 npm run db:migrate                                 # local database
-npm run dev:mocks                                  # test shops on :9100, test Typesense on :8108
-VITE_SEARCH_BACKEND=typesense VITE_TYPESENSE_HOST=localhost VITE_TYPESENSE_PORT=8108 \
-  VITE_TYPESENSE_PROTOCOL=http VITE_TYPESENSE_SEARCH_KEY=dev npx vite build
+npm run dev:mocks                                  # test shops on :9100 (and a test Typesense on :8108, optional)
+npx vite build
 npm run dev:api                                    # site + API on http://localhost:8787
 ```
 
-Open `http://localhost:8787/gr/shops` and apply with `http://localhost:9100/feeds/skroutz.xml` (also `google.xml`, `bestprice.xml`, `products.tsv`, a Shopify store at `http://localhost:9100` and a WooCommerce shop at `http://localhost:9100/woo`). Sign in as `admin@example.com` at `/gr/merchant/login`: without an email key the sign-in link is shown on screen. Run the scheduled sync by hand with `curl -X POST "http://localhost:8787/cdn-cgi/local/explorer/api/local/scheduled?worker=tagora" -H 'Content-Type: application/json' -d '{"cron":"*/10 * * * *"}'`.
+Open `http://localhost:8787/gr/shops` and apply with `http://localhost:9100/feeds/skroutz.xml` (also `google.xml`, `bestprice.xml`, `products.tsv`, a Shopify store at `http://localhost:9100` and a WooCommerce shop at `http://localhost:9100/woo`). Sign in as `admin@example.com` at `/gr/merchant/login`: without an email key the sign-in link is shown on screen. Approve the shops in `/gr/admin`, then press "Show real products". Run the scheduled sync by hand with `curl -X POST "http://localhost:8787/cdn-cgi/local/explorer/api/local/scheduled?worker=tagora" -H 'Content-Type: application/json' -d '{"cron":"*/10 * * * *"}'`.
 
 ### Import from the command line
 
@@ -114,13 +117,22 @@ Only the search-only key goes in `VITE_` variables; they ship to the browser. Th
 
 The domain is already a Cloudflare zone, so the Worker can serve it directly:
 
-1. **Database:** done (`tagora`, Western Europe, tables created).
+1. **Database:** done (`tagora`, Western Europe). Workers Builds does not run migrations: apply a new file in `migrations/` with `npm run db:migrate:remote` before merging the code that needs it.
 2. **Deploy:** Workers & Pages → Create → Import a repository → `dimosbc89/pazari`, project name `tagora` (it must match `wrangler.jsonc`), branch `main`, build command `npm run build`, deploy command `npx wrangler deploy`.
-3. **Secrets:** after the first deploy, add `ADMIN_EMAILS`, `RESEND_API_KEY` and `TYPESENSE_ADMIN_KEY` (see above). Until the search index exists the site runs on the fictional demo catalogue; once you have a Typesense cluster, add `VITE_SEARCH_BACKEND=typesense` and the `VITE_TYPESENSE_*` settings as build variables (Settings → Build) and redeploy.
+3. **Secrets:** after the first deploy, add `ADMIN_EMAILS` and `RESEND_API_KEY` (see above).
 4. **Domain:** the `routes` entry in `wrangler.jsonc` attaches `tagora.online` on deploy (DNS record and certificate included). If the zone already has an A, AAAA or CNAME record for `tagora.online` (for example a parking page), delete it first, or the deploy stops with a conflict.
 5. **www:** in DNS add a proxied `A` record `www` → `192.0.2.1`, then Rules → Redirect Rules → "Redirect from WWW to root" (301, keep path and query). One address keeps Google from indexing every page twice.
 6. **Email:** in Resend add the domain `tagora.online` and create the DNS records it shows (Resend can add them to Cloudflare for you). Emails go out from `hello@tagora.online` (`MAIL_FROM`).
 7. **HTTPS:** SSL/TLS → Edge Certificates → turn on "Always Use HTTPS".
+8. **Receiving email:** Email → Email Routing → enable, then forward `hello@tagora.online` to your inbox. It is the contact address on every page, and shops reply to it. To also send from it, add it in Gmail ("Send mail as") with Resend's SMTP server (`smtp.resend.com`, port 465, user `resend`, password: a Resend API key).
+9. **DMARC** (so emails don't land in spam): DNS → add `TXT` record `_dmarc` with `v=DMARC1; p=none; rua=mailto:hello@tagora.online`. After a few weeks of clean reports, change `p=none` to `p=quarantine`.
+
+### Monitoring
+
+* `GET /api/health` answers 200 when the database works and the scheduled sync ran in the last 30 minutes, 503 otherwise.
+* `.github/workflows/uptime.yml` checks the site and `/api/health` every 30 minutes from GitHub. When a check fails, GitHub emails you (Settings → Notifications → Actions: "Only notify for failed workflows"). GitHub turns scheduled workflows off after 60 days without commits; it emails a warning first.
+* Once a day at most, admins get an email listing the shops whose last sync failed.
+* Logs: Cloudflare → Workers & Pages → `tagora` → Logs. Backups: D1 keeps 30 days of history (Time Travel).
 
 ## Brand
 
@@ -137,12 +149,12 @@ npm run demo:data  # rebuilds the demo catalogue and its images
 
 ## Before launch
 
-* Fill the company details once in `src/config.ts` (`SITE.company`: legal name, address, GEMI, VAT, email, phone, opening hours). They fill the same placeholders on every page. The text pages also need `[LAST UPDATED DATE]`, `[LOG RETENTION DAYS]`, `[EVENT RETENTION DAYS]`, `[HOSTING PROVIDER]`, `[EMAIL PROVIDER]` and `[MERCHANT RETENTION]` in `src/content/legal.ts`, and `[SHOP FEES]`, `[COURTS CITY]`, `[MEDIATORS]` in `src/content/terms.ts`. Search the pages for the yellow highlights to find any left.
-* Have a lawyer review the policies and both sets of terms. Click-outs are now counted per shop and day; searches are not logged server-side, although the policy says they are. Either add that logging or remove it from the policy.
+* Company details are in `src/config.ts` (`SITE.company`) and fill every page. Still missing: **ΓΕΜΗ** and **ΑΦΜ** (`[GEMI NUMBER]`, `[VAT NUMBER]`, highlighted in yellow), and check that the legal name `GROW Agency Ε.Ε.` matches the registry exactly.
+* Have a lawyer review the policies and both sets of terms.
 * Set the `ADMIN_EMAILS` secret and verify the Resend sender before inviting shops.
 * Shop terms: shops accept them at sign-up; the version and date are stored (`terms_version`, `terms_accepted_at`, shown in the admin). When you change the terms, bump `SHOP_TERMS_VERSION` in `worker/routes.ts` and email every shop at least 15 days before (EU Regulation 2019/1150). Rejected and paused shops get an email with the reason.
 * Spam: the sign-up form has a hidden honeypot field. If fake applications appear, add Cloudflare Turnstile to the form.
-* Switch to real data (above). The demo footer note disappears with `VITE_SEARCH_BACKEND=typesense`.
+* Switch to real data: approve shops, preview, then "Show real products" in `/admin`.
 * Google CSS: see the checklist below.
 * Name: check the trademark (EUIPO / Greek registry). The domain is `tagora.online`, on Cloudflare.
 * `Powered by GROW Agency` in the footer: change or remove it in `src/config.ts` (`SITE.poweredBy`).
@@ -157,7 +169,7 @@ What Google looks at, and where this repo stands:
 | Your own product pages (not just links to the shop) | Done (`/products/:group/variant/:id`) |
 | Clear company and customer-service details | Contact page done; fill `SITE.company` |
 | Terms, privacy policy, how ranking works | Done; fill the placeholders and have them reviewed |
-| A real catalogue from real shops, updated often | Sign-up and sync done; you need shops (demo data is off with `VITE_SEARCH_BACKEND=typesense`) |
+| A real catalogue from real shops, updated often | Sign-up and sync done; you need shops, then "Show real products" in `/admin` |
 | Your own domain on HTTPS | Register a domain and add it in Cloudflare |
 | Product pages Google can read | The app renders in the browser. Google renders JavaScript, but server-rendered product pages and a sitemap would make indexing faster |
 
@@ -176,17 +188,18 @@ Shops can then run their Shopping ads through Tagora instead of Google's own CSS
 src/
   config.ts           countries, company details, search backend, storage keys
   i18n/               UI strings (el, en) and the locale hook (prices, labels, paths)
-  search/             types, local (demo) backend, Typesense backend
+  search/             types; demo (in-browser), D1 (/api/catalogue) and Typesense backends; demo/live switch
   pages/              Home, Products, ProductPage, Legal, NotFound, ShopsPage, MerchantLogin, MerchantDashboard, AdminPage
   components/         Header, Footer, SearchInput, HitCard, FacetList, SortSelect, Carts, Lightbox, …
   content/legal.ts    privacy and cookie policies (el, en)
   content/terms.ts    terms of use, terms for shops (el, en)
   content/pages.ts    how we rank results, contact (el, en)
+  content/help.ts     about Tagora, help for shops (el, en)
   lib/                hooks (URL search state), consent + GTM, HTML sanitiser, shop API client
   styles/             tokens, base, components, home, results, product, pages
-worker/               Cloudflare Worker: /api (sign-up, sign-in, dashboards, admin) and the scheduled sync
-sync/                 sync engine shared by the Worker and the CLI: feeds, Shopify, WooCommerce, checks, Typesense
-shared/               markets (countries) and the Typesense schema
+worker/               Cloudflare Worker: /api (sign-up, sign-in, dashboards, admin, product search, health) and the scheduled sync
+sync/                 sync engine shared by the Worker and the CLI: feeds, Shopify, WooCommerce, checks, Typesense (optional)
+shared/               markets (countries), search text helpers (accents, Greeklish, typos), the Typesense schema
 migrations/           D1 database tables
 dev/                  local test shops and test search index
 scripts/              brand, demo data, import (CLI), Typesense push

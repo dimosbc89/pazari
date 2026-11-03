@@ -2,18 +2,20 @@ import { Link } from 'react-router-dom';
 import { SITE } from '../config';
 import { useLocale } from '../i18n';
 import { openCookieSettings } from '../lib/consent';
-import { isDemo } from '../search';
+import { useIsDemo } from '../search';
 import { CountryPicker } from './CountryPicker';
 
 export function Footer() {
   const { t, path } = useLocale();
   const c = SITE.company;
+  const isDemo = useIsDemo();
   return (
     <footer className="footer">
       <div className="footer-inner container">
         <div className="footer-row">
           <CountryPicker />
           <nav className="footer-links" aria-label="Footer">
+            <Link to={path('/pages/about')}>{t('footer.about')}</Link>
             <Link to={path('/shops')}>{t('footer.forShops')}</Link>
             <Link to={path('/pages/contact')}>{t('footer.contact')}</Link>
             <Link to={path('/pages/ranking')}>{t('footer.ranking')}</Link>

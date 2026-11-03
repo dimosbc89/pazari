@@ -3,10 +3,11 @@
 ENVIRONMENT=development
 SITE_URL=http://localhost:8787
 ADMIN_EMAILS=admin@example.com
-TYPESENSE_HOST=localhost
-TYPESENSE_PORT=8108
-TYPESENSE_PROTOCOL=http
-TYPESENSE_ADMIN_KEY=dev
+# Optional: also mirror products to a Typesense index (npm run dev:mocks starts a test one)
+# TYPESENSE_HOST=localhost
+# TYPESENSE_PORT=8108
+# TYPESENSE_PROTOCOL=http
+# TYPESENSE_ADMIN_KEY=dev
 # Leave these empty locally: sign-in links are then shown on screen instead of emailed.
 RESEND_API_KEY=
 MAIL_FROM=

@@ -77,6 +77,7 @@ const baseEl = {
 
   'footer.privacy': 'Πολιτική απορρήτου',
   'footer.contact': 'Επικοινωνία',
+  'footer.about': 'Σχετικά με το Tagora',
   'footer.ranking': 'Πώς κατατάσσουμε',
   'footer.terms': 'Όροι χρήσης',
   'results.howRanked': 'Πώς κατατάσσονται τα αποτελέσματα',
@@ -213,6 +214,7 @@ const baseEn: Record<keyof typeof baseEl, string> = {
 
   'footer.privacy': 'Privacy policy',
   'footer.contact': 'Contact',
+  'footer.about': 'About Tagora',
   'footer.ranking': 'How we rank',
   'footer.terms': 'Terms of use',
   'results.howRanked': 'How results are ranked',

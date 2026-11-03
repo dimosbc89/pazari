@@ -1,6 +1,8 @@
 import { COUNTRIES } from '../shared/markets.ts';
 import { buildReport, checkUrl, SyncError, type Issue, type SourceType } from '../sync/index.ts';
 import { slug } from '../sync/text.ts';
+import { FACETS, SORTS, type Refinements, type SortKey } from '../src/search/types.ts';
+import { catalogueMode, getOffers, getProduct, getSetting, getStats, getVariants, searchCatalogue, setSetting } from './catalogue.ts';
 import { createLoginToken, endSession, getSession, redeemLoginToken, requireSession, type Session } from './auth.ts';
 import { mailFor, sendMail } from './email.ts';
 import { adminEmails, isDev, type Env } from './env.ts';
@@ -241,7 +243,19 @@ const adminList: Handler = async ({ req, env }) => {
   const since = new Date(Date.now() - 29 * 86_400_000).toISOString().slice(0, 10);
   const { results } = await env.DB.prepare(`SELECT s.*, COALESCE((SELECT SUM(clicks) FROM clicks c WHERE c.shop_id = s.id AND c.day >= ?), 0) AS clicks30
     FROM shops s ORDER BY CASE s.status WHEN 'pending' THEN 0 WHEN 'active' THEN 1 WHEN 'paused' THEN 2 ELSE 3 END, s.created_at DESC`).bind(since).all<ShopRow & { clicks30: number }>();
-  return json({ ok: true, shops: results.map((r) => ({ ...shopDto(r), clicks30: r.clicks30 })) });
+  const [mode, live] = await Promise.all([catalogueMode(env), env.DB.prepare('SELECT COUNT(*) AS n FROM products').first<{ n: number }>()]);
+  return json({ ok: true, shops: results.map((r) => ({ ...shopDto(r), clicks30: r.clicks30 })), catalogue: { mode, products: live?.n ?? 0 } });
+};
+
+/** Switches the website between the demo catalogue and the partner shops' products. */
+const adminCatalogue: Handler = async ({ req, env, origin }) => {
+  await requireAdmin(env, req);
+  const b = await body(req);
+  if (b.mode !== 'demo' && b.mode !== 'live') throw new HttpError(400, 'bad_field');
+  await setSetting(env, 'catalogue', b.mode);
+  // Clears the cached answer here at once; other Cloudflare locations follow within 30 seconds.
+  await (caches as unknown as { default: Cache }).default.delete(new Request(`${origin}/api/catalogue/mode`));
+  return json({ ok: true, mode: b.mode });
 };
 
 const adminAction: Handler = async ({ req, env, params, origin }) => {
@@ -273,6 +287,90 @@ const adminAction: Handler = async ({ req, env, params, origin }) => {
   throw new HttpError(404, 'not_found');
 };
 
+// ---------------------------------------------------------------- catalogue (public, cached)
+
+/** Serves a GET from Cloudflare's edge cache for `seconds`, so busy pages don't query D1 every time. */
+async function cached(req: Request, exec: ExecutionContext, seconds: number, make: () => Promise<Response>) {
+  const cache = (caches as unknown as { default: Cache }).default;
+  // Only the parameters we use make up the cache key, so extra ones can't bypass the cache.
+  const url = new URL(req.url);
+  const known = new URLSearchParams();
+  for (const k of [...CACHE_PARAMS].sort()) for (const v of url.searchParams.getAll(k)) known.append(k, v);
+  url.search = known.toString();
+  const key = new Request(url.toString(), { method: 'GET' });
+  const hit = await cache.match(key);
+  if (hit) return hit;
+  const res = await make();
+  if (!res.ok) return res;
+  const out = new Response(res.body, res);
+  out.headers.set('Cache-Control', `public, max-age=${seconds}`);
+  exec.waitUntil(cache.put(key, out.clone()));
+  return out;
+}
+
+const CACHE_PARAMS = new Set<string>(['q', 'country', 'sort', 'limit', 'group', 'key', ...FACETS]);
+
+const market = (url: URL) => {
+  const c = url.searchParams.get('country') ?? '';
+  if (!MARKETS.includes(c)) throw new HttpError(400, 'bad_country');
+  return c;
+};
+
+const catalogueSearch: Handler = ({ req, env, exec }) => cached(req, exec, 300, async () => {
+  const url = new URL(req.url);
+  const refinements: Refinements = {};
+  for (const f of FACETS) {
+    const values = url.searchParams.getAll(f).filter(Boolean).map((v) => v.slice(0, 120));
+    if (values.length) refinements[f] = values;
+  }
+  const sort = url.searchParams.get('sort') as SortKey;
+  const result = await searchCatalogue(env, {
+    query: (url.searchParams.get('q') ?? '').slice(0, 200),
+    country: market(url),
+    refinements,
+    sort: SORTS.includes(sort) ? sort : 'relevance',
+    limit: Number(url.searchParams.get('limit')) || 24,
+  });
+  return json({ ok: true, ...result });
+});
+
+const catalogueProduct: Handler = ({ req, env, params, exec }) => cached(req, exec, 300, async () => {
+  const product = await getProduct(env, decodeURIComponent(params[0]));
+  if (!product) throw new HttpError(404, 'not_found');
+  return json({ ok: true, product });
+});
+
+const catalogueVariants: Handler = ({ req, env, exec }) => cached(req, exec, 300, async () => {
+  const url = new URL(req.url);
+  return json({ ok: true, products: await getVariants(env, url.searchParams.get('group') ?? '', market(url)) });
+});
+
+const catalogueOffers: Handler = ({ req, env, exec }) => cached(req, exec, 300, async () => {
+  const url = new URL(req.url);
+  return json({ ok: true, products: await getOffers(env, url.searchParams.get('key') ?? '', market(url)) });
+});
+
+const catalogueStats: Handler = ({ req, env, exec }) => cached(req, exec, 300, async () => {
+  return json({ ok: true, ...(await getStats(env, market(new URL(req.url)))) });
+});
+
+const catalogueModeRoute: Handler = ({ req, env, exec }) => cached(req, exec, 30, async () => json({ ok: true, mode: await catalogueMode(env) }));
+
+/** For uptime monitors: 200 when the database answers and the scheduled sync ran in the last 30 minutes. */
+const health: Handler = async ({ env }) => {
+  let db = false;
+  let lastCron: string | null = null;
+  try {
+    lastCron = await getSetting(env, 'last_cron_at');
+    db = true;
+  } catch (e) {
+    console.error('health: database', e);
+  }
+  const cron = !!lastCron && Date.now() - Date.parse(lastCron) < 30 * 60_000;
+  const ok = db && cron;
+  return json({ ok, db, cron, lastCron }, ok ? 200 : 503);
+};
+
 // ---------------------------------------------------------------- router
 
 const ROUTES: [string, RegExp, Handler][] = [
@@ -287,6 +385,14 @@ const ROUTES: [string, RegExp, Handler][] = [
   ['POST', /^\/shops\/([a-z0-9-]+)\/sync$/, syncNow],
   ['GET', /^\/admin\/shops$/, adminList],
   ['POST', /^\/admin\/shops\/([a-z0-9-]+)\/(approve|reject|pause|resume)$/, adminAction],
+  ['POST', /^\/admin\/catalogue$/, adminCatalogue],
+  ['GET', /^\/catalogue\/search$/, catalogueSearch],
+  ['GET', /^\/catalogue\/products\/([^/]+)$/, catalogueProduct],
+  ['GET', /^\/catalogue\/variants$/, catalogueVariants],
+  ['GET', /^\/catalogue\/offers$/, catalogueOffers],
+  ['GET', /^\/catalogue\/stats$/, catalogueStats],
+  ['GET', /^\/catalogue\/mode$/, catalogueModeRoute],
+  ['GET', /^\/health$/, health],
 ];
 
 export async function handleApi(req: Request, env: Env, exec: ExecutionContext): Promise<Response> {

@@ -13,13 +13,12 @@ export const SITE = {
   version: __APP_VERSION__,
   /** Fill these in before launch (they show in the footer and the legal pages). */
   company: {
-    legalName: '[COMPANY LEGAL NAME]',
-    address: '[ADDRESS]',
+    legalName: 'GROW Agency Ε.Ε.',
+    address: 'Κολοκοτρώνη 64Α, 173 43 Άγιος Δημήτριος, Αττική',
     gemi: '[GEMI NUMBER]',
     vat: '[VAT NUMBER]',
-    email: '[CONTACT EMAIL]',
-    phone: '[CUSTOMER SERVICE PHONE]',
-    hours: '[OPENING HOURS]',
+    email: 'hello@tagora.online',
+    phone: '+30 210 9713335',
   },
   poweredBy: { name: 'GROW Agency', url: 'https://growagency.online' },
   gtmId: import.meta.env.VITE_GTM_ID || '',
@@ -27,7 +26,9 @@ export const SITE = {
 };
 
 export const SEARCH_CONFIG = {
-  backend: (import.meta.env.VITE_SEARCH_BACKEND || 'local') as 'local' | 'typesense',
+  // auto: the admin page decides (demo or the partner shops' products in D1).
+  // local: always the demo. typesense: a Typesense cluster (VITE_TYPESENSE_*).
+  backend: (import.meta.env.VITE_SEARCH_BACKEND || 'auto') as 'auto' | 'local' | 'typesense',
   typesense: {
     host: import.meta.env.VITE_TYPESENSE_HOST || '',
     port: import.meta.env.VITE_TYPESENSE_PORT || '443',

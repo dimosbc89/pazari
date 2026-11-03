@@ -10,7 +10,7 @@ import type { LegalPage } from './legal';
 export const termsOfUse: Record<'el' | 'en', LegalPage> = {
   el: {
     title: 'Όροι Χρήσης',
-    updated: 'Τελευταία ενημέρωση: [LAST UPDATED DATE]',
+    updated: 'Τελευταία ενημέρωση: 3 Νοεμβρίου 2026',
     intro:
       'Οι όροι αυτοί ισχύουν για όσους επισκέπτονται και χρησιμοποιούν το Tagora. Χρησιμοποιώντας τον ιστότοπο τους αποδέχεστε· αν δεν συμφωνείτε, παρακαλούμε μην τον χρησιμοποιείτε.',
     blocks: [
@@ -108,7 +108,7 @@ export const termsOfUse: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: '13. Εφαρμοστέο δίκαιο και επίλυση διαφορών' },
       {
         type: 'p',
-        text: 'Οι όροι αυτοί διέπονται από το ελληνικό δίκαιο και για τις διαφορές που προκύπτουν από αυτούς αρμόδια είναι τα δικαστήρια [COURTS CITY]. Αν είστε καταναλωτής, διατηρείτε την προστασία των αναγκαστικών διατάξεων του δικαίου της χώρας όπου κατοικείτε και το δικαίωμα να προσφύγετε στα δικαστήρια της χώρας αυτής.',
+        text: 'Οι όροι αυτοί διέπονται από το ελληνικό δίκαιο και για τις διαφορές που προκύπτουν από αυτούς αρμόδια είναι τα δικαστήρια της Αθήνας. Αν είστε καταναλωτής, διατηρείτε την προστασία των αναγκαστικών διατάξεων του δικαίου της χώρας όπου κατοικείτε και το δικαίωμα να προσφύγετε στα δικαστήρια της χώρας αυτής.',
       },
       {
         type: 'p',
@@ -127,7 +127,7 @@ export const termsOfUse: Record<'el' | 'en', LegalPage> = {
 
   en: {
     title: 'Terms of Use',
-    updated: 'Last updated: [LAST UPDATED DATE]',
+    updated: 'Last updated: 3 November 2026',
     intro:
       'These terms apply to everyone who visits and uses Tagora. By using the website you accept them; if you do not agree, please do not use it.',
     blocks: [
@@ -225,7 +225,7 @@ export const termsOfUse: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: '13. Governing law and disputes' },
       {
         type: 'p',
-        text: 'These terms are governed by Greek law, and the courts of [COURTS CITY] have jurisdiction over disputes arising from them. If you are a consumer, you keep the protection of the mandatory rules of the law of the country where you live and your right to bring proceedings in that country’s courts.',
+        text: 'These terms are governed by Greek law, and the courts of Athens have jurisdiction over disputes arising from them. If you are a consumer, you keep the protection of the mandatory rules of the law of the country where you live and your right to bring proceedings in that country’s courts.',
       },
       {
         type: 'p',
@@ -250,7 +250,7 @@ export const termsOfUse: Record<'el' | 'en', LegalPage> = {
 export const shopTerms: Record<'el' | 'en', LegalPage> = {
   el: {
     title: 'Όροι για καταστήματα',
-    updated: 'Τελευταία ενημέρωση: [LAST UPDATED DATE]',
+    updated: 'Τελευταία ενημέρωση: 3 Νοεμβρίου 2026',
     intro:
       'Οι όροι αυτοί ρυθμίζουν τη συνεργασία του Tagora με τα ηλεκτρονικά καταστήματα που εμφανίζουν τα προϊόντα τους σε αυτό («συνεργαζόμενα καταστήματα») και καλύπτουν, με απλά λόγια, όσα απαιτεί ο Κανονισμός (ΕΕ) 2019/1150 για τις σχέσεις επιγραμμικών πλατφορμών και επιχειρήσεων (Κανονισμός P2B). Υποβάλλοντας αίτηση, τους αποδέχεστε.',
     blocks: [
@@ -366,7 +366,8 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
       },
 
       { type: 'h2', text: '8. Χρεώσεις' },
-      { type: 'p', text: 'Οι χρεώσεις για την εμφάνιση των προϊόντων σας στο Tagora είναι οι εξής: [SHOP FEES].' },
+      { type: 'p', text: 'Η εμφάνιση των προϊόντων σας στο Tagora είναι **δωρεάν για τους πρώτους 12 μήνες** από την έγκριση του καταστήματός σας. Μετά, κοστίζει **19 € τον μήνα + ΦΠΑ** ανά κατάστημα, με μηνιαίο τιμολόγιο.' },
+      { type: 'p', text: 'Θα σας ενημερώσουμε με email τουλάχιστον 30 ημέρες πριν λήξει η δωρεάν περίοδος. Αν δεν θέλετε να συνεχίσετε, μπορείτε να αποχωρήσετε πριν από τη λήξη της χωρίς καμία χρέωση. Και μετά, μπορείτε να αποχωρήσετε οποιαδήποτε στιγμή· η χρέωση σταματά από τον επόμενο μήνα. Δεν υπάρχει χρέωση ανά κλικ ούτε προμήθεια επί των πωλήσεων.' },
       {
         type: 'p',
         text: 'Ως υπηρεσία σύγκρισης αγορών (CSS) της Google, μπορούμε επίσης να προβάλλουμε τα προϊόντα σας σε διαφημίσεις Google Shopping. Οι υπηρεσίες αυτές και οι χρεώσεις τους συμφωνούνται χωριστά και διέπονται από ξεχωριστή σύμβαση. Δεν επηρεάζουν την κατάταξη στον ιστότοπό μας.',
@@ -415,7 +416,7 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
       },
       {
         type: 'p',
-        text: 'Αν η διαφορά δεν επιλυθεί, μπορείτε να ζητήσετε διαμεσολάβηση. Οι διαμεσολαβητές με τους οποίους είμαστε πρόθυμοι να συνεργαστούμε είναι: [MEDIATORS]. Η διαμεσολάβηση είναι προαιρετική και δεν θίγει το δικαίωμά σας να προσφύγετε στα δικαστήρια.',
+        text: 'Αν η διαφορά δεν επιλυθεί, μπορείτε να ζητήσετε διαμεσολάβηση. Είμαστε πρόθυμοι να συνεργαστούμε με διαπιστευμένο διαμεσολαβητή του Μητρώου του Υπουργείου Δικαιοσύνης (ν. 4640/2019), που θα επιλέξουμε από κοινού. Η διαμεσολάβηση είναι προαιρετική και δεν θίγει το δικαίωμά σας να προσφύγετε στα δικαστήρια.',
       },
       {
         type: 'p',
@@ -441,7 +442,7 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: '14. Εφαρμοστέο δίκαιο' },
       {
         type: 'p',
-        text: 'Οι όροι αυτοί διέπονται από το ελληνικό δίκαιο. Για κάθε διαφορά αρμόδια είναι τα δικαστήρια [COURTS CITY], με την επιφύλαξη της διαμεσολάβησης της ενότητας 11.',
+        text: 'Οι όροι αυτοί διέπονται από το ελληνικό δίκαιο. Για κάθε διαφορά αρμόδια είναι τα δικαστήρια της Αθήνας, με την επιφύλαξη της διαμεσολάβησης της ενότητας 11.',
       },
 
       { type: 'h2', text: '15. Επικοινωνία' },
@@ -456,7 +457,7 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
 
   en: {
     title: 'Terms for partner shops',
-    updated: 'Last updated: [LAST UPDATED DATE]',
+    updated: 'Last updated: 3 November 2026',
     intro:
       'These terms govern how Tagora works with the online shops that show their products on it (“partner shops”) and cover, in plain language, what Regulation (EU) 2019/1150 on platform-to-business relations (the P2B Regulation) requires. By applying, you accept them.',
     blocks: [
@@ -572,7 +573,8 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
       },
 
       { type: 'h2', text: '8. Fees' },
-      { type: 'p', text: 'The fees for showing your products on Tagora are: [SHOP FEES].' },
+      { type: 'p', text: 'Showing your products on Tagora is **free for the first 12 months** after your shop is approved. After that, it costs **€19 a month + VAT** per shop, invoiced monthly.' },
+      { type: 'p', text: 'We will email you at least 30 days before the free period ends. If you do not want to continue, you can leave before it ends at no charge. After that, too, you can leave at any time; charges stop from the following month. There is no charge per click and no commission on sales.' },
       {
         type: 'p',
         text: 'As a Google Comparison Shopping Service (CSS), we may also place your products in Google Shopping ads. Those services and their fees are agreed separately and governed by a separate agreement. They do not affect ranking on our website.',
@@ -621,7 +623,7 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
       },
       {
         type: 'p',
-        text: 'If the dispute is not resolved, you can ask for mediation. The mediators we are willing to work with are: [MEDIATORS]. Mediation is voluntary and does not affect your right to go to court.',
+        text: 'If the dispute is not resolved, you can ask for mediation. We are willing to work with a mediator accredited in the Greek Ministry of Justice register (Law 4640/2019), chosen together with you. Mediation is voluntary and does not affect your right to go to court.',
       },
       {
         type: 'p',
@@ -647,7 +649,7 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
       { type: 'h2', text: '14. Governing law' },
       {
         type: 'p',
-        text: 'These terms are governed by Greek law. The courts of [COURTS CITY] have jurisdiction over any dispute, without prejudice to the mediation described in section 11.',
+        text: 'These terms are governed by Greek law. The courts of Athens have jurisdiction over any dispute, without prejudice to the mediation described in section 11.',
       },
 
       { type: 'h2', text: '15. Contact' },

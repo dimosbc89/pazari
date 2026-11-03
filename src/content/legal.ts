@@ -22,7 +22,7 @@ export interface LegalPage {
 export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
   el: {
     title: 'Πολιτική Απορρήτου',
-    updated: 'Τελευταία ενημέρωση: [LAST UPDATED DATE]',
+    updated: 'Τελευταία ενημέρωση: 3 Νοεμβρίου 2026',
     intro:
       'Η πολιτική αυτή εξηγεί ποια προσωπικά δεδομένα επεξεργάζεται το Tagora όταν χρησιμοποιείτε τον ιστότοπό μας, για ποιον λόγο και ποια δικαιώματα έχετε. Σχεδιάσαμε το Tagora ώστε να συλλέγει όσο το δυνατόν λιγότερα: δεν υπάρχουν λογαριασμοί χρηστών, εγγραφή ή newsletter, και μπορείτε να συγκρίνετε τιμές χωρίς να μας πείτε ποιος είστε.',
     blocks: [
@@ -45,7 +45,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       { type: 'h3', text: 'Αναζητήσεις, φίλτρα και μεταβάσεις σε καταστήματα' },
       {
         type: 'p',
-        text: 'Καταγράφουμε ποιες αναζητήσεις γίνονται, ποια φίλτρα επιλέγονται και σε ποιες προσφορές γίνεται κλικ, ώστε να βελτιώνουμε τα αποτελέσματα και να ενημερώνουμε τα συνεργαζόμενα καταστήματα για το πόσες επισκέψεις τους στείλαμε. Τα στοιχεία αυτά αναλύονται σε συγκεντρωτική μορφή και δεν χρησιμοποιούνται για να δημιουργηθεί προφίλ σας. Σας παρακαλούμε να μην πληκτρολογείτε προσωπικές πληροφορίες, όπως το όνομα ή το τηλέφωνό σας, στο πεδίο αναζήτησης.',
+        text: 'Δεν αποθηκεύουμε τι αναζητάτε ούτε ποια φίλτρα επιλέγετε. Τα αποτελέσματα μιας αναζήτησης μπορεί να κρατηθούν προσωρινά (για λίγα λεπτά) στο δίκτυο της Cloudflare, χωρίς κανένα στοιχείο για εσάς, ώστε να φορτώνουν πιο γρήγορα. Όταν κάνετε κλικ σε μια προσφορά, μετράμε μόνο ότι έγινε μία μετάβαση στο συγκεκριμένο κατάστημα εκείνη την ημέρα, για να ενημερώνουμε τα καταστήματα πόσες επισκέψεις τους στείλαμε· δεν κρατάμε IP ή άλλο στοιχείο σας. Αν δεχτείτε τα cookies ανάλυσης, το Google Analytics μπορεί να καταγράφει τις σελίδες που βλέπετε, μαζί με τις αναζητήσεις στη διεύθυνσή τους. Σας παρακαλούμε να μην πληκτρολογείτε προσωπικές πληροφορίες, όπως το όνομα ή το τηλέφωνό σας, στο πεδίο αναζήτησης.',
       },
       { type: 'h3', text: 'Προτίμηση χώρας και γλώσσας' },
       {
@@ -77,12 +77,12 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
           [
             'Λειτουργία και ασφάλεια του ιστότοπου (αρχεία καταγραφής)',
             'Έννομο συμφέρον (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ): μια διαθέσιμη και ασφαλής υπηρεσία',
-            '[LOG RETENTION DAYS] ημέρες· περισσότερο μόνο αν χρειάζεται για τη διερεύνηση συγκεκριμένου περιστατικού',
+            'Έως 7 ημέρες· περισσότερο μόνο αν χρειάζεται για τη διερεύνηση συγκεκριμένου περιστατικού',
           ],
           [
-            'Βελτίωση της αναζήτησης και αναφορά μεταβάσεων στα καταστήματα',
-            'Έννομο συμφέρον (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ): μια χρήσιμη υπηρεσία σύγκρισης και ακριβής ενημέρωση των συνεργατών μας',
-            'Μεμονωμένα συμβάντα έως [EVENT RETENTION DAYS] ημέρες· στη συνέχεια μόνο συγκεντρωτικά στατιστικά χωρίς αναγνωριστικά',
+            'Μέτρηση μεταβάσεων στα καταστήματα',
+            'Έννομο συμφέρον (άρθρο 6 παρ. 1 στοιχ. στ΄ ΓΚΠΔ): ακριβής ενημέρωση των συνεργατών μας',
+            'Κρατάμε μόνο έναν αριθμό ανά κατάστημα και ημέρα, χωρίς κανένα στοιχείο επισκεπτών',
           ],
           [
             'Απομνημόνευση χώρας και γλώσσας',
@@ -102,7 +102,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
           [
             'Αιτήσεις και λογαριασμοί καταστημάτων',
             'Εκτέλεση σύμβασης και προσυμβατικά μέτρα (άρθρο 6 παρ. 1 στοιχ. β΄ ΓΚΠΔ)',
-            'Όσο διαρκεί η συνεργασία και έως [MERCHANT RETENTION] μετά τη λήξη της· οι σύνδεσμοι σύνδεσης λήγουν σε 30 λεπτά και οι συνεδρίες σε 30 ημέρες',
+            'Όσο διαρκεί η συνεργασία και έως 5 έτη μετά τη λήξη της (για φορολογικές και νομικές υποχρεώσεις)· οι σύνδεσμοι σύνδεσης λήγουν σε 30 λεπτά και οι συνεδρίες σε 30 ημέρες',
           ],
         ],
       },
@@ -119,9 +119,8 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       {
         type: 'ul',
         items: [
-          'τον **πάροχο φιλοξενίας και CDN** ([HOSTING PROVIDER]), που εξυπηρετεί τον ιστότοπο και τηρεί τα αρχεία καταγραφής·',
-          'το **Typesense Cloud**, που φιλοξενεί τη μηχανή αναζήτησης προϊόντων και επεξεργάζεται τα αιτήματα αναζήτησης·',
-          'τον **πάροχο αποστολής email** ([EMAIL PROVIDER]), που στέλνει στα καταστήματα τα email σύνδεσης και ενημέρωσης·',
+          'την **Cloudflare**, που φιλοξενεί τον ιστότοπο, τη βάση δεδομένων (στη Δυτική Ευρώπη) και την αναζήτηση προϊόντων, και τηρεί τα αρχεία καταγραφής·',
+          'τη **Resend**, που στέλνει στα καταστήματα τα email σύνδεσης και ενημέρωσης·',
           'την **Google**, μόνο εφόσον έχετε συναινέσει σε cookies ανάλυσης ή διαφήμισης.',
         ],
       },
@@ -201,7 +200,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
 
   en: {
     title: 'Privacy Policy',
-    updated: 'Last updated: [LAST UPDATED DATE]',
+    updated: 'Last updated: 3 November 2026',
     intro:
       'This policy explains what personal data Tagora processes when you use our website, why we process it and what rights you have. We built Tagora to collect as little as possible: there are no user accounts, no sign-up and no newsletter, and you can compare prices without telling us who you are.',
     blocks: [
@@ -224,7 +223,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       { type: 'h3', text: 'Searches, filters and click-outs' },
       {
         type: 'p',
-        text: 'We record which searches are made, which filters are applied and which offers are clicked, so that we can improve results and tell partner shops how many visits we sent them. These events are analysed in aggregated form and are not used to build a profile of you. Please avoid typing personal information, such as your name or phone number, into the search box.',
+        text: 'We do not store what you search for or which filters you choose. Search results may be kept briefly (for a few minutes) on Cloudflare’s network, with no information about you, so that they load faster. When you click an offer, we only count that one visit went to that shop that day, so that we can tell shops how many visits we sent them; we keep no IP address or other information about you. If you accept analytics cookies, Google Analytics may record the pages you view, including the searches in their address. Please do not type personal information, such as your name or phone number, into the search box.',
       },
       { type: 'h3', text: 'Your country and language preference' },
       {
@@ -256,12 +255,12 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
           [
             'Running and securing the website (logs)',
             'Legitimate interest (Art. 6(1)(f) GDPR): an available and secure service',
-            '[LOG RETENTION DAYS] days; longer only if needed to investigate a specific incident',
+            'Up to 7 days; longer only if needed to investigate a specific incident',
           ],
           [
-            'Improving search and reporting click-outs to shops',
-            'Legitimate interest (Art. 6(1)(f) GDPR): a useful comparison service and accurate reporting to our partners',
-            'Individual events up to [EVENT RETENTION DAYS] days; after that, only aggregated statistics with no identifiers',
+            'Counting visits sent to shops',
+            'Legitimate interest (Art. 6(1)(f) GDPR): accurate reporting to our partners',
+            'We keep only one number per shop per day, with no information about visitors',
           ],
           [
             'Remembering your country and language',
@@ -281,7 +280,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
           [
             'Shop applications and accounts',
             'Performance of a contract and pre-contractual steps (Art. 6(1)(b) GDPR)',
-            'For as long as we work together and up to [MERCHANT RETENTION] afterwards; sign-in links expire after 30 minutes and sessions after 30 days',
+            'For as long as we work together and up to 5 years afterwards (for tax and legal obligations); sign-in links expire after 30 minutes and sessions after 30 days',
           ],
         ],
       },
@@ -298,9 +297,8 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
       {
         type: 'ul',
         items: [
-          'our **hosting and CDN provider** ([HOSTING PROVIDER]), which serves the website and keeps the logs;',
-          '**Typesense Cloud**, which hosts our product search engine and processes the search requests sent to it;',
-          'our **email provider** ([EMAIL PROVIDER]), which sends sign-in and update emails to shops;',
+          '**Cloudflare**, which hosts the website, the database (in Western Europe) and the product search, and keeps the logs;',
+          '**Resend**, which sends sign-in and update emails to shops;',
           '**Google**, only if you have consented to analytics or advertising cookies.',
         ],
       },
@@ -386,7 +384,7 @@ export const privacyPolicy: Record<'el' | 'en', LegalPage> = {
 export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
   el: {
     title: 'Πολιτική Cookies',
-    updated: 'Τελευταία ενημέρωση: [LAST UPDATED DATE]',
+    updated: 'Τελευταία ενημέρωση: 3 Νοεμβρίου 2026',
     intro:
       'Η πολιτική αυτή εξηγεί ποια cookies και παρόμοιες τεχνολογίες χρησιμοποιεί το Tagora, τι κάνουν και πώς μπορείτε να τα ελέγχετε. Ο κανόνας μας είναι απλός: αυτόματα ενεργοποιείται μόνο ό,τι χρειάζεται για να λειτουργεί ο ιστότοπος· όλα τα υπόλοιπα περιμένουν τη δική σας άδεια.',
     blocks: [
@@ -492,7 +490,7 @@ export const cookiesPolicy: Record<'el' | 'en', LegalPage> = {
 
   en: {
     title: 'Cookies Policy',
-    updated: 'Last updated: [LAST UPDATED DATE]',
+    updated: 'Last updated: 3 November 2026',
     intro:
       'This policy explains which cookies and similar technologies Tagora uses, what they do and how you can control them. Our rule is simple: only what the website needs in order to work is set automatically; everything else waits for your permission.',
     blocks: [
