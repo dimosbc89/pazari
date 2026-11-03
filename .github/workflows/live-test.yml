@@ -1,0 +1,26 @@
+# Temporary: live test of tagora.online from GitHub's servers (removed after the test).
+name: Live test
+on:
+  push:
+    branches: [claude/tagora-rebrand]
+    paths: ['live-test/plan.json']
+permissions:
+  contents: write
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm i --no-save --no-package-lock playwright@1.55.0 && npx playwright install --with-deps chromium
+      - run: node live-test/run.mjs
+      - name: Save results to the branch
+        if: always()
+        run: |
+          git config user.name "tagora-live-test"
+          git config user.email "actions@users.noreply.github.com"
+          git add live-test/out
+          git commit -m "Live test results" || exit 0
+          git push

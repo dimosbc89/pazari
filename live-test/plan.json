@@ -1,0 +1,9 @@
+{
+  "phase": "signup",
+  "candidates": [
+    { "type": "shopify", "url": "https://www.ancient-greek-sandals.com", "name": "Ancient Greek Sandals" },
+    { "type": "shopify", "url": "https://zeusndione.com", "name": "Zeus+Dione" },
+    { "type": "shopify", "url": "https://www.korres.com", "name": "Korres" },
+    { "type": "shopify", "url": "https://www.allbirds.com", "name": "Allbirds" }
+  ]
+}
