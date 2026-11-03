@@ -62,7 +62,7 @@ wp eval "\$v = wc_get_product( $V43 ); \$v->set_stock_status( 'outofstock' ); \$
 wp action-scheduler run --hooks=tagora_push_products --quiet || wp action-scheduler run --quiet
 check "variation sold out: removed" "$(curl -sS -o /dev/null -w '%{http_code}' "$T/catalogue/products/$SHOP-$V43")" "404"
 check "other variation stays" "$(curl -sS -o /dev/null -w '%{http_code}' "$T/catalogue/products/$SHOP-$V42")" "200"
-wp post delete "$LUMO" >/dev/null
+wp eval "wp_trash_post( $LUMO );" # what "Move to Trash" in WP-Admin does
 wp action-scheduler run --hooks=tagora_push_products --quiet || wp action-scheduler run --quiet
 check "trashed product: removed" "$(curl -sS -o /dev/null -w '%{http_code}' "$T/catalogue/products/$SHOP-$LUMO")" "404"
 

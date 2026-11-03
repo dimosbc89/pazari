@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 class Tagora_Catalog {
 
 	/** Meta keys where popular plugins keep the barcode (EAN/GTIN), checked in this order. */
-	const EAN_KEYS = array( '_global_unique_id', '_ean', 'ean', '_gtin', 'gtin', '_barcode', 'barcode', '_alg_ean', '_wpm_gtin_code', 'hwp_product_gtin', 'hwp_var_gtin', '_ts_gtin', '_woosea_ean', '_woosea_gtin', '_cpf_ean', '_wc_gtin' );
+	const EAN_KEYS = array( '_ean', 'ean', '_gtin', 'gtin', '_barcode', 'barcode', '_alg_ean', '_wpm_gtin_code', 'hwp_product_gtin', 'hwp_var_gtin', '_ts_gtin', '_woosea_ean', '_woosea_gtin', '_cpf_ean', '_wc_gtin' );
 	/** Meta keys for the manufacturer's part number (MPN). */
 	const MPN_KEYS = array( '_mpn', 'mpn', '_woosea_mpn', 'hwp_product_mpn', 'hwp_var_mpn', '_ts_mpn', '_wpm_mpn', '_cpf_mpn' );
 	/** Taxonomies used for brands by WooCommerce and popular brand plugins. */
