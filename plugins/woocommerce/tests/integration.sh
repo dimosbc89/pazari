@@ -14,7 +14,9 @@ api() { curl -sS -H 'Content-Type: application/json' "$@"; }
 echo "== WooCommerce products"
 CAT=$(wp wc product_cat create --user=1 --name="Ήχος" --porcelain)
 SONARO=$(wp wc product create --user=1 --name="Ακουστικά Sonaro Q40" --type=simple --status=publish --regular_price=129 --sale_price=109 \
-  --global_unique_id=5209000000017 --categories="[{\"id\":$CAT}]" --short_description="<p>Over-ear με <b>ακύρωση θορύβου</b>.</p>" --porcelain)
+  --categories="[{\"id\":$CAT}]" --short_description="<p>Over-ear με <b>ακύρωση θορύβου</b>.</p>" --porcelain)
+# WooCommerce's own GTIN/EAN field (9.2+), set the way the product editor does.
+wp eval "\$p = wc_get_product( $SONARO ); \$p->set_global_unique_id( '5209000000017' ); \$p->save();"
 wp term create product_brand Sonaro --porcelain >/dev/null 2>&1 || true
 wp post term add "$SONARO" product_brand Sonaro >/dev/null 2>&1 || true
 LUMO=$(wp wc product create --user=1 --name="Φωτιστικό Lumo Arc" --type=simple --status=publish --regular_price=49.90 \
