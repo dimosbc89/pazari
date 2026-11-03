@@ -1,0 +1,20 @@
+[
+  {
+    "type": "woocommerce",
+    "url": "https://www.danaos-stores.gr",
+    "status": 200,
+    "ms": 364,
+    "ok": false,
+    "code": "not_woocommerce",
+    "message": "This does not look like a WooCommerce shop, or its Store API is switched off. Use an XML feed instead."
+  },
+  {
+    "type": "shopify",
+    "url": "https://www.danaos-stores.gr",
+    "status": 200,
+    "ms": 73,
+    "ok": false,
+    "code": "not_shopify",
+    "message": "This store does not share its product list. Use an XML feed instead."
+  }
+]
