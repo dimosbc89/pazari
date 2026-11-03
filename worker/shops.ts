@@ -1,11 +1,33 @@
 // Shop records, syncing a shop into the search index, and the schedule.
+import { COUNTRIES } from '../shared/markets.ts';
 import { buildReport, SyncError, typesenseClient, type Issue, type ShopConfig, type SourceType } from '../sync/index.ts';
 import { deleteShopProducts, saveShopProducts } from './catalogue.ts';
 import { mailFor, sendMail } from './email.ts';
 import { isDev, type Env } from './env.ts';
 import { addHours, HttpError, nowIso } from './http.ts';
+import { slug } from '../sync/text.ts';
 
 export type ShopStatus = 'pending' | 'active' | 'paused' | 'rejected';
+
+/** Bump when the shop terms (src/content/terms.ts) change, and email shops 15 days before. */
+export const SHOP_TERMS_VERSION = '2026-11';
+export const MARKETS = COUNTRIES.map((c) => c.code);
+
+export function countriesFrom(v: unknown): string[] {
+  const list = Array.isArray(v) ? v.filter((c): c is string => typeof c === 'string' && MARKETS.includes(c)) : [];
+  if (!list.length) throw new HttpError(400, 'missing_countries', 'Choose at least one country you deliver to.');
+  return [...new Set(list)];
+}
+
+/** A free shop id (slug of the name, with -2, -3… when taken). */
+export async function uniqueId(env: Env, name: string): Promise<string> {
+  const base = slug(name).slice(0, 40) || 'shop';
+  for (let i = 1; i < 50; i++) {
+    const id = i === 1 ? base : `${base}-${i}`;
+    if (!(await env.DB.prepare('SELECT 1 FROM shops WHERE id = ?').bind(id).first())) return id;
+  }
+  return `${base}-${crypto.randomUUID().slice(0, 6)}`;
+}
 
 export interface ShopRow {
   id: string; name: string; website: string; email: string; contact_name: string | null; phone: string | null;
@@ -146,7 +168,7 @@ export async function syncShop(env: Env, shop: ShopRow, trigger: 'schedule' | 'm
 /** Runs from the cron trigger: syncs the shops that are due, a few at a time. */
 export async function syncDueShops(env: Env) {
   const batch = Math.max(1, Number(env.SYNC_BATCH || 3));
-  const { results } = await env.DB.prepare("SELECT * FROM shops WHERE status = 'active' AND source_type != 'plugin' AND (next_sync_at IS NULL OR next_sync_at <= ?) ORDER BY next_sync_at LIMIT ?")
+  const { results } = await env.DB.prepare("SELECT * FROM shops WHERE status = 'active' AND source_type NOT IN ('plugin', 'shopify-app') AND (next_sync_at IS NULL OR next_sync_at <= ?) ORDER BY next_sync_at LIMIT ?")
     .bind(nowIso(), batch).all<ShopRow>();
   for (const shop of results) {
     const r = await syncShop(env, shop, 'schedule');

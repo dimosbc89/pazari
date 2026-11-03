@@ -24,6 +24,13 @@ export interface Env {
   RESEND_API_KEY?: string;
   /** Sender, e.g. "Tagora <hello@tagora.online>" (the domain must be verified in Resend) */
   MAIL_FROM?: string;
+
+  /** The Tagora app for Shopify: its Client ID (public, in wrangler.jsonc) */
+  SHOPIFY_API_KEY?: string;
+  /** Secret: the app's Client secret (signs session tokens and webhooks) */
+  SHOPIFY_API_SECRET?: string;
+  /** Development only: send Shopify API calls to a test server, e.g. http://localhost:8790 */
+  SHOPIFY_TEST_ORIGIN?: string;
 }
 
 export const isDev = (env: Env) => env.ENVIRONMENT === 'development';

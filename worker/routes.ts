@@ -1,19 +1,15 @@
-import { COUNTRIES } from '../shared/markets.ts';
 import { buildReport, checkUrl, SyncError, type Issue, type SourceType } from '../sync/index.ts';
-import { slug } from '../sync/text.ts';
 import { FACETS, SORTS, type Refinements, type SortKey } from '../src/search/types.ts';
 import { catalogueMode, getOffers, getProduct, getSetting, getStats, getVariants, listShopProducts, searchCatalogue, setSetting } from './catalogue.ts';
 import { PLUGIN_FORMAT, pluginFinish, pluginHello, pluginProducts, setPluginKey } from './plugin.ts';
+import { shopifyAppApply, shopifyAppState, shopifyAppSync, shopifyWebhook, startShopifySync } from './shopify.ts';
 import { createLoginToken, endSession, getSession, redeemLoginToken, requireSession, type Session } from './auth.ts';
 import { mailFor, sendMail, updateEvery } from './email.ts';
 import { adminEmails, isDev, type Env } from './env.ts';
 import { body, checkSameOrigin, errorResponse, HttpError, isEmail, json, nowIso, num, str } from './http.ts';
-import { getShop, intervalHours, shopDto, siteLink, syncShop, unlistShop, type ShopRow, type ShopStatus } from './shops.ts';
+import { countriesFrom, getShop, intervalHours, MARKETS, SHOP_TERMS_VERSION, shopDto, siteLink, syncShop, uniqueId, unlistShop, type ShopRow, type ShopStatus } from './shops.ts';
 
 const SOURCE_TYPES: SourceType[] = ['feed', 'shopify', 'woocommerce', 'plugin'];
-/** Bump when the shop terms (src/content/terms.ts) change, and email shops 15 days before. */
-const SHOP_TERMS_VERSION = '2026-11';
-const MARKETS = COUNTRIES.map((c) => c.code);
 
 type Handler = (ctx: { req: Request; env: Env; params: string[]; origin: string; exec: ExecutionContext }) => Promise<Response>;
 
@@ -60,21 +56,6 @@ function sourceFrom(b: Record<string, unknown>, env: Env): { type: SourceType; u
   } catch (e) {
     throw new HttpError(400, 'bad_url', e instanceof Error ? e.message : 'Bad address');
   }
-}
-
-function countriesFrom(v: unknown): string[] {
-  const list = Array.isArray(v) ? v.filter((c): c is string => typeof c === 'string' && MARKETS.includes(c)) : [];
-  if (!list.length) throw new HttpError(400, 'missing_countries', 'Choose at least one country you deliver to.');
-  return [...new Set(list)];
-}
-
-async function uniqueId(env: Env, name: string): Promise<string> {
-  const base = slug(name).slice(0, 40);
-  for (let i = 1; i < 50; i++) {
-    const id = i === 1 ? base : `${base}-${i}`;
-    if (!(await env.DB.prepare('SELECT 1 FROM shops WHERE id = ?').bind(id).first())) return id;
-  }
-  return `${base}-${crypto.randomUUID().slice(0, 6)}`;
 }
 
 /** The shop, if the session may manage it (its own email, or an admin). */
@@ -212,6 +193,11 @@ const syncNow: Handler = async ({ req, env, params, origin }) => {
     throw new HttpError(429, 'too_soon', 'You can sync again in a few minutes.');
   }
   await env.DB.prepare('UPDATE shops SET last_manual_sync_at = ? WHERE id = ?').bind(nowIso(), shop.id).run();
+  if (shop.source_type === 'shopify-app') {
+    // Shopify prepares the product list; it is saved a minute or two later.
+    await startShopifySync(env, shop.id, 'manual');
+    return json({ ok: true, started: true });
+  }
   const result = await syncShop(env, shop, 'manual', origin);
   return json({ ok: true, result });
 };
@@ -224,7 +210,10 @@ const updateShop: Handler = async ({ req, env, params }) => {
   const vals: unknown[] = [];
   const set = (col: string, v: unknown) => { sets.push(`${col} = ?`); vals.push(v); };
   let pluginKey: string | undefined;
-  if ('sourceType' in b || 'sourceUrl' in b) {
+  if (('sourceType' in b || 'sourceUrl' in b) && shop.source_type === 'shopify-app' && (b.sourceType ?? 'shopify-app') !== 'shopify-app') {
+    throw new HttpError(409, 'shopify_app_shop', 'This shop is connected with the Tagora app for Shopify. Remove the app in Shopify first.');
+  }
+  if (('sourceType' in b || 'sourceUrl' in b) && shop.source_type !== 'shopify-app') {
     const { type, url } = sourceFrom({ sourceType: b.sourceType ?? shop.source_type, sourceUrl: b.sourceUrl ?? shop.source_url }, env);
     if (type === 'plugin' && shop.source_type !== 'plugin') {
       set('source_type', type); set('source_url', url); set('source_format', PLUGIN_FORMAT);
@@ -285,12 +274,18 @@ const adminAction: Handler = async ({ req, env, params, origin }) => {
 
   if (action === 'approve' || action === 'resume') {
     await env.DB.prepare("UPDATE shops SET status = 'active', status_reason = NULL, approved_at = COALESCE(approved_at, ?), next_sync_at = ? WHERE id = ?").bind(nowIso(), nowIso(), id).run();
-    // Plugin shops: show what the plugin already sent; an empty shop gets a full sync at the plugin's next hourly check.
-    const result = shop.source_type === 'plugin'
+    // Plugin and Shopify app shops: show what they already sent. The plugin sends a full sync at its
+    // next hourly check when the shop is empty; the Shopify app gets a fresh full sync now.
+    const pushed = shop.source_type === 'plugin' || shop.source_type === 'shopify-app';
+    const result = pushed
       ? await (async () => {
           const n = await listShopProducts(env, id);
           await env.DB.prepare('UPDATE shops SET product_count = ? WHERE id = ?').bind(n, id).run();
-          return { status: 'ok' as const, found: n, imported: n, skipped: 0, removed: 0, message: n ? null : 'Waiting for the plugin to send the products (within the hour).', issues: [] };
+          if (shop.source_type === 'shopify-app') {
+            await startShopifySync(env, id, 'approve').catch((e) => console.error('shopify sync on approval failed', id, e));
+          }
+          const waiting = shop.source_type === 'plugin' ? 'Waiting for the plugin to send the products (within the hour).' : 'Waiting for Shopify to send the products (a few minutes).';
+          return { status: 'ok' as const, found: n, imported: n, skipped: 0, removed: 0, message: n ? null : waiting, issues: [] };
         })()
       : await syncShop(env, { ...shop, status: 'active' }, 'approve', origin);
     // A shop that was paused hears it is back; a pending one hears it was approved.
@@ -429,6 +424,11 @@ export async function handleApi(req: Request, env: Env, exec: ExecutionContext):
     if (req.method === 'POST' && path === '/plugin/hello') return await pluginHello(env, req, url.origin);
     if (req.method === 'POST' && path === '/plugin/products') return await pluginProducts(env, req);
     if (req.method === 'POST' && path === '/plugin/finish') return await pluginFinish(env, req);
+    // The Tagora app for Shopify: webhooks (signed by Shopify) and the app page (Shopify session token).
+    if (req.method === 'POST' && path === '/shopify/webhooks') return await shopifyWebhook(env, req, exec);
+    if (req.method === 'GET' && path === '/shopify/app/state') return await shopifyAppState(env, req, url.origin);
+    if (req.method === 'POST' && path === '/shopify/app/apply') return await shopifyAppApply(env, req, url.origin);
+    if (req.method === 'POST' && path === '/shopify/app/sync') return await shopifyAppSync(env, req, url.origin);
     checkSameOrigin(req);
     for (const [method, re, handler] of ROUTES) {
       const m = path.match(re);
@@ -436,7 +436,12 @@ export async function handleApi(req: Request, env: Env, exec: ExecutionContext):
     }
     throw new HttpError(404, 'not_found');
   } catch (e) {
-    if (e instanceof HttpError) return errorResponse(e);
+    if (e instanceof HttpError) {
+      const res = errorResponse(e);
+      // Tells App Bridge to retry with a fresh session token.
+      if (e.code === 'invalid_session') res.headers.set('X-Shopify-Retry-Invalid-Session-Request', '1');
+      return res;
+    }
     console.error('api error', req.method, path, e);
     return json({ ok: false, code: 'server_error', message: 'Something went wrong. Please try again.' }, 500);
   }

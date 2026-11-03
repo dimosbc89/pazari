@@ -53,9 +53,11 @@ function ShopsAdmin() {
     setNotice(null);
     try {
       const endpoint = action === 'sync' ? `/shops/${shop.id}/sync` : `/admin/shops/${shop.id}/${action}`;
-      const r = await api<{ result?: RunResult }>(endpoint, { body: { reason } });
+      const r = await api<{ result?: RunResult; started?: boolean }>(endpoint, { body: { reason } });
       const res = r.result;
-      setNotice(res
+      setNotice(r.started
+        ? { ok: true, text: `${shop.name}: ${t('dash.syncStarted')}` }
+        : res
         ? { ok: res.status !== 'error', text: `${shop.name}: ${res.status === 'error' ? res.message : t('dash.syncDone', { imported: num(res.imported), removed: num(res.removed) })}` }
         : { ok: true, text: `${shop.name}: ${t('admin.done')}` });
       setVersion((v) => v + 1);

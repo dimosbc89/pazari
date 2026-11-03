@@ -56,7 +56,8 @@ export function useErrorText() {
 // ---------- types (mirror worker/shops.ts) ----------
 
 export type ShopStatus = 'pending' | 'active' | 'paused' | 'rejected';
-export type SourceType = 'feed' | 'shopify' | 'woocommerce' | 'plugin';
+/** How a shop is connected. shopify-app: the Tagora app for Shopify (set up from inside Shopify, not from this site). */
+export type SourceType = 'feed' | 'shopify' | 'woocommerce' | 'plugin' | 'shopify-app';
 export interface Issue { code: string; count: number; examples: string[] }
 
 export interface Shop {

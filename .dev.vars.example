@@ -11,3 +11,8 @@ ADMIN_EMAILS=admin@example.com
 # Leave these empty locally: sign-in links are then shown on screen instead of emailed.
 RESEND_API_KEY=
 MAIL_FROM=
+# The Tagora app for Shopify, against the stand-in Shopify (node plugins/shopify/tests/mock-shopify.mjs).
+# Test values only; the real Client ID is in wrangler.jsonc and the real secret is a Cloudflare secret.
+SHOPIFY_API_KEY=test-client-id
+SHOPIFY_API_SECRET=test-secret
+SHOPIFY_TEST_ORIGIN=http://localhost:8790

@@ -71,3 +71,60 @@ function toItems(p: ShopifyProduct, base: string): SourceItem[] {
     };
   });
 }
+
+// ---------------------------------------------------------------- the Tagora app for Shopify
+// Products read with the Admin GraphQL API (worker/shopify.ts). Same ids as the public list
+// above ("<product>-<variant>"), so a shop that switches to the app keeps its product pages.
+
+export interface AdminVariant {
+  id: string; legacyResourceId: string; title: string; price: string; compareAtPrice: string | null;
+  barcode: string | null; availableForSale: boolean; selectedOptions: { name: string; value: string }[];
+  image: { url: string } | null;
+}
+export interface AdminProduct {
+  id: string; legacyResourceId: string; title: string; handle: string; status: string; vendor: string;
+  productType: string; description: string; onlineStoreUrl: string | null; category: { fullName: string } | null;
+  featuredMedia: { preview: { image: { url: string } | null } | null } | null;
+  variants: AdminVariant[];
+  /** Image URLs of the product's media, in order */
+  images: string[];
+}
+
+/**
+ * One item per variant. Products that are not active, or not on the Online Store (no
+ * onlineStoreUrl), give items without a link, so the checks leave them out.
+ * vat: 1 when the store's prices include VAT, else e.g. 1.24 to add it.
+ */
+export function adminProductItems(p: AdminProduct, vat = 1): SourceItem[] {
+  if (p.status !== 'ACTIVE') return [];
+  const description = p.description ? decodeEntities(p.description).trim() : undefined;
+  const featured = p.featuredMedia?.preview?.image?.url;
+  const allImages = [...new Set([...(featured ? [featured] : []), ...p.images])];
+  const round = (n: number) => Math.round(n * vat * 100) / 100;
+  const pick = (v: AdminVariant, re: RegExp) => v.selectedOptions.find((o) => re.test(o.name))?.value || undefined;
+  return p.variants.map((v) => {
+    const price = parseFloat(v.price);
+    const compare = v.compareAtPrice ? parseFloat(v.compareAtPrice) : NaN;
+    const image = v.image?.url ?? allImages[0];
+    const color = pick(v, COLOR);
+    const size = pick(v, SIZE);
+    const hasOptions = v.title && v.title !== 'Default Title';
+    return {
+      id: `${p.legacyResourceId}-${v.legacyResourceId}`,
+      groupId: p.legacyResourceId,
+      title: hasOptions && !color && !size ? `${p.title} – ${v.title}` : p.title,
+      description,
+      url: p.onlineStoreUrl ? `${p.onlineStoreUrl}${p.variants.length > 1 ? `?variant=${v.legacyResourceId}` : ''}` : undefined,
+      image,
+      images: allImages.filter((s) => s !== image).slice(0, 6),
+      price: Number.isFinite(price) ? round(price) : undefined,
+      oldPrice: compare > price ? round(compare) : undefined,
+      brand: p.vendor || undefined,
+      category: p.category?.fullName || p.productType || undefined,
+      color,
+      size,
+      gtin: v.barcode || undefined,
+      inStock: v.availableForSale !== false,
+    };
+  });
+}
