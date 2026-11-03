@@ -15,8 +15,8 @@ export const SITE = {
   company: {
     legalName: 'GROW Agency Ε.Ε.',
     address: 'Κολοκοτρώνη 64Α, 173 43 Άγιος Δημήτριος, Αττική',
-    gemi: '[GEMI NUMBER]',
-    vat: '[VAT NUMBER]',
+    gemi: '172105303000',
+    vat: '802206835',
     email: 'hello@tagora.online',
     phone: '+30 210 9713335',
   },
