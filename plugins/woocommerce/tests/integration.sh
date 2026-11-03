@@ -12,23 +12,10 @@ check() { # label, got, want
 api() { curl -sS -H 'Content-Type: application/json' "$@"; }
 
 echo "== WooCommerce products"
-CAT=$(wp wc product_cat create --user=1 --name="Ήχος" --porcelain)
-SONARO=$(wp wc product create --user=1 --name="Ακουστικά Sonaro Q40" --type=simple --status=publish --regular_price=129 --sale_price=109 \
-  --categories="[{\"id\":$CAT}]" --short_description="<p>Over-ear με <b>ακύρωση θορύβου</b>.</p>" --porcelain)
-# WooCommerce's own GTIN/EAN field (9.2+), set the way the product editor does.
-wp eval "\$p = wc_get_product( $SONARO ); \$p->set_global_unique_id( '5209000000017' ); \$p->save();"
-wp term create product_brand Sonaro --porcelain >/dev/null 2>&1 || true
-wp post term add "$SONARO" product_brand Sonaro >/dev/null 2>&1 || true
-LUMO=$(wp wc product create --user=1 --name="Φωτιστικό Lumo Arc" --type=simple --status=publish --regular_price=49.90 \
-  --meta_data='[{"key":"_ean","value":"5209000000031"},{"key":"_mpn","value":"ARC-RED"}]' \
-  --attributes='[{"name":"Μάρκα","options":["Lumo"],"visible":true},{"name":"Χρώμα","options":["Κόκκινο"],"visible":true}]' --porcelain)
-VELTO=$(wp wc product create --user=1 --name="Αθλητικά Velto Aero" --type=variable --status=publish \
-  --attributes='[{"name":"Μέγεθος","options":["42","43"],"variation":true,"visible":true},{"name":"Brand","options":["Velto"],"visible":true}]' --porcelain)
-V42=$(wp wc product_variation create "$VELTO" --user=1 --regular_price=80 --attributes='[{"name":"Μέγεθος","option":"42"}]' --meta_data='[{"key":"_ean","value":"5209000000062"}]' --porcelain)
-V43=$(wp wc product_variation create "$VELTO" --user=1 --regular_price=80 --attributes='[{"name":"Μέγεθος","option":"43"}]' --porcelain)
-wp wc product create --user=1 --name="Πρόχειρο" --type=simple --status=draft --regular_price=10 --porcelain >/dev/null
-SOLD=$(wp wc product create --user=1 --name="Εξαντλημένο" --type=simple --status=publish --regular_price=15 --stock_status=outofstock --porcelain)
-echo "sonaro=$SONARO lumo=$LUMO velto=$VELTO ($V42, $V43) sold=$SOLD"
+IDS=$(wp eval-file "$(dirname "$0")/setup-products.php")
+echo "$IDS"
+SONARO=$(echo "$IDS" | jq -r .sonaro); LUMO=$(echo "$IDS" | jq -r .lumo); VELTO=$(echo "$IDS" | jq -r .velto)
+V42=$(echo "$IDS" | jq -r .v42); V43=$(echo "$IDS" | jq -r .v43); SOLD=$(echo "$IDS" | jq -r .sold)
 
 echo "== Sign up on Tagora with the plugin"
 SIGNUP=$(api -X POST "$T/shops/signup" -d '{"name":"CI Woo Shop","website":"https://ci-woo.example","email":"owner@ci-woo.example","sourceType":"plugin","consent":true,"countries":["gr"],"lang":"el"}')
@@ -68,10 +55,10 @@ check "velto: same group" "$(echo "$V" | jq -r '[.hits[].groupId] | unique | len
 check "sold out: not shown" "$(curl -sS "$T/catalogue/search?country=gr&q=εξαντλημενο" | jq -r .total)" "0"
 
 echo "== Live updates (background jobs, as on a real shop)"
-wp wc product update "$SONARO" --user=1 --sale_price=99 >/dev/null
+wp eval "\$p = wc_get_product( $SONARO ); \$p->set_sale_price( '99' ); \$p->save();"
 wp action-scheduler run --hooks=tagora_push_products --quiet || wp action-scheduler run --quiet
 check "price change reaches Tagora" "$(curl -sS "$T/catalogue/products/$SHOP-$SONARO" | jq -r .product.price)" "99"
-wp wc product_variation update "$VELTO" "$V43" --user=1 --stock_status=outofstock >/dev/null
+wp eval "\$v = wc_get_product( $V43 ); \$v->set_stock_status( 'outofstock' ); \$v->save();"
 wp action-scheduler run --hooks=tagora_push_products --quiet || wp action-scheduler run --quiet
 check "variation sold out: removed" "$(curl -sS -o /dev/null -w '%{http_code}' "$T/catalogue/products/$SHOP-$V43")" "404"
 check "other variation stays" "$(curl -sS -o /dev/null -w '%{http_code}' "$T/catalogue/products/$SHOP-$V42")" "200"
