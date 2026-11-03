@@ -149,7 +149,7 @@ npm run demo:data  # rebuilds the demo catalogue and its images
 
 ## Before launch
 
-* Company details are in `src/config.ts` (`SITE.company`) and fill every page. Still missing: **ΓΕΜΗ** and **ΑΦΜ** (`[GEMI NUMBER]`, `[VAT NUMBER]`, highlighted in yellow), and check that the legal name `GROW Agency Ε.Ε.` matches the registry exactly.
+* Company details are in `src/config.ts` (`SITE.company`) and fill every page (GROW Agency Ε.Ε., ΓΕΜΗ 172105303000, ΑΦΜ 802206835). Check that the legal name matches the registry exactly.
 * Have a lawyer review the policies and both sets of terms.
 * Set the `ADMIN_EMAILS` secret and verify the Resend sender before inviting shops.
 * Shop terms: shops accept them at sign-up; the version and date are stored (`terms_version`, `terms_accepted_at`, shown in the admin). When you change the terms, bump `SHOP_TERMS_VERSION` in `worker/routes.ts` and email every shop at least 15 days before (EU Regulation 2019/1150). Rejected and paused shops get an email with the reason.
