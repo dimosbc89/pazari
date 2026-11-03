@@ -1,5 +1,6 @@
 // Shop records, syncing a shop into the search index, and the schedule.
 import { buildReport, SyncError, typesenseClient, type Issue, type ShopConfig, type SourceType } from '../sync/index.ts';
+import { deleteShopProducts, saveShopProducts } from './catalogue.ts';
 import { mailFor, sendMail } from './email.ts';
 import { isDev, type Env } from './env.ts';
 import { addHours, HttpError, nowIso } from './http.ts';
@@ -58,8 +59,12 @@ export async function getShop(env: Env, id: string): Promise<ShopRow> {
 
 export const intervalHours = (env: Env) => Math.max(1, Number(env.SYNC_INTERVAL_HOURS || 6));
 
-export function search(env: Env) {
-  if (!env.TYPESENSE_HOST || !env.TYPESENSE_ADMIN_KEY) throw new SyncError('index_not_configured', 'The search index is not configured (TYPESENSE_HOST / TYPESENSE_ADMIN_KEY).');
+/**
+ * Optional: a Typesense index kept in step with D1, for when the catalogue outgrows D1 search.
+ * Only used when TYPESENSE_HOST and TYPESENSE_ADMIN_KEY are set.
+ */
+function typesense(env: Env) {
+  if (!env.TYPESENSE_HOST || !env.TYPESENSE_ADMIN_KEY || env.TYPESENSE_HOST.startsWith('xxx')) return null;
   return typesenseClient({ host: env.TYPESENSE_HOST, port: env.TYPESENSE_PORT, protocol: env.TYPESENSE_PROTOCOL, apiKey: env.TYPESENSE_ADMIN_KEY, collection: env.TYPESENSE_COLLECTION });
 }
 
@@ -87,18 +92,26 @@ export async function syncShop(env: Env, shop: ShopRow, trigger: 'schedule' | 'm
     if (report.products.length === 0) {
       throw new SyncError('no_products', `None of the ${report.found} products passed the checks (price, link, stock). See the issues list.`);
     }
-    const ts = search(env);
-    await ts.ensureCollection();
-    const { failed, errors } = await ts.upsert(report.products);
-    const removed = await ts.deleteStale(shop.id, syncId);
-    const imported = report.products.length - failed;
+    const { removed } = await saveShopProducts(env, shop.id, report.products);
+    const ts = typesense(env);
+    if (ts) {
+      try {
+        await ts.ensureCollection();
+        const { failed, errors } = await ts.upsert(report.products);
+        if (failed) console.error(`typesense rejected ${failed} products of ${shop.id}: ${errors[0] ?? ''}`);
+        await ts.deleteStale(shop.id, syncId);
+      } catch (e) {
+        console.error('typesense mirror failed', shop.id, e);
+      }
+    }
+    const imported = report.products.length;
     // Sold-out items are left out on purpose; only other skips count as a problem.
     const soldOut = report.issues.find((i) => i.code === 'out_of_stock')?.count ?? 0;
     const skippedShare = report.found ? (report.skipped - soldOut) / report.found : 0;
     result = {
-      status: failed > 0 || skippedShare > 0.1 ? 'warning' : 'ok',
-      found: report.found, imported, skipped: report.skipped + failed, removed,
-      message: failed ? `${failed} products were rejected by the search index: ${errors[0] ?? ''}` : null,
+      status: skippedShare > 0.1 ? 'warning' : 'ok',
+      found: report.found, imported, skipped: report.skipped, removed,
+      message: null,
       issues: report.issues,
     };
   } catch (e) {
@@ -141,10 +154,11 @@ export async function syncDueShops(env: Env) {
 
 /** Takes a shop's products off the site (pause / reject). */
 export async function unlistShop(env: Env, shopId: string) {
+  await deleteShopProducts(env, shopId);
   try {
-    await search(env).deleteShop(shopId);
+    await typesense(env)?.deleteShop(shopId);
   } catch (e) {
-    console.error('unlist failed', shopId, e);
+    console.error('typesense unlist failed', shopId, e);
   }
   await env.DB.prepare('UPDATE shops SET product_count = 0 WHERE id = ?').bind(shopId).run();
 }

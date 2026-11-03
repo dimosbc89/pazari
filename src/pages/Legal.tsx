@@ -4,12 +4,13 @@ import { Footer } from '../components/Footer';
 import { Header } from '../components/Header';
 import { SITE } from '../config';
 import { cookiesPolicy, privacyPolicy, type LegalBlock, type LegalPage } from '../content/legal';
+import { aboutPage, shopHelpPage } from '../content/help';
 import { contactPage, rankingPage } from '../content/pages';
 import { shopTerms, termsOfUse } from '../content/terms';
 import { useLocale } from '../i18n';
 import { useDocumentTitle } from '../lib/hooks';
 
-export type PageKind = 'privacy' | 'cookies' | 'terms' | 'shopTerms' | 'ranking' | 'contact';
+export type PageKind = 'privacy' | 'cookies' | 'terms' | 'shopTerms' | 'ranking' | 'contact' | 'about' | 'shopHelp';
 
 const PAGES: Record<PageKind, Record<'el' | 'en', LegalPage>> = {
   privacy: privacyPolicy,
@@ -18,6 +19,8 @@ const PAGES: Record<PageKind, Record<'el' | 'en', LegalPage>> = {
   shopTerms,
   ranking: rankingPage,
   contact: contactPage,
+  about: aboutPage,
+  shopHelp: shopHelpPage,
 };
 
 /**
@@ -33,7 +36,6 @@ function fillCompany(text: string): string {
     '[GEMI NUMBER]': real(c.gemi),
     '[VAT NUMBER]': real(c.vat),
     '[CUSTOMER SERVICE PHONE]': real(c.phone),
-    '[OPENING HOURS]': real(c.hours),
     '[CONTACT EMAIL]': real(c.email) ? `[${c.email}](mailto:${c.email})` : null,
   };
   return text.replace(/\[[A-Z][A-Z0-9 _-]+\]/g, (m) => map[m] ?? m);

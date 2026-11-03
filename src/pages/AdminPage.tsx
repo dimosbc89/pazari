@@ -35,7 +35,7 @@ function ShopsAdmin() {
   const errText = useErrorText();
   const ago = useRelativeTime();
   const [version, setVersion] = useState(0);
-  const { data, loading, error } = useAsync(() => api<{ shops: Shop[] }>('/admin/shops'), [version]);
+  const { data, loading, error } = useAsync(() => api<{ shops: Shop[]; catalogue: { mode: 'demo' | 'live'; products: number } }>('/admin/shops'), [version]);
   const [tab, setTab] = useState<ShopStatus | 'all'>('pending');
   const [busy, setBusy] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
@@ -66,9 +66,38 @@ function ShopsAdmin() {
     }
   };
 
+  const catalogue = data?.catalogue;
+  const switchCatalogue = async () => {
+    if (!catalogue) return;
+    const to = catalogue.mode === 'live' ? 'demo' : 'live';
+    if (to === 'live' && !window.confirm(t('admin.catalogue.confirmLive'))) return;
+    setNotice(null);
+    try {
+      await api('/admin/catalogue', { body: { mode: to } });
+      setNotice({ ok: true, text: t(to === 'live' ? 'admin.catalogue.nowLive' : 'admin.catalogue.nowDemo') });
+      setVersion((v) => v + 1);
+    } catch (e) {
+      setNotice({ ok: false, text: errText(e) });
+    }
+  };
+
   return (
     <>
       <div className="dash-head"><h1>{t('admin.title')}</h1></div>
+      {catalogue && (
+        <section className="panel catalogue-switch" aria-labelledby="catalogue-title">
+          <div>
+            <h2 id="catalogue-title">{t('admin.catalogue.title')}</h2>
+            <p>{t(catalogue.mode === 'live' ? 'admin.catalogue.live' : 'admin.catalogue.demo', { n: num(catalogue.products) })}</p>
+            {catalogue.mode === 'demo' && (
+              <p className="muted small">{t('admin.catalogue.preview')} <a href={`${path('/products')}?catalogue=live`} target="_blank" rel="noopener">{t('admin.catalogue.previewLink')}</a></p>
+            )}
+          </div>
+          <button type="button" className={`btn ${catalogue.mode === 'live' ? 'btn--ghost' : ''}`} onClick={switchCatalogue}>
+            {t(catalogue.mode === 'live' ? 'admin.catalogue.toDemo' : 'admin.catalogue.toLive')}
+          </button>
+        </section>
+      )}
       <div className="tabs" role="tablist">
         {TABS.map((s) => (
           <button key={s} type="button" role="tab" aria-selected={tab === s} className={tab === s ? 'is-active' : ''} onClick={() => setTab(s)}>

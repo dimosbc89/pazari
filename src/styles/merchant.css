@@ -226,3 +226,14 @@
 .admin-detail td { background: var(--paper); }
 .admin-detail .facts { margin-bottom: 12px; }
 .panel.table-wrap { padding: 8px 12px; }
+
+/* ---------- admin: which catalogue the site shows ---------- */
+.catalogue-switch { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 16px; }
+.catalogue-switch h2 { margin: 0 0 4px; font-size: 17px; }
+.catalogue-switch p { margin: 0 0 4px; }
+
+.shops-free { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 22px; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,.9); color: var(--ink); font-weight: 650; font-size: 15px; }
+.shops-free .icon { width: 18px; height: 18px; color: var(--mint-text); }
+.faq-more { margin-top: 14px; }
+.dash-plan { display: flex; align-items: flex-start; gap: 8px; margin: 4px 0 18px; color: var(--muted); font-size: 14.5px; }
+.dash-plan .icon { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--mint-text); }

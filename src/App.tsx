@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { CookieBanner } from './components/CookieBanner';
 import { IconSprite } from './components/Icons';
 import { DEFAULT_COUNTRY, STORAGE_KEYS, findCountry } from './config';
 import { LocaleProvider } from './i18n';
 import { Home } from './pages/Home';
-import { Legal } from './pages/Legal';
 import { NotFound } from './pages/NotFound';
 import { ProductPage } from './pages/ProductPage';
 import { Products } from './pages/Products';
@@ -13,6 +12,9 @@ import { AdminPage } from './pages/AdminPage';
 import { MerchantDashboard } from './pages/MerchantDashboard';
 import { MerchantLogin } from './pages/MerchantLogin';
 import { ShopsPage } from './pages/ShopsPage';
+
+// Text pages (policies, terms, help) load only when opened, so the main bundle stays small.
+const Legal = lazy(() => import('./pages/Legal').then((m) => ({ default: m.Legal })));
 
 /** "/" goes to the visitor's last country, else a guess from the browser language, else Greece. */
 function RootRedirect() {
@@ -47,7 +49,7 @@ function CountryLayout() {
   }
   return (
     <LocaleProvider country={country}>
-      <Outlet />
+      <Suspense fallback={null}><Outlet /></Suspense>
       <CookieBanner />
     </LocaleProvider>
   );
@@ -69,6 +71,8 @@ export function App() {
           <Route path="pages/shop-terms" element={<Legal kind="shopTerms" />} />
           <Route path="pages/ranking" element={<Legal kind="ranking" />} />
           <Route path="pages/contact" element={<Legal kind="contact" />} />
+          <Route path="pages/about" element={<Legal kind="about" />} />
+          <Route path="pages/shop-help" element={<Legal kind="shopHelp" />} />
           <Route path="shops" element={<ShopsPage />} />
           <Route path="merchant" element={<MerchantDashboard />} />
           <Route path="merchant/login" element={<MerchantLogin />} />

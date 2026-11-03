@@ -7,7 +7,7 @@ import type { LegalPage } from './legal';
 export const rankingPage: Record<'el' | 'en', LegalPage> = {
   el: {
     title: 'Πώς κατατάσσουμε τα αποτελέσματα',
-    updated: 'Τελευταία ενημέρωση: [LAST UPDATED DATE]',
+    updated: 'Τελευταία ενημέρωση: 3 Νοεμβρίου 2026',
     intro: 'Θέλουμε να ξέρεις γιατί βλέπεις τα προϊόντα με αυτή τη σειρά. Εδώ εξηγούμε απλά τι μετράει, τι δεν μετράει, και από πού έρχονται οι τιμές.',
     blocks: [
       { type: 'h2', text: '1. Ποια καταστήματα εμφανίζονται' },
@@ -41,7 +41,7 @@ export const rankingPage: Record<'el' | 'en', LegalPage> = {
   },
   en: {
     title: 'How we rank results',
-    updated: 'Last updated: [LAST UPDATED DATE]',
+    updated: 'Last updated: 3 November 2026',
     intro: 'We want you to know why products appear in the order you see. This page explains, plainly, what counts, what does not, and where the prices come from.',
     blocks: [
       { type: 'h2', text: '1. Which shops appear' },
@@ -82,7 +82,7 @@ export const contactPage: Record<'el' | 'en', LegalPage> = {
     intro: 'Είμαστε εδώ για ερωτήσεις σχετικά με το Tagora, για ένα προϊόν που είδες στον ιστότοπο ή για τη συνεργασία με το κατάστημά σου.',
     blocks: [
       { type: 'h2', text: 'Εξυπηρέτηση' },
-      { type: 'ul', items: ['**Email:** [CONTACT EMAIL]', '**Τηλέφωνο:** [CUSTOMER SERVICE PHONE]', '**Ώρες:** [OPENING HOURS]'] },
+      { type: 'ul', items: ['**Email:** [CONTACT EMAIL]', '**Τηλέφωνο:** [CUSTOMER SERVICE PHONE]'] },
       { type: 'p', text: 'Για παραγγελίες, πληρωμές, αποστολές και επιστροφές επικοινώνησε απευθείας με το κατάστημα από το οποίο αγόρασες. Το Tagora δεν πουλά προϊόντα και δεν βλέπει τις παραγγελίες σου.' },
 
       { type: 'h2', text: 'Λάθος τιμή ή προϊόν;' },
@@ -105,7 +105,7 @@ export const contactPage: Record<'el' | 'en', LegalPage> = {
     intro: 'We are here for questions about Tagora, about a product you saw on the site, or about listing your shop.',
     blocks: [
       { type: 'h2', text: 'Customer service' },
-      { type: 'ul', items: ['**Email:** [CONTACT EMAIL]', '**Phone:** [CUSTOMER SERVICE PHONE]', '**Hours:** [OPENING HOURS]'] },
+      { type: 'ul', items: ['**Email:** [CONTACT EMAIL]', '**Phone:** [CUSTOMER SERVICE PHONE]'] },
       { type: 'p', text: 'For orders, payments, delivery and returns, contact the shop you bought from directly. Tagora does not sell products and cannot see your orders.' },
 
       { type: 'h2', text: 'Wrong price or product?' },

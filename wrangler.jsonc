@@ -30,15 +30,13 @@
     "MAIL_FROM": "Tagora <hello@tagora.online>",
     "SYNC_INTERVAL_HOURS": "6",
     "SYNC_BATCH": "3",
-    "TYPESENSE_HOST": "xxx.a1.typesense.net",
-    "TYPESENSE_PORT": "443",
-    "TYPESENSE_PROTOCOL": "https",
-    "TYPESENSE_COLLECTION": "products",
     "ENVIRONMENT": "production"
+    // Optional: also copy products to a Typesense cluster (README → "Optional, for much larger catalogues")
+    // "TYPESENSE_HOST": "xxx.a1.typesense.net",
   },
   // Secrets (not in this file; Cloudflare → the Worker → Settings → Variables and Secrets):
   //   ADMIN_EMAILS         who can open /admin (comma-separated)
   //   RESEND_API_KEY       sends the emails
-  //   TYPESENSE_ADMIN_KEY  writes products to the search index
+  //   TYPESENSE_ADMIN_KEY  optional, with TYPESENSE_HOST
   "observability": { "enabled": true }
 }

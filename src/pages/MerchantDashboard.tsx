@@ -13,6 +13,14 @@ import { api, useErrorText, useMe, useRelativeTime, type Run, type RunResult, ty
 import { useAsync, useDocumentTitle } from '../lib/hooks';
 import { SourceFields, useSourceCheck } from './ShopsPage';
 
+/** Shops are free for 12 months from approval (shop terms, section 8). */
+export const FREE_MONTHS = 12;
+const freeUntil = (approvedAt: string, lang: string) => {
+  const d = new Date(approvedAt);
+  d.setMonth(d.getMonth() + FREE_MONTHS);
+  return d.toLocaleDateString(lang, { day: 'numeric', month: 'long', year: 'numeric' });
+};
+
 interface Detail { shop: Shop; runs: Run[]; clicks: { day: string; clicks: number }[]; syncEveryHours: number }
 
 export function StatusPill({ status }: { status: string }) {
@@ -61,7 +69,7 @@ export function MerchantDashboard() {
 }
 
 function ShopPanel({ id }: { id: string }) {
-  const { t, num, country, price } = useLocale();
+  const { t, num, country, price, path, lang } = useLocale();
   const errText = useErrorText();
   const ago = useRelativeTime();
   const [version, setVersion] = useState(0);
@@ -131,6 +139,14 @@ function ShopPanel({ id }: { id: string }) {
           <span className="tile-sub">{t('dash.visitsSub')}</span>
         </div>
       </div>
+
+      <p className="dash-plan">
+        <Icon name="check" />{' '}
+        {shop.approvedAt
+          ? t('dash.freeUntil', { date: freeUntil(shop.approvedAt, lang) })
+          : t('dash.freeAfterApproval')}{' '}
+        <Link to={path('/pages/shop-terms')}>{t('dash.planTerms')}</Link>
+      </p>
 
       {shop.lastSyncStatus === 'error' && shop.lastSyncMessage && (
         <div className="banner banner--error" role="alert"><Icon name="alert" /><p>{shop.lastSyncMessage}</p></div>

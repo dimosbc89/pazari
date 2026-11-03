@@ -64,6 +64,10 @@ const T = {
     el: { subject: 'Πρόβλημα στον συγχρονισμό του «{shop}»', lines: ['Δεν μπορέσαμε να διαβάσουμε τα προϊόντα του καταστήματός σου: {message}', 'Τα προϊόντα που ήδη έχουμε μένουν online. Θα ξαναδοκιμάσουμε σε μία ώρα.'], button: 'Δες λεπτομέρειες' },
     en: { subject: 'Problem syncing “{shop}”', lines: ['We could not read your shop’s products: {message}', 'The products we already have stay live. We will try again in an hour.'], button: 'See details' },
   },
+  adminAlert: {
+    el: { subject: 'Tagora: {count} καταστήματα δεν συγχρονίζονται', lines: ['Ο τελευταίος συγχρονισμός απέτυχε για: {list}.', 'Τα προϊόντα τους που ήδη υπάρχουν μένουν online. Τα καταστήματα έχουν ήδη λάβει email. Αυτό το μήνυμα στέλνεται το πολύ μία φορά τη μέρα.'], button: 'Άνοιγμα διαχείρισης' },
+    en: { subject: 'Tagora: {count} shops are not syncing', lines: ['The last sync failed for: {list}.', 'Their products already online stay online. The shops have been emailed. This message is sent at most once a day.'], button: 'Open admin' },
+  },
   newShop: {
     el: { subject: 'Νέα αίτηση καταστήματος: {shop}', lines: ['Νέα αίτηση από «{shop}» ({website}).', 'Σύνδεση: {source}. Έλεγχος: {count} προϊόντα.'], button: 'Άνοιγμα διαχείρισης' },
     en: { subject: 'New shop application: {shop}', lines: ['New application from “{shop}” ({website}).', 'Source: {source}. Check: {count} products.'], button: 'Open admin' },
