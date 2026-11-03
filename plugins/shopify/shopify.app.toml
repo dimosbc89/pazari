@@ -1,10 +1,10 @@
 # The Tagora app for Shopify: its configuration at Shopify.
-# 1. Create the app in the Shopify Dev Dashboard and paste its Client ID below.
-# 2. From this folder, `shopify app deploy` (Shopify CLI) uploads this file as a new app version.
-#    Or type the same values into the Dev Dashboard by hand.
+# GitHub uploads it to Shopify as a new app version whenever it changes on main
+# (.github/workflows/shopify-app-config.yml, with the secret SHOPIFY_APP_AUTOMATION_TOKEN).
+# By hand: `shopify app deploy` from this folder (Shopify CLI).
 # Setup steps: README.md → "Tagora app for Shopify".
 
-client_id = "PASTE-THE-CLIENT-ID-HERE"
+client_id = "5f34a1d091bb73a24ef60277139374d7"
 name = "Tagora"
 application_url = "https://tagora.online/shopify"
 embedded = true

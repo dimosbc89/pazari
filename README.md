@@ -115,10 +115,10 @@ A Shopify app that runs inside the Tagora Worker: no other server. Shopify shows
 
 **Setting it up (once):**
 
-1. Create a free account at [partners.shopify.com](https://partners.shopify.com) (or sign in), open the **Dev Dashboard** and create an app named **Tagora**.
-2. Copy its **Client ID** into `wrangler.jsonc` → `SHOPIFY_API_KEY` and `plugins/shopify/shopify.app.toml` → `client_id`. Add its **Client secret** as the Worker secret `SHOPIFY_API_SECRET` (Cloudflare → the Worker → Settings → Variables and Secrets). Then apply `migrations/0005_shopify.sql` and deploy.
-3. Upload the configuration: `cd plugins/shopify && shopify app deploy` (Shopify CLI), or enter the same values in the Dev Dashboard: App URL `https://tagora.online/shopify`, embedded, scopes `read_products,read_inventory`, API version 2026-07, the webhooks and the privacy webhooks to `https://tagora.online/api/shopify/webhooks`.
-4. Create a development store, install the app on it from the Dev Dashboard and try it.
+1. ✅ The app **Tagora** exists in the Shopify Dev Dashboard; its Client ID (`5f34a1d091bb73a24ef60277139374d7`) is in `wrangler.jsonc` → `SHOPIFY_API_KEY` and `plugins/shopify/shopify.app.toml` → `client_id`.
+2. Its **Client secret** (starts with `shpss_`) goes in the Worker secret `SHOPIFY_API_SECRET` (Cloudflare → Workers & Pages → tagora → Settings → Variables and Secrets → Add → Secret). Until it is set, `/shopify` says the app is not set up and webhooks answer 503.
+3. Shopify's settings for the app (App URL, scopes, webhooks, privacy webhooks) come from `plugins/shopify/shopify.app.toml`. GitHub uploads it with Shopify CLI (`.github/workflows/shopify-app-config.yml`) whenever it changes on `main`, or from Actions → "Shopify app config" → Run workflow. It needs the repository secret `SHOPIFY_APP_AUTOMATION_TOKEN`: Dev Dashboard → Tagora → App settings → App Automation Token → Create token, then GitHub → the repo → Settings → Secrets and variables → Actions → New repository secret.
+4. Create a development store (Dev Dashboard → Stores), install the app on it and try it.
 5. To list it in the App Store: register for the App Store (one-time US$19), fill in the listing from `plugins/shopify/LISTING.md` with screenshots, and submit for review. Choose public distribution: until Shopify approves the app, it installs only on development stores. (Custom distribution would tie the app to a single store for good.)
 
 ### Import from the command line
