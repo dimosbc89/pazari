@@ -70,6 +70,7 @@ export function ProductPage() {
 
   const off = discountLabel(p);
   const offers = data!.offers;
+  const shopCount = new Set(offers.map((o) => o.shopId || o.shop)).size;
   const total = (o: Product) => o.price + (o.shipping ?? 0);
   const details = (
     <>
@@ -120,7 +121,7 @@ export function ProductPage() {
           <section className="offers" aria-labelledby="offers-title">
             <h2 id="offers-title">{t('product.compare')}</h2>
             <p className="section-note">
-              {offers.length === 1 ? t('product.compareOne') : t('product.compareText', { n: offers.length })}{' '}
+              {shopCount === 1 ? t('product.compareOne') : t('product.compareText', { n: shopCount })}{' '}
               <Link to={path('/pages/ranking')}>{t('product.howCompared')}</Link>
             </p>
             <ol className="offers-list">
