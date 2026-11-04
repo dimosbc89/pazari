@@ -21,6 +21,46 @@ test('uid is accepted without losing leading zeroes or changing established ID p
   assert.equal(parseXml(xml('<id/><uid>fallback</uid>')).items[0].id, 'fallback');
 });
 
+test('XML id attributes are a fallback after every existing child ID alias', () => {
+  assert.equal(parseXml('<products><product id="00123"><name>Bag</name></product></products>').items[0].id, '00123');
+  for (const name of ['id', 'productid', 'product_id', 'uniqueid', 'unique_id', 'item_id', 'sku', 'code', 'uid']) {
+    const input = `<products><product id="attribute-id"><${name}>child-id</${name}></product></products>`;
+    assert.equal(parseXml(input).items[0].id, 'child-id', name);
+  }
+  assert.equal(parseXml('<products><product id="fallback"><id/></product></products>').items[0].id, 'fallback');
+});
+
+test('TooFast item/model fields are mapped only for the exact retailer feed endpoint', () => {
+  const input = xml('<item>00186</item><model>Motorcycle vest</model><mpn>GVR186</mpn><price>45.00</price><url>https://toofast.gr/vest</url>');
+  for (const url of ['https://toofast.gr/xml/skroutz.xml', 'https://www.toofast.gr/xml/skroutz.xml/']) {
+    const item = parseXml(input, url).items[0];
+    assert.equal(item.id, '00186');
+    assert.equal(item.title, 'Motorcycle vest');
+    assert.equal(item.mpn, 'GVR186');
+  }
+  for (const url of [undefined, 'https://example.test/xml/skroutz.xml', 'https://toofast.gr/other.xml', 'https://toofast.gr.example.test/xml/skroutz.xml']) {
+    const item = parseXml(input, url).items[0];
+    assert.equal(item.id, '', url);
+    assert.equal(item.title, undefined, url);
+  }
+  assert.equal(parseXml(xml('<id>1</id><model>Manufacturer model</model>')).items[0].mpn, 'Manufacturer model');
+  const preferred = parseXml(xml('<id>old-id</id><item>new-id</item><name>Old title</name><model>New title</model>'), 'https://toofast.gr/xml/skroutz.xml').items[0];
+  assert.equal(preferred.id, 'old-id');
+  assert.equal(preferred.title, 'Old title');
+});
+
+test('TooFast category paths are a scoped fallback behind standard categories', () => {
+  const input = xml(`${required}<cat_list>ΠΡΟΪΟΝΤΑ/ΕΝΔΥΣΗ/Ένδυση αναβάτη /Γιλέκα</cat_list>`);
+  for (const url of ['https://toofast.gr/xml/skroutz.xml', 'https://www.toofast.gr/xml/skroutz.xml/']) {
+    assert.equal(parseXml(input, url).items[0].category, 'Γιλέκα');
+  }
+  for (const url of [undefined, 'https://example.test/xml/skroutz.xml', 'https://toofast.gr/other.xml', 'https://toofast.gr.example.test/xml/skroutz.xml']) {
+    assert.equal(parseXml(input, url).items[0].category, undefined, url);
+  }
+  const preferred = xml(`${required}<category>Clothing &gt; Jackets</category><cat_list>ΠΡΟΪΟΝΤΑ/Γιλέκα</cat_list>`);
+  assert.equal(parseXml(preferred, 'https://toofast.gr/xml/skroutz.xml').items[0].category, 'Jackets');
+});
+
 test('Google RSS field names, sale pricing, shipping and multiple images remain compatible', () => {
   const result = parseXml(`<rss xmlns:g="http://base.google.com/ns/1.0"><channel><item>
     <g:id>sku-1</g:id><g:item_group_id>group-1</g:item_group_id><title>Shirt &amp; scarf</title>
@@ -110,6 +150,33 @@ test('stock flags, zero quantity and backorders are excluded while immediate ava
   }
   assert.equal(parseXml(xml(`${required}<instock>Y</instock><quantity>0</quantity>`)).items[0].inStock, false);
   assert.equal(parseXml(xml(`${required}<availability>Άμεσα διαθέσιμο</availability><instock>N</instock>`)).items[0].inStock, false);
+});
+
+test('shipping_costs and inventory are fallbacks behind established shipping and quantity aliases', () => {
+  assert.equal(parseXml(xml(`${required}<shipping_costs>4</shipping_costs>`)).items[0].shipping, 4);
+  assert.equal(parseXml(xml(`${required}<shipping_costs>0</shipping_costs>`)).items[0].shipping, 0);
+  for (const name of ['shipping', 'shipping_cost', 'shippingcost', 'delivery_cost', 'shipping_price']) {
+    const item = parseXml(xml(`${required}<${name}>3</${name}><shipping_costs>4</shipping_costs>`)).items[0];
+    assert.equal(item.shipping, 3, name);
+  }
+  assert.equal(parseXml(xml(`${required}<availability>in stock</availability><inventory>0</inventory>`)).items[0].inStock, false);
+  assert.equal(parseXml(xml(`${required}<inventory>2</inventory>`)).items[0].inStock, true);
+  for (const name of ['quantity', 'qty', 'stock_quantity']) {
+    assert.equal(parseXml(xml(`${required}<${name}>2</${name}><inventory>0</inventory>`)).items[0].inStock, true, name);
+    assert.equal(parseXml(xml(`${required}<${name}>0</${name}><inventory>2</inventory>`)).items[0].inStock, false, name);
+  }
+});
+
+test('explicit Greek backorder labels are excluded across accents and letter case', () => {
+  for (const value of ['Κατόπιν παραγγελίας', 'κατοπιν παραγγελιας', 'ΚΑΤΟΠΙΝ ΠΑΡΑΓΓΕΛΙΑΣ',
+    'ΚΑΤΌΠΙΝ ΠΑΡΑΓΓΕΛΊΑΣ', 'Αναμένεται', 'αναμενεται', 'ΑΝΑΜΕΝΕΤΑΙ', 'ΑΝΑΜΈΝΕΤΑΙ']) {
+    const item = parseXml(xml(`${required}<instock>Y</instock><availability>${value}</availability>`)).items[0];
+    assert.equal(item.inStock, false, value);
+    assert.equal(normalize({ format: 'xml', items: [item], truncated: false }, shop, 'test').products.length, 0, value);
+  }
+  for (const value of ['Άμεσα διαθέσιμο', 'ΑΜΕΣΑ ΔΙΑΘΕΣΙΜΟ', 'Άμεση παραλαβή / Παράδoση 1 έως 3 ημέρες']) {
+    assert.equal(parseXml(xml(`${required}<availability>${value}</availability>`)).items[0].inStock, true, value);
+  }
 });
 
 test('malformed XML rejects the entire feed with bad_format', () => {

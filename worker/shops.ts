@@ -6,6 +6,7 @@ import { mailFor, sendMail } from './email.ts';
 import { isDev, type Env } from './env.ts';
 import { addHours, HttpError, nowIso } from './http.ts';
 import { slug } from '../sync/text.ts';
+import { silentSyncShopIds } from './notifications.ts';
 
 export type ShopStatus = 'pending' | 'active' | 'paused' | 'rejected';
 
@@ -159,7 +160,7 @@ export async function syncShop(env: Env, shop: ShopRow, trigger: 'schedule' | 'm
   ]);
 
   // Tell the shop when syncing starts failing (once, not on every retry).
-  if (!ok && shop.last_sync_status !== 'error' && trigger === 'schedule') {
+  if (!ok && shop.last_sync_status !== 'error' && trigger === 'schedule' && !(await silentSyncShopIds(env)).includes(shop.id)) {
     await sendMail(env, mailFor('syncFailed', shop.lang as 'el' | 'en', shop.email, { shop: shop.name, message: result.message ?? '' }, siteLink(env, shop, '/merchant', origin)));
   }
   return result;
