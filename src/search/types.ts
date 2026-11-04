@@ -77,6 +77,8 @@ export interface CatalogueStats {
   offers: number;
   shops: number;
   brands: number;
+  /** Ranked category shortcuts; optional while older cached responses expire. */
+  categories?: FacetValue[];
 }
 
 export interface SearchBackend {

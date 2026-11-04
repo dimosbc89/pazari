@@ -5,6 +5,7 @@ import { STRINGS } from '../i18n/strings';
 import { pickLang } from '../i18n';
 import type { Lang } from '../config';
 import { fold, hash, oneEdit, toLatin, words } from '../../shared/searchtext';
+import { categorySuggestions } from '../../shared/category-suggestions';
 import {
   FACETS,
   type CatalogueStats,
@@ -155,7 +156,17 @@ export function createLocalBackend(url = '/demo/products.json'): SearchBackend {
 
     async stats(country): Promise<CatalogueStats> {
       const items = (await load()).filter((p) => p.countries.includes(country));
-      return { offers: items.length, shops: new Set(items.map((p) => p.shop)).size, brands: new Set(items.map((p) => p.brand)).size };
+      const categories = new Map<string, { count: number; shops: Set<string> }>();
+      for (const p of items) {
+        const entry = categories.get(p.category) ?? { count: 0, shops: new Set<string>() };
+        entry.count++;
+        entry.shops.add(p.shopId ?? p.shop);
+        categories.set(p.category, entry);
+      }
+      const ranked = [...categories].sort(([a, x], [b, y]) => y.shops.size - x.shops.size || y.count - x.count || (a < b ? -1 : a > b ? 1 : 0))
+        .map(([value, { count }]) => ({ value, count }));
+      return { offers: items.length, shops: new Set(items.map((p) => p.shop)).size, brands: new Set(items.map((p) => p.brand)).size,
+        categories: categorySuggestions(ranked, undefined, 20) };
     },
   };
 }
