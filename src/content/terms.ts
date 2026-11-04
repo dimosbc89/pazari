@@ -250,7 +250,7 @@ export const termsOfUse: Record<'el' | 'en', LegalPage> = {
 export const shopTerms: Record<'el' | 'en', LegalPage> = {
   el: {
     title: 'Όροι για καταστήματα',
-    updated: 'Τελευταία ενημέρωση: 3 Νοεμβρίου 2026',
+    updated: 'Τελευταία ενημέρωση: 4 Νοεμβρίου 2026',
     intro:
       'Οι όροι αυτοί ρυθμίζουν τη συνεργασία του Tagora με τα ηλεκτρονικά καταστήματα που εμφανίζουν τα προϊόντα τους σε αυτό («συνεργαζόμενα καταστήματα») και καλύπτουν, με απλά λόγια, όσα απαιτεί ο Κανονισμός (ΕΕ) 2019/1150 για τις σχέσεις επιγραμμικών πλατφορμών και επιχειρήσεων (Κανονισμός P2B). Υποβάλλοντας αίτηση, τους αποδέχεστε.',
     blocks: [
@@ -366,8 +366,8 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
       },
 
       { type: 'h2', text: '8. Χρεώσεις' },
-      { type: 'p', text: 'Η εμφάνιση των προϊόντων σας στο Tagora είναι **δωρεάν για τους πρώτους 12 μήνες** από την έγκριση του καταστήματός σας. Μετά, κοστίζει **19 € τον μήνα + ΦΠΑ** ανά κατάστημα, με μηνιαίο τιμολόγιο.' },
-      { type: 'p', text: 'Θα σας ενημερώσουμε με email τουλάχιστον 30 ημέρες πριν λήξει η δωρεάν περίοδος. Αν δεν θέλετε να συνεχίσετε, μπορείτε να αποχωρήσετε πριν από τη λήξη της χωρίς καμία χρέωση. Και μετά, μπορείτε να αποχωρήσετε οποιαδήποτε στιγμή· η χρέωση σταματά από τον επόμενο μήνα. Δεν υπάρχει χρέωση ανά κλικ ούτε προμήθεια επί των πωλήσεων.' },
+      { type: 'p', text: 'Η εμφάνιση των προϊόντων σας στο Tagora είναι **δωρεάν για τους πρώτους 12 μήνες** από την έγκριση του καταστήματός σας. Μετά, κοστίζει **300 € τον χρόνο + ΦΠΑ** ανά κατάστημα (δηλαδή 25 € τον μήνα), με ετήσιο τιμολόγιο που εκδίδεται στην αρχή κάθε έτους.' },
+      { type: 'p', text: 'Θα σας ενημερώσουμε με email τουλάχιστον 30 ημέρες πριν λήξει η δωρεάν περίοδος. Αν δεν θέλετε να συνεχίσετε, μπορείτε να αποχωρήσετε πριν από τη λήξη της χωρίς καμία χρέωση. Η συνεργασία ανανεώνεται κάθε χρόνο· μπορείτε να αποχωρήσετε οποιαδήποτε στιγμή και τότε δεν ανανεώνεται, χωρίς όμως επιστροφή για το υπόλοιπο ενός έτους που έχει ήδη τιμολογηθεί. Δεν υπάρχει χρέωση ανά κλικ ούτε προμήθεια επί των πωλήσεων.' },
       {
         type: 'p',
         text: 'Ως υπηρεσία σύγκρισης αγορών (CSS) της Google, μπορούμε επίσης να προβάλλουμε τα προϊόντα σας σε διαφημίσεις Google Shopping. Οι υπηρεσίες αυτές και οι χρεώσεις τους συμφωνούνται χωριστά και διέπονται από ξεχωριστή σύμβαση. Δεν επηρεάζουν την κατάταξη στον ιστότοπό μας.',
@@ -457,7 +457,7 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
 
   en: {
     title: 'Terms for partner shops',
-    updated: 'Last updated: 3 November 2026',
+    updated: 'Last updated: 4 November 2026',
     intro:
       'These terms govern how Tagora works with the online shops that show their products on it (“partner shops”) and cover, in plain language, what Regulation (EU) 2019/1150 on platform-to-business relations (the P2B Regulation) requires. By applying, you accept them.',
     blocks: [
@@ -573,8 +573,8 @@ export const shopTerms: Record<'el' | 'en', LegalPage> = {
       },
 
       { type: 'h2', text: '8. Fees' },
-      { type: 'p', text: 'Showing your products on Tagora is **free for the first 12 months** after your shop is approved. After that, it costs **€19 a month + VAT** per shop, invoiced monthly.' },
-      { type: 'p', text: 'We will email you at least 30 days before the free period ends. If you do not want to continue, you can leave before it ends at no charge. After that, too, you can leave at any time; charges stop from the following month. There is no charge per click and no commission on sales.' },
+      { type: 'p', text: 'Showing your products on Tagora is **free for the first 12 months** after your shop is approved. After that, it costs **€300 a year + VAT** per shop (that is, €25 a month), invoiced yearly at the start of each year.' },
+      { type: 'p', text: 'We will email you at least 30 days before the free period ends. If you do not want to continue, you can leave before it ends at no charge. The partnership renews every year; you can leave at any time and it will not renew, but a year already invoiced is not refunded. There is no charge per click and no commission on sales.' },
       {
         type: 'p',
         text: 'As a Google Comparison Shopping Service (CSS), we may also place your products in Google Shopping ads. Those services and their fees are agreed separately and governed by a separate agreement. They do not affect ranking on our website.',

@@ -10,7 +10,7 @@ import { slug } from '../sync/text.ts';
 export type ShopStatus = 'pending' | 'active' | 'paused' | 'rejected';
 
 /** Bump when the shop terms (src/content/terms.ts) change, and email shops 15 days before. */
-export const SHOP_TERMS_VERSION = '2026-11';
+export const SHOP_TERMS_VERSION = '2026-11-04';
 export const MARKETS = COUNTRIES.map((c) => c.code);
 
 export function countriesFrom(v: unknown): string[] {

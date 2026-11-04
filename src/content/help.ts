@@ -244,7 +244,7 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
       { type: 'p', text: 'Αν δείχνεις έκπτωση, η παλιά τιμή πρέπει να είναι **η χαμηλότερη τιμή που είχες τις τελευταίες 30 ημέρες** πριν από τη μείωση. Αυτό ορίζει ο κανόνας Omnibus της ΕΕ και το δέχεσαι στους [όρους για καταστήματα](/pages/shop-terms). Στο feed η παλιά τιμή μπαίνει στο price και η τιμή μετά την έκπτωση στο sale_price· το ποσοστό το υπολογίζουμε εμείς. Αν δεν έχεις πραγματική έκπτωση, άφησε το sale_price κενό.' },
 
       { type: 'h2', text: '11. Πόσο κοστίζει' },
-      { type: 'p', text: 'Το Tagora είναι **δωρεάν για τους πρώτους 12 μήνες** από την έγκριση του καταστήματός σου. Μετά κοστίζει **19 € τον μήνα + ΦΠΑ** για κάθε κατάστημα, με μηνιαία χρέωση.' },
+      { type: 'p', text: 'Το Tagora είναι **δωρεάν για τους πρώτους 12 μήνες** από την έγκριση του καταστήματός σου. Μετά κοστίζει **300 € τον χρόνο + ΦΠΑ** για κάθε κατάστημα (25 € τον μήνα), με ετήσιο τιμολόγιο.' },
       { type: 'p', text: 'Σου στέλνουμε email τουλάχιστον 30 ημέρες πριν τελειώσει η δωρεάν περίοδος. Μπορείς να αποχωρήσεις όποτε θέλεις, γράφοντάς μας στο [CONTACT EMAIL]· αν φύγεις πριν τελειώσει η δωρεάν περίοδος, δεν πληρώνεις τίποτα. Αναλυτικά στους [όρους για καταστήματα](/pages/shop-terms).' },
 
       { type: 'h2', text: '12. Σύνδεση στον πίνακα καταστήματος' },
@@ -426,7 +426,7 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
       { type: 'p', text: 'If you show a discount, the old price must be **the lowest price you charged in the last 30 days** before the reduction. This is the EU Omnibus rule, and you agree to it in the [terms for shops](/pages/shop-terms). In a feed, the old price goes in price and the discounted price in sale_price; we work out the percentage ourselves. If there is no real discount, leave sale_price empty.' },
 
       { type: 'h2', text: '11. What it costs' },
-      { type: 'p', text: 'Tagora is **free for the first 12 months** after we approve your shop. After that it costs **€19 per month + VAT** per shop, billed monthly.' },
+      { type: 'p', text: 'Tagora is **free for the first 12 months** after we approve your shop. After that it costs **€300 a year + VAT** per shop (€25 a month), invoiced yearly.' },
       { type: 'p', text: 'We email you at least 30 days before your free period ends. You can leave at any time by writing to us at [CONTACT EMAIL]; if you leave before the free period ends, you pay nothing. The details are in the [terms for shops](/pages/shop-terms).' },
 
       { type: 'h2', text: '12. Signing in' },
