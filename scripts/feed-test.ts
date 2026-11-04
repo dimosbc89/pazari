@@ -98,6 +98,44 @@ test('Skroutz names and price_with_vat retain priority over price', () => {
   assert.equal(result.items[0].inStock, true);
 });
 
+test('MyPharmacy PriceVat is scoped to its exact endpoint and preserves UniqueID and stock flags', () => {
+  const input = `<mywebstore><products><product ctn="11388">
+    <UniqueID>004008600082545</UniqueID><Name>Example spoon</Name>
+    <Link>https://www.mypharmacy.gr/product-p-11388</Link><PriceVat>3.91</PriceVat>
+    <Instock>Y</Instock><Availability>Άμεσα διαθέσιμο</Availability><Ean>004008600082545</Ean>
+  </product><product><UniqueID>unavailable</UniqueID><Name>Unavailable spoon</Name>
+    <Link>https://www.mypharmacy.gr/product-p-2</Link><PriceVat>3.42</PriceVat>
+    <Instock>N</Instock><Availability>Διαθέσιμο σε 1-3 Εργάσιμες</Availability>
+  </product></products></mywebstore>`;
+  for (const url of ['https://www.mypharmacy.gr/skroutz.xml', 'https://mypharmacy.gr/skroutz.xml/']) {
+    const parsed = parseXml(input, url);
+    assert.equal(parsed.items[0].id, '004008600082545');
+    assert.equal(parsed.items[0].gtin, '004008600082545');
+    assert.equal(parsed.items[0].price, 3.91);
+    assert.equal(parsed.items[0].inStock, true);
+    assert.equal(parsed.items[1].inStock, false);
+    const report = normalize({ ...parsed, truncated: false }, shop, 'test');
+    assert.equal(report.products.length, 1);
+    assert.equal(report.products[0].price, 3.91);
+    assert.equal(report.issues.find((issue) => issue.code === 'out_of_stock')?.count, 1);
+  }
+  for (const url of [undefined, 'https://example.test/skroutz.xml', 'https://mypharmacy.gr/other.xml',
+    'https://mypharmacy.gr.example.test/skroutz.xml']) {
+    assert.equal(parseXml(input, url).items[0].price, undefined, url);
+  }
+});
+
+test('MyPharmacy pricevat fallback keeps existing price and sale aliases ahead of it', () => {
+  const url = 'https://www.mypharmacy.gr/skroutz.xml';
+  for (const name of ['price_with_vat', 'price', 'final_price', 'retail_price', 'regular_price']) {
+    const item = parseXml(xml(`<uniqueid>1</uniqueid><${name}>20</${name}><PriceVat>30</PriceVat>`), url).items[0];
+    assert.equal(item.price, 20, name);
+  }
+  const item = parseXml(xml('<uniqueid>1</uniqueid><price/><PriceVat>19,50</PriceVat><sale_price>15</sale_price>'), url).items[0];
+  assert.equal(item.price, 15);
+  assert.equal(item.oldPrice, 19.5);
+});
+
 test('repeated sizes preserve nonempty values even after an empty first element', () => {
   assert.equal(parseXml(xml(`${required}<size/><size>S, M, L</size><size>XL</size><size>XL</size>`)).items[0].size, 'S, M, L, XL');
   assert.equal(parseXml(xml(`${required}<size/><size/>`)).items[0].size, undefined);

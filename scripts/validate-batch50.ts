@@ -50,7 +50,7 @@ assert.ok(Array.isArray(metadata), 'Metadata must be an array or {feeds:[]}');
 const approved: string[] = JSON.parse(await fs.readFile(path.resolve(opt('approved')!), 'utf8'));
 assert.ok(Array.isArray(approved) && approved.length > 0 && approved.every((s) => typeof s === 'string'), 'Approved must be a nonempty JSON array of slugs');
 assert.equal(new Set(approved).size, approved.length, 'Approved contains duplicate slugs');
-const protectedShops = [
+const protectedShops: string[][] = opt('protected') ? JSON.parse(await fs.readFile(path.resolve(opt('protected')!), 'utf8')).map((s: {id:string; name:string}) => [s.id,s.name]) : [
   ['tandem-concept', 'Tandem Concept'], ['danaos-stores', 'Danaos Stores'],
   ['des-to-tsantaki-mou', 'Des to Tsantaki Mou'], ['leatherbrands', 'LeatherBrands'],
   ['amazon-beauty', 'Amazon Beauty'], ['ellinoekdotiki', 'Ελληνοεκδοτική'],
@@ -64,6 +64,7 @@ await fs.mkdir(outDir, { recursive: true });
 
 const migrations: string[] = [];
 const implementationHash = createHash('sha256');
+implementationHash.update(JSON.stringify(protectedShops));
 const files = [
   ...((await fs.readdir(path.join(repo, 'sync'))).filter((f) => f.endsWith('.ts')).map((f) => `sync/${f}`)),
   'worker/catalogue.ts', 'shared/searchtext.ts', 'package-lock.json', 'scripts/validate-batch50.ts',
