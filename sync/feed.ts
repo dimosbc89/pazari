@@ -1,19 +1,19 @@
 // Reads product feeds: XML (Google Merchant Center RSS/Atom, Skroutz, BestPrice and
 // most custom shop feeds) and delimited text (TSV/CSV with a header row).
 // Fields are found by name, so one reader covers all of them.
-import { XMLParser } from 'fast-xml-parser';
+import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { fetchText, type FetchOptions } from './fetch.ts';
 import { decodeEntities, money, stripHtml } from './text.ts';
 import { SyncError, type SourceItem, type SourceResult } from './types.ts';
 
 /** Accepted names for each field, lowercase, without namespace prefix. First match wins. */
 const FIELDS = {
-  id: ['id', 'productid', 'product_id', 'uniqueid', 'unique_id', 'item_id', 'sku', 'code'],
+  id: ['id', 'productid', 'product_id', 'uniqueid', 'unique_id', 'item_id', 'sku', 'code', 'uid'],
   group: ['item_group_id', 'group_id', 'parent_id', 'parentid', 'item_group'],
   title: ['title', 'name', 'product_name', 'productname'],
   link: ['link', 'url', 'producturl', 'product_url', 'product_link', 'productlink'],
   image: ['image_link', 'image', 'imageurl', 'image_url', 'mainimage', 'main_image', 'picture', 'thumbnail'],
-  images: ['additional_image_link', 'additionalimage', 'additional_image', 'additional_images', 'imagesurl', 'images', 'gallery'],
+  images: ['additional_image_link', 'additionalimage', 'additional_image', 'additional_images', 'imagesurl', 'images', 'gallery', 'additional_imageurl'],
   price: ['price_with_vat', 'price', 'final_price', 'retail_price', 'regular_price'],
   sale: ['sale_price', 'special_price', 'offer_price', 'discount_price'],
   brand: ['brand', 'manufacturer', 'vendor', 'make'],
@@ -65,7 +65,7 @@ function pick(item: Raw, names: readonly string[]): unknown {
   return undefined;
 }
 
-const OUT = /out[ _-]?of[ _-]?stock|^(no|n|0|false|out)$|εξαντλ|μη διαθέσιμ|μη διαθεσιμ|not available|unavailable|discontinued|sold ?out/i;
+const OUT = /out[ _-]?of[ _-]?stock|back[ _-]?order|^(no|n|0|false|out)$|εξαντλ|μη διαθέσιμ|μη διαθεσιμ|not available|unavailable|discontinued|sold ?out/i;
 
 function inStock(item: Raw): boolean {
   for (const name of FIELDS.availability) {
@@ -93,14 +93,31 @@ function lowerKeys(o: Raw): Raw {
   return out;
 }
 
-function toItem(rawItem: Raw): SourceItem {
+function toItem(rawItem: Raw, fractionalDiscount = false): SourceItem {
   const it = lowerKeys(rawItem);
   const price = money(text(pick(it, FIELDS.price)));
-  const sale = money(text(pick(it, FIELDS.sale)));
+  const saleText = text(pick(it, FIELDS.sale));
+  let sale = money(saleText);
+  if (fractionalDiscount && it.discount !== undefined) {
+    const value = text(it.discount);
+    const discount = value === undefined ? NaN : Number(value);
+    if (!value || !/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) || !Number.isFinite(discount) || discount < 0 || discount >= 1) {
+      throw new SyncError('bad_format', 'The feed contains an invalid fractional discount.');
+    }
+    if (saleText === undefined && price !== undefined) {
+      // Correct binary rounding at half-cents (e.g. 9.45 × 0.9 = 8.505 → 8.51).
+      sale = Math.round((price * (1 - discount) + Number.EPSILON * price) * 100) / 100;
+    }
+  }
   const discounted = sale !== undefined && price !== undefined && sale > 0 && sale < price;
   const desc = text(pick(it, FIELDS.description));
-  const image = text(pick(it, FIELDS.image));
-  const images = [...texts(it[FIELDS.images.find((n) => it[n] !== undefined) ?? '']), ...(Array.isArray(it.image) ? texts(it.image.slice(1)) : [])];
+  const primaryImages = texts(pick(it, FIELDS.image));
+  const additionalImages = FIELDS.images.flatMap((name) => texts(it[name]));
+  // Some feeds only provide <images><image>…</image></images>.
+  const image = primaryImages[0] ?? additionalImages[0];
+  const images = [...new Set([...additionalImages, ...primaryImages.slice(1)])];
+  // Repeated <size> elements may start with an empty placeholder.
+  const sizes = [...new Set(texts(pick(it, FIELDS.size)))];
   return {
     id: text(pick(it, FIELDS.id)) ?? '',
     groupId: text(pick(it, FIELDS.group)),
@@ -115,7 +132,7 @@ function toItem(rawItem: Raw): SourceItem {
     brand: text(pick(it, FIELDS.brand)),
     category: category(it),
     color: text(pick(it, FIELDS.color)),
-    size: text(pick(it, FIELDS.size)),
+    size: sizes.length ? sizes.join(', ') : undefined,
     mpn: text(pick(it, FIELDS.mpn)),
     gtin: text(pick(it, FIELDS.gtin)),
     inStock: inStock(it),
@@ -150,7 +167,21 @@ function formatOf(root: Raw): string {
   return 'xml';
 }
 
-export function parseXml(xml: string): { format: string; items: SourceItem[] } {
+/** This publisher exports list prices plus a fractional discount, not sale_price. */
+function usesFractionalDiscount(sourceUrl?: string): boolean {
+  if (!sourceUrl) return false;
+  try {
+    const url = new URL(sourceUrl);
+    return ['ellinoekdotiki.gr', 'www.ellinoekdotiki.gr'].includes(url.hostname)
+      && url.pathname.replace(/\/+$/, '') === '/export/feed';
+  } catch {
+    return false;
+  }
+}
+
+export function parseXml(xml: string, sourceUrl?: string): { format: string; items: SourceItem[] } {
+  // XMLParser is tolerant by default; never sync a partially parsed broken feed.
+  if (XMLValidator.validate(xml) !== true) throw new SyncError('bad_format', 'The file is not valid XML.');
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: '@_',
@@ -167,7 +198,8 @@ export function parseXml(xml: string): { format: string; items: SourceItem[] } {
     throw new SyncError('bad_format', 'The file is not valid XML.');
   }
   const raw = findItems(root);
-  return { format: formatOf(root), items: raw.map(toItem) };
+  const fractionalDiscount = usesFractionalDiscount(sourceUrl);
+  return { format: formatOf(root), items: raw.map((item) => toItem(item, fractionalDiscount)) };
 }
 
 /** Splits delimited text, honouring quotes ("a, b"). */
@@ -209,7 +241,7 @@ export async function readFeed(url: string, opts: FetchOptions): Promise<SourceR
   const trimmed = body.trimStart();
   if (!trimmed) throw new SyncError('empty', 'The file is empty.');
   if (/^<!doctype html|^<html/i.test(trimmed)) throw new SyncError('not_a_feed', 'This address is a web page, not a product feed.');
-  const parsed = trimmed.startsWith('<') ? parseXml(trimmed) : parseDelimited(trimmed);
+  const parsed = trimmed.startsWith('<') ? parseXml(trimmed, url) : parseDelimited(trimmed);
   if (!parsed.items.length) throw new SyncError('no_products', 'No products were found in the file.');
   return { ...parsed, truncated: false };
 }
