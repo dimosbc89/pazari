@@ -60,7 +60,7 @@ Shops join by themselves and their products stay up to date without anyone at Ta
 
 * A Cloudflare cron runs every 10 minutes and syncs the shops that are due, a few at a time. Each shop is synced every `SYNC_INTERVAL_HOURS` (default 6). Shops can also press "Sync now" (once per 5 minutes).
 * Each sync reads the whole source, checks every product, saves them in the database (unchanged products are skipped, so a sync costs little), then **removes that shop's products that were not in this sync** (deleted, sold out). Out-of-stock items are left out on purpose.
-* **Cost for shops:** free for 12 months from approval, then €19 a month + VAT (shop terms, section 8). The dashboard shows each shop's free-until date.
+* **Cost for shops:** free for 12 months from approval, then €300 a year + VAT, invoiced yearly (shop terms, section 8). The dashboard shows each shop's free-until date.
 * If a source fails (site down, broken feed), the products already online stay online, the shop gets one email, and Tagora retries in an hour.
 * **Same product in different shops** = same barcode (EAN/GTIN), or same brand + MPN. Shop SKUs are never used for matching.
 * Every product-page click-out is counted per shop per day (no visitor data) for the shop dashboard.

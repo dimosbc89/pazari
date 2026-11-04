@@ -8,7 +8,7 @@ Greek first (the main market), then English.
 - **App name:** Tagora
 - **App icon:** `public/brand/` (the Tagora "o" icon, 1200 × 1200)
 - **Category:** Sales channels → Marketplaces and comparison shopping (or the closest one offered)
-- **Pricing:** Free to install. Tagora's listing has its own plan: the first 12 months free, then €19 a month + VAT, billed by GROW Agency Ε.Ε. (see "Billing" below).
+- **Pricing:** Free to install. Tagora's listing has its own plan: the first 12 months free, then €300 a year + VAT, billed by GROW Agency Ε.Ε. (see "Billing" below).
 - **Privacy policy:** https://tagora.online/gr/pages/privacy-policy
 - **Support email:** hello@tagora.online
 - **Website:** https://tagora.online
@@ -50,7 +50,7 @@ Tagora is a Greek price comparison site and a Google CSS partner. With the app, 
 
 ## Billing
 
-The app itself is free. Tagora charges shops for its comparison listing (12 months free, then €19 a month + VAT), invoiced directly by GROW Agency Ε.Ε. under the Tagora terms for shops, the same for every shop whether it uses this app, the WooCommerce plugin or an XML feed. If Shopify's review asks for app charges to go through the Shopify Billing API, the paid plan has to be offered through it instead (a change in `worker/shopify.ts`).
+The app itself is free. Tagora charges shops for its comparison listing (12 months free, then €300 a year + VAT), invoiced directly by GROW Agency Ε.Ε. under the Tagora terms for shops, the same for every shop whether it uses this app, the WooCommerce plugin or an XML feed. If Shopify's review asks for app charges to go through the Shopify Billing API, the paid plan has to be offered through it instead (a change in `worker/shopify.ts`).
 
 ## Notes for the reviewer
 
