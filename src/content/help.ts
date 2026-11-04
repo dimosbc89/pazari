@@ -223,7 +223,7 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
           '**από όσα δήλωσες στην αίτηση**: «Κόστος αποστολής (€)» και «Δωρεάν αποστολή από (€)». Για προϊόντα με τιμή ίση ή μεγαλύτερη από αυτό το ποσό δείχνουμε δωρεάν αποστολή.',
         ],
       },
-      { type: 'p', text: 'Στο Shopify και στο WooCommerce ισχύουν πάντα οι ρυθμίσεις της αίτησης. Αν δεν έχουμε τίποτα από τα δύο, δεν δείχνουμε μεταφορικά και το σύνολο είναι μόνο η τιμή. Τις ρυθμίσεις τις αλλάζεις όποτε θέλεις στον πίνακα καταστήματος, στο «Σύνδεση και αποστολή» → «Αλλαγή». Ισχύουν από τον επόμενο συγχρονισμό.' },
+      { type: 'p', text: 'Στο Shopify και στο WooCommerce ισχύουν πάντα οι ρυθμίσεις της αίτησης. Αν δεν έχουμε τίποτα από τα δύο, εμφανίζουμε «Δεν έχει δοθεί κόστος αποστολής» και δεν εμφανίζουμε σύνολο με μεταφορικά. Η τιμή του προϊόντος και ο σύνδεσμος προς το κατάστημα παραμένουν διαθέσιμα. Τις ρυθμίσεις τις αλλάζεις όποτε θέλεις στον πίνακα καταστήματος, στο «Σύνδεση και αποστολή» → «Αλλαγή». Ισχύουν από τον επόμενο συγχρονισμό.' },
 
       { type: 'h2', text: '9. Πώς γίνεται ο συγχρονισμός' },
       {
@@ -405,7 +405,7 @@ export const shopHelpPage: Record<'el' | 'en', LegalPage> = {
           '**from what you gave when you applied**: “Delivery cost (€)” and “Free delivery from (€)”. Products priced at or above that amount show free delivery.',
         ],
       },
-      { type: 'p', text: 'For Shopify and WooCommerce, the settings from your application always apply. If we have neither, we show no delivery cost and the total is the price alone. You can change these settings at any time in your shop dashboard, under “Connection and delivery” → “Change”. The next sync uses the new settings.' },
+      { type: 'p', text: 'For Shopify and WooCommerce, the settings from your application always apply. If we have neither, we show “Delivery cost not provided” and no delivered total. The product price and shop link remain available. You can change these settings at any time in your shop dashboard, under “Connection and delivery” → “Change”. The next sync uses the new settings.' },
 
       { type: 'h2', text: '9. How syncing works' },
       {

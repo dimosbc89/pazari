@@ -4,7 +4,7 @@ import { Footer } from '../components/Footer';
 import { Header } from '../components/Header';
 import { Icon } from '../components/Icons';
 import { Lightbox } from '../components/Lightbox';
-import { Loader, Pills, Price, ProductImage, Shipping, discountLabel } from '../components/ui';
+import { Loader, OfferTotal, Pills, Price, ProductImage, Shipping, discountLabel } from '../components/ui';
 import { useLocale } from '../i18n';
 import { trackClick } from '../lib/api';
 import { track } from '../lib/consent';
@@ -26,7 +26,7 @@ export function ProductPage() {
   const { id = '' } = useParams();
   const [params] = useSearchParams();
   const query = params.get('q') ?? '';
-  const { t, loc, path, price, country } = useLocale();
+  const { t, loc, path, country } = useLocale();
   const { data, loading } = useAsync(() => loadProduct(id, country.code), [id, country.code]);
   const p = data?.product;
 
@@ -71,7 +71,6 @@ export function ProductPage() {
   const off = discountLabel(p);
   const offers = data!.offers;
   const shopCount = new Set(offers.map((o) => o.shopId || o.shop)).size;
-  const total = (o: Product) => o.price + (o.shipping ?? 0);
   const details = (
     <>
       <div className="product-brand">{p.brand}</div>
@@ -133,7 +132,7 @@ export function ProductPage() {
                     {i === 0 && offers.length > 1 && <span className="badge-best">{t('product.bestPrice')}</span>}
                   </div>
                   <div className="offer-price"><Price p={o} /><Shipping fee={o.shipping} /></div>
-                  <div className="offer-total"><span>{t('product.total')}</span> <strong>{price(total(o))}</strong></div>
+                  <OfferTotal p={o} />
                   <a className={`btn ${i === 0 ? '' : 'btn--ghost'}`} href={o.url} target="_blank" rel="noopener sponsored" onClick={clickOut(o)}>
                     {t('product.goToShop')} <Icon name="external" />
                   </a>

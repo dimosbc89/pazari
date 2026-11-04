@@ -40,13 +40,27 @@ export function Price({ p, large = false }: { p: Pick<Product, 'price' | 'oldPri
   );
 }
 
-export function Shipping({ fee }: { fee?: number }) {
+const knownShipping = (fee: unknown): fee is number =>
+  typeof fee === 'number' && Number.isFinite(fee) && fee >= 0;
+
+export function Shipping({ fee }: { fee?: number | null }) {
   const { t, price } = useLocale();
-  if (fee === undefined) return null;
   return (
     <div className={`shipping ${fee === 0 ? 'is-free' : ''}`}>
       <Icon name="truck" />
-      {fee === 0 ? t('hit.freeShipping') : t('hit.shipping', { fee: price(fee) })}
+      {!knownShipping(fee) ? t('hit.shippingUnknown') : fee === 0 ? t('hit.freeShipping') : t('hit.shipping', { fee: price(fee) })}
+    </div>
+  );
+}
+
+export function OfferTotal({ p }: { p: Pick<Product, 'price' | 'shipping'> }) {
+  const { t, price } = useLocale();
+  const fee = p.shipping;
+  const known = knownShipping(fee);
+  return (
+    <div className="offer-total">
+      <span>{t(known ? 'product.total' : 'product.totalUnknown')}</span>
+      {known && <> <strong>{price(p.price + fee)}</strong></>}
     </div>
   );
 }
