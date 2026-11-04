@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.worker.json && tsc -p tsconfig.node.json",
     "test:feed": "node --test scripts/feed-test.ts",
+    "test:notifications": "node --test scripts/notification-test.ts",
     "demo:data": "node scripts/generate-demo-data.mjs",
     "brand": "node scripts/build-brand.mjs",
     "feed:import": "node scripts/import.ts",

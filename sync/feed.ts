@@ -21,14 +21,15 @@ const FIELDS = {
   gtin: ['gtin', 'ean', 'barcode', 'upc', 'ean13'],
   category: ['google_product_category', 'product_type', 'category_path', 'categorypath', 'category', 'categories', 'category_name'],
   availability: ['availability', 'stock_status', 'instock', 'in_stock', 'stock', 'available'],
-  quantity: ['quantity', 'qty', 'stock_quantity'],
+  quantity: ['quantity', 'qty', 'stock_quantity', 'inventory'],
   color: ['color', 'colour', 'χρώμα', 'χρωμα'],
   size: ['size', 'sizes', 'μέγεθος', 'μεγεθος'],
   description: ['description', 'short_description', 'details', 'desc'],
-  shipping: ['shipping', 'shipping_cost', 'shippingcost', 'delivery_cost', 'shipping_price'],
+  shipping: ['shipping', 'shipping_cost', 'shippingcost', 'delivery_cost', 'shipping_price', 'shipping_costs'],
 } as const;
 
 type Raw = Record<string, unknown>;
+type FeedProfile = 'default' | 'ellinoekdotiki' | 'toofast';
 const ITEM_TAGS = new Set(['item', 'entry', 'product', 'offer']);
 const MULTI_TAGS = new Set(['additional_image_link', 'additionalimage', 'shipping', 'image']);
 
@@ -65,7 +66,7 @@ function pick(item: Raw, names: readonly string[]): unknown {
   return undefined;
 }
 
-const OUT = /out[ _-]?of[ _-]?stock|back[ _-]?order|^(no|n|0|false|out)$|εξαντλ|μη διαθέσιμ|μη διαθεσιμ|not available|unavailable|discontinued|sold ?out/i;
+const OUT = /out[ _-]?of[ _-]?stock|back[ _-]?order|^(no|n|0|false|out)$|εξαντλ|μη διαθέσιμ|μη διαθεσιμ|κατ[οό]πιν\s+παραγγελ[ιί]ας|αναμ[εέ]νεται|not available|unavailable|discontinued|sold ?out/i;
 
 function inStock(item: Raw): boolean {
   for (const name of FIELDS.availability) {
@@ -76,8 +77,9 @@ function inStock(item: Raw): boolean {
   return !(q !== undefined && /^\d+$/.test(q) && Number(q) === 0);
 }
 
-function category(item: Raw): string | undefined {
-  for (const name of FIELDS.category) {
+function category(item: Raw, profile: FeedProfile): string | undefined {
+  const names = profile === 'toofast' ? [...FIELDS.category, 'cat_list'] : FIELDS.category;
+  for (const name of names) {
     const v = text(item[name]);
     if (!v || /^\d+$/.test(v)) continue; // Google category ids are numbers: not useful as a label
     const last = v.split(/\s*(?:>|\/|\|)\s*/).filter(Boolean).pop();
@@ -93,12 +95,12 @@ function lowerKeys(o: Raw): Raw {
   return out;
 }
 
-function toItem(rawItem: Raw, fractionalDiscount = false): SourceItem {
+function toItem(rawItem: Raw, profile: FeedProfile = 'default'): SourceItem {
   const it = lowerKeys(rawItem);
   const price = money(text(pick(it, FIELDS.price)));
   const saleText = text(pick(it, FIELDS.sale));
   let sale = money(saleText);
-  if (fractionalDiscount && it.discount !== undefined) {
+  if (profile === 'ellinoekdotiki' && it.discount !== undefined) {
     const value = text(it.discount);
     const discount = value === undefined ? NaN : Number(value);
     if (!value || !/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) || !Number.isFinite(discount) || discount < 0 || discount >= 1) {
@@ -119,9 +121,9 @@ function toItem(rawItem: Raw, fractionalDiscount = false): SourceItem {
   // Repeated <size> elements may start with an empty placeholder.
   const sizes = [...new Set(texts(pick(it, FIELDS.size)))];
   return {
-    id: text(pick(it, FIELDS.id)) ?? '',
+    id: text(pick(it, FIELDS.id)) ?? (profile === 'toofast' ? text(it.item) : undefined) ?? text(it['@_id']) ?? '',
     groupId: text(pick(it, FIELDS.group)),
-    title: text(pick(it, FIELDS.title)),
+    title: text(pick(it, FIELDS.title)) ?? (profile === 'toofast' ? text(it.model) : undefined),
     description: desc ? stripHtml(desc) : undefined,
     url: text(pick(it, FIELDS.link)),
     image,
@@ -130,7 +132,7 @@ function toItem(rawItem: Raw, fractionalDiscount = false): SourceItem {
     oldPrice: discounted ? price : undefined,
     shipping: money(text(pick(it, FIELDS.shipping))),
     brand: text(pick(it, FIELDS.brand)),
-    category: category(it),
+    category: category(it, profile),
     color: text(pick(it, FIELDS.color)),
     size: sizes.length ? sizes.join(', ') : undefined,
     mpn: text(pick(it, FIELDS.mpn)),
@@ -167,16 +169,18 @@ function formatOf(root: Raw): string {
   return 'xml';
 }
 
-/** This publisher exports list prices plus a fractional discount, not sale_price. */
-function usesFractionalDiscount(sourceUrl?: string): boolean {
-  if (!sourceUrl) return false;
+/** Only apply retailer-specific meanings to their exact feed endpoint. */
+function profileOf(sourceUrl?: string): FeedProfile {
+  if (!sourceUrl) return 'default';
   try {
     const url = new URL(sourceUrl);
-    return ['ellinoekdotiki.gr', 'www.ellinoekdotiki.gr'].includes(url.hostname)
-      && url.pathname.replace(/\/+$/, '') === '/export/feed';
+    const path = url.pathname.replace(/\/+$/, '');
+    if (['ellinoekdotiki.gr', 'www.ellinoekdotiki.gr'].includes(url.hostname) && path === '/export/feed') return 'ellinoekdotiki';
+    if (['toofast.gr', 'www.toofast.gr'].includes(url.hostname) && path === '/xml/skroutz.xml') return 'toofast';
   } catch {
-    return false;
+    // A standalone parser call without a valid source URL uses the generic fields.
   }
+  return 'default';
 }
 
 export function parseXml(xml: string, sourceUrl?: string): { format: string; items: SourceItem[] } {
@@ -198,8 +202,8 @@ export function parseXml(xml: string, sourceUrl?: string): { format: string; ite
     throw new SyncError('bad_format', 'The file is not valid XML.');
   }
   const raw = findItems(root);
-  const fractionalDiscount = usesFractionalDiscount(sourceUrl);
-  return { format: formatOf(root), items: raw.map((item) => toItem(item, fractionalDiscount)) };
+  const profile = profileOf(sourceUrl);
+  return { format: formatOf(root), items: raw.map((item) => toItem(item, profile)) };
 }
 
 /** Splits delimited text, honouring quotes ("a, b"). */
