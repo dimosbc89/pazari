@@ -298,3 +298,155 @@ test('readFeed passes its source URL through to publisher pricing without a netw
   assert.equal(source.items[0].oldPrice, 10);
   assert.equal(source.truncated, false);
 });
+
+const eShoesUrl = 'https://e-shoes.gr/wp-content/uploads/webexpert-glami-xml/glami.xml';
+const pharmacyLiveUrl = 'https://pharmacylive.gr/feeds/bestprice.xml';
+const bonprixUrl = 'https://www.bonprix.gr/feeds/bestprice.xml';
+const glamiFields = `<ITEM_ID>00411587</ITEM_ID><ITEMGROUP_ID>00411584</ITEMGROUP_ID>
+  <PRODUCTNAME>Γυναικεία Sneakers</PRODUCTNAME><PRICE_VAT>130,00</PRICE_VAT>
+  <URL>https://e-shoes.gr/product/shoe/?attribute_pa_size=36</URL>
+  <IMGURL>https://e-shoes.gr/main.jpg</IMGURL><IMGURL_ALTERNATIVE>https://e-shoes.gr/side.jpg</IMGURL_ALTERNATIVE>
+  <IMGURL_ALTERNATIVE>https://e-shoes.gr/back.jpg</IMGURL_ALTERNATIVE>
+  <MANUFACTURER>DKNY</MANUFACTURER><CATEGORYTEXT>Γυναικεία | Sneakers</CATEGORYTEXT>
+  <DESCRIPTION><![CDATA[<p>&Gamma;&upsilon;&nu;&alpha;ί&kappa;&alpha; &Sigma;&sigma;&sigmaf; &times; &bull; &trade;</p>]]></DESCRIPTION>
+  <PARAM><PARAM_NAME>μέγεθος</PARAM_NAME><VAL>36</VAL></PARAM>
+  <pArAm><pArAm_NaMe>ΧΡΩΜΑ</pArAm_NaMe><vAl>Μαύρο</vAl></pArAm>
+  <PARAM><PARAM_NAME>υλικό</PARAM_NAME><VAL>Δέρμα</VAL></PARAM>`;
+
+test('E-shoes GLAMI maps nested parameters, images, category, price, descriptions and variant identities', () => {
+  const input = `<SHOP><SHOPITEM>${glamiFields}<DELIVERY_DATE>0</DELIVERY_DATE></SHOPITEM></SHOP>`;
+  for (const url of [eShoesUrl, eShoesUrl.replace('https://', 'https://www.')]) {
+    const parsed = parseXml(input, url);
+    assert.equal(parsed.items.length, 1); // A single SHOPITEM must also be found.
+    const item = parsed.items[0];
+    assert.equal(item.id, '00411587');
+    assert.equal(item.groupId, '00411584');
+    assert.equal(item.price, 130);
+    assert.equal(item.size, '36');
+    assert.equal(item.color, 'Μαύρο');
+    assert.equal(item.category, 'Sneakers');
+    assert.equal(item.image, 'https://e-shoes.gr/main.jpg');
+    assert.deepEqual(item.images, ['https://e-shoes.gr/side.jpg', 'https://e-shoes.gr/back.jpg']);
+    assert.equal(item.description, 'Γυναίκα Σσς × • ™');
+    assert.equal(item.inStock, true);
+    assert.equal(item.mpn, undefined); // A retailer variant ID is not an MPN.
+    const report = normalize({ ...parsed, truncated: false }, shop, 'test');
+    assert.equal(report.products[0].id, 'fixture-shop-00411587');
+    assert.equal(report.products[0].groupId, 'fixture-shop-00411584');
+    assert.equal(report.products[0].url, 'https://e-shoes.gr/product/shoe/?attribute_pa_size=36');
+  }
+  const variants = parseXml(`<SHOP><SHOPITEM>${glamiFields}<DELIVERY_DATE>0</DELIVERY_DATE></SHOPITEM>
+    <SHOPITEM>${glamiFields.replace('00411587', '00411588').replaceAll('36', '37')}<DELIVERY_DATE>0</DELIVERY_DATE></SHOPITEM></SHOP>`, eShoesUrl);
+  const products = normalize({ ...variants, truncated: false }, shop, 'test').products;
+  assert.equal(products.length, 2);
+  assert.equal(products[0].groupId, products[1].groupId);
+  assert.notEqual(products[0].id, products[1].id);
+  assert.notEqual(products[0].size, products[1].size);
+  const singleParam = parseXml(xml(`${required}<PARAM><PARAM_NAME>SiZe</PARAM_NAME><VAL>38</VAL></PARAM><DELIVERY_DATE>0</DELIVERY_DATE>`), eShoesUrl).items[0];
+  assert.equal(singleParam.size, '38');
+  const variantLink = 'https://e-shoes.gr/product/shoe/?attribute_pa_size=38';
+  assert.equal(parseXml(xml(`${required}<URL_SIZE>${variantLink}</URL_SIZE>`), eShoesUrl).items[0].url, variantLink);
+  for (const invalid of ['', '@@URL_SIZE@@', 'javascript:alert(1)']) {
+    assert.equal(parseXml(xml(`${required}<URL_SIZE>${invalid}</URL_SIZE>`), eShoesUrl).items[0].url, 'https://example.test/product');
+  }
+  assert.equal(parseXml(xml(`${required}<URL_SIZE>${variantLink}</URL_SIZE>`)).items[0].url, 'https://example.test/product');
+});
+
+test('E-shoes only treats GLAMI zero delivery_date as immediate stock and respects other negative flags', () => {
+  for (const value of ['1', '5', '-1', '2026-11-10', 'unknown', '', '0.0']) {
+    const parsed = parseXml(xml(`${required}<DELIVERY_DATE>${value}</DELIVERY_DATE>`), eShoesUrl);
+    assert.equal(parsed.items[0].inStock, false, value);
+    assert.equal(normalize({ ...parsed, truncated: false }, shop, 'test').products.length, 0, value);
+  }
+  assert.equal(parseXml(xml(required), eShoesUrl).items[0].inStock, false);
+  for (const field of ['<instock>N</instock>', '<quantity>0</quantity>', '<availability>backorder</availability>']) {
+    assert.equal(parseXml(xml(`${required}<DELIVERY_DATE>0</DELIVERY_DATE>${field}`), eShoesUrl).items[0].inStock, false);
+  }
+  assert.equal(parseXml(xml(`${required}<DELIVERY_DATE>5</DELIVERY_DATE>`)).items[0].inStock, true);
+});
+
+test('E-shoes decimal VAT prices preserve fractional cents without applying thousands-separator heuristics', () => {
+  for (const [value, expected] of [['69.953', 69.95], ['69.955', 69.96], ['9.945', 9.95], ['1.005', 1.01], ['130,00', 130]]) {
+    const parsed = parseXml(xml(`${required}<PRICE_VAT>${value}</PRICE_VAT><DELIVERY_DATE>0</DELIVERY_DATE>`), eShoesUrl);
+    assert.equal(normalize({ ...parsed, truncated: false }, shop, 'test').products[0].price, expected);
+  }
+  for (const invalid of ['', 'invalid', '-5', 'Infinity', '1.234.56']) {
+    const parsed = parseXml(xml(`${required}<PRICE_VAT>${invalid}</PRICE_VAT><DELIVERY_DATE>0</DELIVERY_DATE>`), eShoesUrl);
+    assert.equal(normalize({ ...parsed, truncated: false }, shop, 'test').products.length, 0, invalid);
+  }
+  assert.equal(parseXml(xml('<id>1</id><price>69.953</price>')).items[0].price, 69953);
+});
+
+const pharmacyFields = `<productid>001ABC</productid><product_name>Example pharmacy item</product_name>
+  <Product_link>https://pharmacylive.gr/el/item.html</Product_link>
+  <product_image>https://pharmacylive.gr/image.jpg</product_image>
+  <product_in_stock>Y</product_in_stock><product_availability>Άμεση παραλαβή/Παράδοση σε 1 έως 3 ημέρες</product_availability>
+  <Quantity>4</Quantity><Original_Price>24.98</Original_Price><product_special_price>23.00</product_special_price>
+  <product_size>100ml</product_size><product_part_number>PART-123</product_part_number><barcode>05213010813620</barcode>
+  <Manufacturer>Example brand</Manufacturer><Product_Description><![CDATA[<p>Product &amp; details.</p>]]></Product_Description>`;
+
+test('PharmacyLive uses the verified selling price with its custom image, size, description and manufacturer part number', () => {
+  for (const url of [pharmacyLiveUrl, pharmacyLiveUrl.replace('https://', 'https://www.')]) {
+    const parsed = parseXml(xml(pharmacyFields), url);
+    const item = parsed.items[0];
+    assert.equal(item.id, '001ABC');
+    assert.equal(item.price, 23);
+    assert.equal(item.oldPrice, undefined);
+    assert.equal(item.image, 'https://pharmacylive.gr/image.jpg');
+    assert.equal(item.size, '100ml');
+    assert.equal(item.description, 'Product & details.');
+    assert.equal(item.mpn, 'PART-123');
+    assert.equal(item.gtin, '05213010813620');
+    assert.equal(item.inStock, true);
+    assert.equal(normalize({ ...parsed, truncated: false }, shop, 'test').products.length, 1);
+  }
+  for (const current of ['24.98', '26.00']) {
+    const item = parseXml(xml(pharmacyFields.replace('<product_special_price>23.00', `<product_special_price>${current}`)), pharmacyLiveUrl).items[0];
+    assert.equal(item.price, Number(current));
+    assert.equal(item.oldPrice, undefined);
+  }
+  for (const current of ['', 'invalid', '0', '-2']) {
+    const parsed = parseXml(xml(pharmacyFields.replace('<product_special_price>23.00', `<product_special_price>${current}`)), pharmacyLiveUrl);
+    assert.equal(normalize({ ...parsed, truncated: false }, shop, 'test').products.length, 0, current);
+  }
+});
+
+test('PharmacyLive custom negative stock flags override positive generic fields and quantity', () => {
+  for (const fields of [
+    pharmacyFields.replace('<product_in_stock>Y', '<product_in_stock>N'),
+    pharmacyFields.replace('Άμεση παραλαβή/Παράδοση σε 1 έως 3 ημέρες', 'Εξαντλημένο'),
+    pharmacyFields.replace('<Quantity>4', '<Quantity>0'),
+  ]) {
+    const parsed = parseXml(xml(`${fields}<instock>Y</instock><availability>in stock</availability>`), pharmacyLiveUrl);
+    assert.equal(parsed.items[0].inStock, false);
+    assert.equal(normalize({ ...parsed, truncated: false }, shop, 'test').products.length, 0);
+  }
+});
+
+test('Bonprix skips placeholder images, prefers valid thumbnail and then gallery, without changing prices', () => {
+  const fields = `${required}<image>@@ProductImage@@</image><thumbnail>https://www.bonprix.gr/thumb.jpg</thumbnail>
+    <additional_imageurl>https://www.bonprix.gr/side.jpg</additional_imageurl><initialprice>5</initialprice>`;
+  for (const url of [bonprixUrl, bonprixUrl.replace('www.', '')]) {
+    const item = parseXml(xml(fields), url).items[0];
+    assert.equal(item.image, 'https://www.bonprix.gr/thumb.jpg');
+    assert.deepEqual(item.images, ['https://www.bonprix.gr/side.jpg']);
+    assert.equal(item.price, 10);
+    assert.equal(item.oldPrice, undefined); // initialprice must never become a lower selling price.
+    const noThumbnail = fields.replace('https://www.bonprix.gr/thumb.jpg', '@@Thumbnail@@');
+    assert.equal(parseXml(xml(noThumbnail), url).items[0].image, 'https://www.bonprix.gr/side.jpg');
+    assert.equal(parseXml(xml(fields.replace('@@ProductImage@@', 'https://www.bonprix.gr/main.jpg')), url).items[0].image, 'https://www.bonprix.gr/main.jpg');
+  }
+  assert.equal(parseXml(xml(fields)).items[0].image, '@@ProductImage@@');
+});
+
+test('the three new profiles require their exact HTTPS endpoint, allowing only www as a host alias', () => {
+  for (const endpoint of [eShoesUrl, pharmacyLiveUrl, bonprixUrl]) {
+    const url = new URL(endpoint);
+    const wrong = [undefined, endpoint.replace('https:', 'http:'), `${endpoint}/`, `${endpoint}?other=1`,
+      `${endpoint}#other`, `${url.origin}/other.xml`, endpoint.replace(url.hostname, `${url.hostname}.example.test`),
+      endpoint.replace(url.hostname, `${url.hostname}:8443`)];
+    const fields = `${required}${glamiFields}${pharmacyFields}<image>@@ProductImage@@</image><thumbnail>https://example.test/thumb.jpg</thumbnail>`;
+    const generic = parseXml(xml(fields));
+    for (const source of wrong) assert.deepEqual(parseXml(xml(fields), source), generic, source);
+  }
+});
