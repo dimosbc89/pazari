@@ -1,0 +1,1386 @@
+[
+  {
+    "shopId": "agroequip",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.609546+00:00",
+    "summary": {
+      "el": "Αποστολή με courier ή μεταφορική, με χρέωση που δεν δημοσιεύεται ως ενιαίο ποσό. Η μεταφορική παραδίδει στο πρακτορείο, όχι στην πόρτα. Σε δυσπρόσιτες περιοχές απαιτείται παραλαβή από κατάστημα courier ή επιπλέον χρέωση.",
+      "en": "Courier or freight delivery; no single shipping price is published. Freight requires depot collection. Remote destinations may require courier-branch collection or an extra charge."
+    },
+    "deliveryTime": {
+      "el": "Ενδεικτικά 1–3 εργάσιμες, ανάλογα με διαθεσιμότητα και προορισμό.",
+      "en": "Estimated 1–3 business days, subject to availability and destination."
+    },
+    "conditions": {
+      "el": "Η περιορισμένη προσφορά δωρεάν χερσαίας μεταφοράς από 250 € δεν αποτελεί γενική δωρεάν παράδοση στο σπίτι.",
+      "en": "A limited prepaid land-freight offer from €250 is not a general free home-delivery rule."
+    },
+    "sources": [
+      {
+        "url": "https://agroequip.eu/tropoi-apostolhs",
+        "title": "Agroequip — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "amazon-beauty",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.609822+00:00",
+    "summary": {
+      "el": "Σε συγκεκριμένες περιοχές της Αττικής: 2,90 € έως 30 €, δωρεάν από 30,01 €. Στην υπόλοιπη Ελλάδα: 3,90 € έως 65 €, δωρεάν από 65,01 €. Box Now: 2 € ηπειρωτικά / 4 € στα νησιά.",
+      "en": "Selected Attica areas: €2.90 through €30, free from €30.01. Elsewhere in Greece: €3.90 through €65, free from €65.01. Box Now: €2 mainland / €4 islands."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "Οι τοπικές τιμές αφορούν μόνο τις περιοχές που ορίζει το κατάστημα. Δωρεάν αντικαταβολή μόνο εκεί· αλλού δεν διατίθεται. Άνω των 3 κιλών μπορεί να χρησιμοποιηθεί μεταφορική.",
+      "en": "Local rates apply only to the store’s named areas. Free COD only there; unavailable elsewhere. Parcels over 3 kg may use freight."
+    },
+    "sources": [
+      {
+        "url": "https://www.amazonbeauty.gr/tropoi-apostolis/",
+        "title": "Amazon Beauty — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "anesis-home",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.610203+00:00",
+    "summary": {
+      "el": "Συνήθη προϊόντα: 2,50 € για παραγγελίες κάτω από 49 €, δωρεάν πάνω από 49 €. Χαλιά/ογκώδη: 15 €, στρώματα: 60 €. Τα ξενοδοχειακά είδη έχουν ξεχωριστές χρεώσεις. Box Now δωρεάν πάνω από 19 €.",
+      "en": "Ordinary items: €2.50 below €49; free above €49. Rugs/bulky items: €15; mattresses: €60. Hotel supplies have separate charges. Box Now is free above €19."
+    },
+    "deliveryTime": {
+      "el": "Ο χρόνος αποστολής αναγράφεται στο προϊόν. Ξενοδοχειακά: εκτέλεση σε 3–4 εργάσιμες.",
+      "en": "Dispatch time is stated on each product. Hotel-supply orders: processing in 3–4 business days."
+    },
+    "conditions": {
+      "el": "Εξαιρούνται χαλιά, στρώματα και ογκώδη από τα δωρεάν μεταφορικά. Δυσπρόσιτες περιοχές κατόπιν συνεννόησης. Η χρέωση ακριβώς στα 49 € δεν διευκρινίζεται.",
+      "en": "Free delivery excludes rugs, mattresses and bulky items. Remote delivery is agreed separately. Exactly €49 is not clearly covered."
+    },
+    "sources": [
+      {
+        "url": "https://www.anesishome.gr/content/tropi-apostolis-23",
+        "title": "Anesis Home — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "anthidis-euronics",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.610421+00:00",
+    "summary": {
+      "el": "Στη Θεσσαλονίκη εντός εσωτερικής περιφερειακής: συνήθως δωρεάν έως ισόγειο/πεζοδρόμιο, με εξαιρέσεις ειδικών τιμών. Υπόλοιπη Ελλάδα: από 4,90 €, ανάλογα με βάρος, όγκο και προορισμό.",
+      "en": "Within Thessaloniki’s inner ring: usually free to ground level/kerbside, excluding some special-price products. Elsewhere in Greece: from €4.90, depending on weight, size and destination."
+    },
+    "deliveryTime": {
+      "el": "1–7 εργάσιμες, ανάλογα με διαθεσιμότητα και προορισμό.",
+      "en": "1–7 business days, subject to availability and destination."
+    },
+    "conditions": {
+      "el": "Σκάλες: 10 €/όροφο όταν δεν χωρά στο ασανσέρ. Ογκώδη και δυσπρόσιτα κατόπιν συνεννόησης. Αντικαταβολή δωρεάν μόνο στην ορισμένη περιοχή Θεσσαλονίκης.",
+      "en": "Stairs: €10/floor if the item does not fit the lift. Bulky/remote delivery is quoted separately. Free COD only in the stated Thessaloniki area."
+    },
+    "sources": [
+      {
+        "url": "https://anthidiseuronics.gr/tropoi-apostolis/",
+        "title": "Anthidis Euronics — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "antonakakis-clima",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.610631+00:00",
+    "summary": {
+      "el": "Δωρεάν παράδοση εντός Αττικής και σε ακτίνα 30 χλμ. από τη Νέα Φιλαδέλφεια. Πέρα από αυτή την περιοχή, τα μεταφορικά χρεώνονται ανάλογα με τον προορισμό.",
+      "en": "Free delivery within Attica and a 30 km radius of Nea Filadelfeia. Beyond this area, shipping is charged according to destination."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "Δεν δημοσιεύεται ενιαία τιμή για την υπόλοιπη Ελλάδα. Αντικαταβολή έως 500 €· η πρόσθετη χρέωσή της δεν αναφέρεται.",
+      "en": "No flat rate is published for the rest of Greece. COD is available up to €500; its surcharge is not stated."
+    },
+    "sources": [
+      {
+        "url": "https://antonakakisclima.gr/tropoi-pliromis-apostolis/",
+        "title": "Antonakakis Clima — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "bambo-nature",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.611223+00:00",
+    "summary": {
+      "el": "Οι όροι αναφέρουν μεταφορικά 4,80 € έως 34,99 € και δωρεάν από 35 €. Η αρχική σελίδα αναφέρει δωρεάν πάνω από 25 €. Επειδή οι επίσημες πληροφορίες διαφέρουν, επιβεβαιώστε το τελικό κόστος στο κατάστημα.",
+      "en": "Terms list €4.80 through €34.99 and free delivery from €35, while the homepage advertises free delivery above €25. Official pages conflict; confirm the final charge with the store."
+    },
+    "deliveryTime": {
+      "el": "Οι όροι αναφέρουν 1–3 εργάσιμες με ΕΛΤΑ Courier ή Speedex.",
+      "en": "Terms state 1–3 business days with ELTA Courier or Speedex."
+    },
+    "conditions": {
+      "el": "Αντικρουόμενα όρια δωρεάν αποστολής. Οι όροι αναφέρουν αντικαταβολή 1,20 € για παραγγελίες έως 500 €.",
+      "en": "Conflicting free-delivery thresholds. Terms quote €1.20 COD for orders up to €500."
+    },
+    "sources": [
+      {
+        "url": "https://gr.bambo.com/%ce%bf%cf%81%ce%bf%ce%b9-%cf%80%cf%81%ce%bf%cf%85%cf%80%ce%bf%ce%b8%ce%b5%cf%83%ce%b5%ce%b9%cf%83/",
+        "title": "Bambo Nature — Delivery policy"
+      },
+      {
+        "url": "https://gr.bambo.com/",
+        "title": "Bambo Nature — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "bettersport",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.611481+00:00",
+    "summary": {
+      "el": "ΕΛΤΑ Courier: 2,50 €, ACS: 3,50 €, Box Now: 2,50 € για παραγγελίες κάτω από 69,99 €, σύμφωνα με την πολιτική. Δωρεάν πάνω από 70 €. Αντικαταβολή +2,50 €.",
+      "en": "ELTA Courier: €2.50; ACS: €3.50; Box Now: €2.50 for orders below €69.99, as written in the policy. Free above €70. COD adds €2.50."
+    },
+    "deliveryTime": {
+      "el": "1–4 εργάσιμες· πιθανές καθυστερήσεις σε δυσπρόσιτες περιοχές.",
+      "en": "1–4 business days; remote areas may take longer."
+    },
+    "conditions": {
+      "el": "Η τιμή εξαρτάται από τον μεταφορέα. Η διατύπωση δεν διευκρινίζει ακριβώς τις παραγγελίες 69,99 € και 70 €.",
+      "en": "Rate depends on carrier. The wording does not clearly cover orders of exactly €69.99 or €70."
+    },
+    "sources": [
+      {
+        "url": "https://bettersport.gr/el/content/23-shipping-courier",
+        "title": "BetterSport — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "bonprix",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.611898+00:00",
+    "summary": {
+      "el": "Για Ελλάδα, courier ή Box Now από 2,90 €. Το τελικό κόστος εξαρτάται από βάρος, προορισμό, τρόπο αποστολής και πληρωμής και εμφανίζεται στο καλάθι. Αντικαταβολή courier +2 €, Box Now Pay on the Go +1 €.",
+      "en": "Greece: courier or Box Now from €2.90. The final charge depends on weight, destination, delivery method and payment, and is shown in the basket. Courier COD adds €2; Box Now Pay on the Go adds €1."
+    },
+    "deliveryTime": {
+      "el": "Η σελίδα προϊόντος αναφέρει παράδοση στον courier σε 7–10 εργάσιμες, πριν από τη μεταφορά στον πελάτη.",
+      "en": "The product page states handover to the courier in 7–10 business days, before transit to the customer."
+    },
+    "conditions": {
+      "el": "Η τιμή είναι ελάχιστη, όχι σταθερή. Για αγορές άνω των 499 € απαιτείται online πληρωμή. Ο χρόνος εξαρτάται από το προϊόν.",
+      "en": "This is a starting rate, not a flat fee. Orders above €499 require online payment. Timing depends on the product."
+    },
+    "sources": [
+      {
+        "url": "https://www.bonprix.gr/el-gr/information/5487/Tropoi-plhromhs-_-apostolhs",
+        "title": "Bonprix — Delivery policy"
+      },
+      {
+        "url": "https://www.bonprix.gr/el-gr/gynaikeia-rouxa-mplouzes/top-me-pagietes-612829",
+        "title": "Bonprix — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "calzomania",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.612289+00:00",
+    "summary": {
+      "el": "ΕΛΤΑ Courier: 3,50 € πανελλαδικά για παραγγελίες έως 39,99 €, δωρεάν πάνω από 40 €. Box Now: 2,50 €, δωρεάν πάνω από 40 €. Αντικαταβολή +2 €.",
+      "en": "ELTA Courier: €3.50 nationwide through €39.99; free above €40. Box Now: €2.50; free above €40. COD adds €2."
+    },
+    "deliveryTime": {
+      "el": "Διαθέσιμα είδη: αποστολή εντός 2 εργάσιμων για Ρόδο· παράδοση 3–7 εργάσιμες στην υπόλοιπη Ελλάδα.",
+      "en": "Available items: dispatch within 2 business days for Rhodes; delivery in 3–7 business days elsewhere in Greece."
+    },
+    "conditions": {
+      "el": "Η χρέωση ακριβώς στα 40 € δεν διευκρινίζεται. Άλλη εταιρεία μεταφοράς επιβαρύνει τον πελάτη. Πιθανές καθυστερήσεις σε περιόδους φόρτου.",
+      "en": "Exactly €40 is not clearly covered. A different carrier is charged to the customer. Busy periods may cause delays."
+    },
+    "sources": [
+      {
+        "url": "https://www.calzomania.gr/shipment-methods/",
+        "title": "Calzomania — Delivery policy"
+      },
+      {
+        "url": "https://www.calzomania.gr/payment-methods/",
+        "title": "Calzomania — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "carepoint",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.612911+00:00",
+    "summary": {
+      "el": "Courier: 2,70 € έως 2 κιλά, +1 €/επιπλέον κιλό. Δωρεάν πάνω από 49 € μόνο έως 2 κιλά. Αντικαταβολή +2,30 €. TNT: διαφορετικές χρεώσεις, χωρίς δωρεάν αποστολή.",
+      "en": "Courier: €2.70 up to 2 kg, plus €1/additional kg. Free above €49 only up to 2 kg. COD adds €2.30. TNT has separate charges and no free-delivery offer."
+    },
+    "deliveryTime": {
+      "el": "Στόχος αποστολής σε 1–5 εργάσιμες· πιθανές καθυστερήσεις σε αργίες ή έκτακτες συνθήκες.",
+      "en": "Dispatch target: 1–5 business days; holidays or exceptional conditions may delay shipment."
+    },
+    "conditions": {
+      "el": "Courier μόνο για μη ογκώδη δέματα. TNT στην Ελλάδα: 8 € έως 2 κιλά, +2 €/κιλό· στη Λέσβο 5 € έως 10 κιλά, +2 €/κιλό.",
+      "en": "Courier is for non-bulky parcels. TNT Greece: €8 up to 2 kg, +€2/kg; Lesvos: €5 up to 10 kg, +€2/kg."
+    },
+    "sources": [
+      {
+        "url": "https://carepoint.gr/tropoi-apostolis/",
+        "title": "CarePoint — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "clicknbuy",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.613232+00:00",
+    "summary": {
+      "el": "Speedex στην Ελλάδα: 4,90 €. Η πολιτική αναφέρει δωρεάν μεταφορικά πάνω από 60 €, ενώ η κεφαλίδα γράφει «από 60 €». Επιβεβαιώστε τη χρέωση για παραγγελία ακριβώς 60 €.",
+      "en": "Speedex in Greece: €4.90. The delivery policy says free above €60, while the header says from €60. Confirm the charge for an order of exactly €60."
+    },
+    "deliveryTime": {
+      "el": "Εκτός Αττικής: 1–3 εργάσιμες, ανάλογα με την περιοχή.",
+      "en": "Outside Attica: 1–3 business days, depending on destination."
+    },
+    "conditions": {
+      "el": "",
+      "en": ""
+    },
+    "sources": [
+      {
+        "url": "https://clicknbuy.gr/apostoles/",
+        "title": "ClicknBuy — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "danaos-stores",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.613456+00:00",
+    "summary": {
+      "el": "Γενική Ταχυδρομική: 3 € εντός Αττικής ή 5 € εκτός Αττικής για αγορές κάτω από 50 €. Δωρεάν αποστολή πανελλαδικά πάνω από 50 €. Διατίθενται επίσης Box Now και αυθημερόν υπηρεσία σε συγκεκριμένους Τ.Κ.",
+      "en": "Geniki Taxydromiki: €3 within Attica or €5 outside Attica for orders below €50. Free nationwide above €50. Box Now and a same-day service for selected postcodes are also offered."
+    },
+    "deliveryTime": {
+      "el": "Αυθημερόν μόνο σε επιλεγμένους Τ.Κ. Αττικής και υπό τις προϋποθέσεις της πολιτικής.",
+      "en": "Same-day delivery only to selected Attica postcodes, subject to the policy’s conditions."
+    },
+    "conditions": {
+      "el": "Η χρέωση ακριβώς στα 50 € και η τιμή Box Now δεν διευκρινίζονται. Διαφορετική τιμή ανά περιοχή.",
+      "en": "Exactly €50 and the Box Now price are not specified. Prices vary by region."
+    },
+    "sources": [
+      {
+        "url": "https://www.danaos-stores.gr/apostoles/",
+        "title": "Danaos Stores — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "des-to-tsantaki-mou",
+    "country": "gr",
+    "status": "verified",
+    "checkedAt": "2026-11-04T20:13:29.613703+00:00",
+    "summary": {
+      "el": "ACS: 2,80 € σε όλη την Ελλάδα, δωρεάν για παραγγελίες πάνω από 79 €. Αντικαταβολή +3 €. Εναλλακτικά, Box Now με 2,50 €.",
+      "en": "ACS: €2.80 throughout Greece, free for orders above €79. COD adds €3. Box Now is an alternative at €2.50."
+    },
+    "deliveryTime": {
+      "el": "Αττική: 1–3 εργάσιμες. Υπόλοιπη Ελλάδα: 1–4 εργάσιμες.",
+      "en": "Attica: 1–3 business days. Elsewhere in Greece: 1–4 business days."
+    },
+    "conditions": {
+      "el": "Η βασική χρέωση αφορά προπληρωμένη αποστολή με ACS.",
+      "en": "The standard charge is for prepaid ACS delivery."
+    },
+    "sources": [
+      {
+        "url": "https://destotsantakimou.gr/faqs/",
+        "title": "Des to Tsantaki Mou — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "drele",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.613940+00:00",
+    "summary": {
+      "el": "ACS: 4 €, 10 € ή 20 €, ανάλογα με τον όγκο του προϊόντος. Δεν δημοσιεύονται τα όρια όγκου για κάθε χρέωση· το τελικό κόστος χρειάζεται επιβεβαίωση στο κατάστημα.",
+      "en": "ACS: €4, €10 or €20, depending on product volume. Volume bands are not published; confirm the applicable charge with the store."
+    },
+    "deliveryTime": {
+      "el": "1–3 εργάσιμες, εκτός δυσπρόσιτων περιοχών.",
+      "en": "1–3 business days, excluding remote areas."
+    },
+    "conditions": {
+      "el": "",
+      "en": ""
+    },
+    "sources": [
+      {
+        "url": "https://www.drele.com/distribution-info/",
+        "title": "Drele — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "e-geoponiki",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.614213+00:00",
+    "summary": {
+      "el": "Courier έως 2 κιλά: 2,50 € Αττική / 2,80 € υπόλοιπη Ελλάδα. Επιπλέον κιλό: 0,90 € / 1,10 € αντίστοιχα. Ογκώδη με μεταφορική και ξεχωριστές χρεώσεις. Box Now: 2,50–4,50 €, δωρεάν πάνω από 80 € υπό όρους.",
+      "en": "Courier up to 2 kg: €2.50 Attica / €2.80 elsewhere in Greece. Additional kg: €0.90 / €1.10 respectively. Bulky goods use separate freight rates. Box Now: €2.50–€4.50, free above €80 subject to limits."
+    },
+    "deliveryTime": {
+      "el": "Αττική 2–7 εργάσιμες· επαρχία/νησιά 3–10· δυσπρόσιτα 5–12.",
+      "en": "Attica 2–7 business days; other towns/islands 3–10; remote areas 5–12."
+    },
+    "conditions": {
+      "el": "Σε δυσπρόσιτες περιοχές η τιμή courier αφορά παραλαβή από ACS. Η μεταφορική αφορά πεζοδρόμιο/πρακτορείο. Δωρεάν άνω των 250 € μόνο εντός Ν. Αττικής, μαζί με Κέα/Κύθνο.",
+      "en": "Remote courier rate is for ACS collection. Freight is kerbside/depot delivery. Free above €250 only in Attica, including Kea/Kythnos."
+    },
+    "sources": [
+      {
+        "url": "https://e-geoponiki.gr/tropoi-apostolis/",
+        "title": "e-Geoponiki — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "e-geoponos",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.614430+00:00",
+    "summary": {
+      "el": "ΕΛΤΑ Courier: 3,10 € έως 2 κιλά, +1,10 €/επιπλέον κιλό, έως 25 κιλά. Αντικαταβολή +2,50 €. Box Now: 3 €, δωρεάν πάνω από 50 € έως 18 κιλά και εντός διαστάσεων θυρίδας.",
+      "en": "ELTA Courier: €3.10 up to 2 kg, +€1.10/additional kg, up to 25 kg. COD adds €2.50. Box Now: €3, free above €50 for parcels up to 18 kg within locker dimensions."
+    },
+    "deliveryTime": {
+      "el": "Courier/lockers: αναφέρονται 1–3 ημέρες. Μεταφορική: 1–5 ημέρες.",
+      "en": "Courier/lockers: stated as 1–3 days. Freight: 1–5 days."
+    },
+    "conditions": {
+      "el": "Ισχύει και ογκομετρικό βάρος. Μεταφορική: 10 €/δέμα προς πρακτορείο, με πρόσθετη χρέωση για περαιτέρω μεταφορά σε νησιά/δυσπρόσιτα. Χωρίς αντικαταβολή στη μεταφορική.",
+      "en": "Volumetric weight applies. Freight: €10/parcel to a depot, with onward island/remote transport extra. No freight COD."
+    },
+    "sources": [
+      {
+        "url": "https://www.e-geoponos.gr/%CF%84%CF%81%CF%8C%CF%80%CE%BF%CE%B9-%CE%B1%CF%80%CE%BF%CF%83%CF%84%CE%BF%CE%BB%CE%AE%CF%82/",
+        "title": "E-geoponos — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "e-sandal",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.614560+00:00",
+    "summary": {
+      "el": "Γενική Ταχυδρομική: 4 € στην ηπειρωτική Ελλάδα, 5 € στα νησιά. Δωρεάν πάνω από 69 €. Box Now: 2,50 € ηπειρωτικά ή 3,50 € στα νησιά που αναφέρει η πολιτική.",
+      "en": "Geniki Taxydromiki: €4 mainland Greece, €5 islands. Free above €69. Box Now: €2.50 mainland or €3.50 on the islands named in the policy."
+    },
+    "deliveryTime": {
+      "el": "Για αποστολές έως 14:00: 1–2 εργάσιμες· δυσπρόσιτα 2–3 εργάσιμες.",
+      "en": "For dispatches by 14:00: 1–2 business days; remote areas 2–3 business days."
+    },
+    "conditions": {
+      "el": "Η τιμή εξαρτάται από περιοχή και μεταφορέα. Τα 3,50 € Box Now αφορούν Κρήτη, Κέρκυρα, Ζάκυνθο, Κεφαλλονιά, Λευκάδα, Ρόδο και Μυτιλήνη.",
+      "en": "Price depends on region and carrier. The €3.50 Box Now rate applies to Crete, Corfu, Zakynthos, Kefalonia, Lefkada, Rhodes and Lesvos."
+    },
+    "sources": [
+      {
+        "url": "https://e-sandal.gr/tropoi-apostolis/",
+        "title": "e-Sandal — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "e-shoes",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:29.614791+00:00",
+    "summary": {
+      "el": "Courier: 2,99 € για παραγγελίες κάτω από 39 €, δωρεάν πάνω από 39 €. Αντικαταβολή +2 €. Box Now με την ίδια χρέωση και όριο. Η χρέωση ακριβώς στα 39 € δεν διευκρινίζεται.",
+      "en": "Courier: €2.99 for orders below €39; free above €39. COD adds €2. Box Now has the same fee and threshold. Exactly €39 is not clearly covered."
+    },
+    "deliveryTime": {
+      "el": "Αποστολή την επόμενη εργάσιμη· συνήθης παράδοση 2–3 εργάσιμες, ανάλογα με περιοχή/μεταφορέα.",
+      "en": "Dispatch next business day; usual delivery 2–3 business days, depending on destination/carrier."
+    },
+    "conditions": {
+      "el": "ACS, Γενική Ταχυδρομική ή ΕΛΤΑ Courier. Σε περιόδους αυξημένης κίνησης χρειάζεται περισσότερος χρόνος.",
+      "en": "ACS, Geniki Taxydromiki or ELTA Courier. Busy periods can take longer."
+    },
+    "sources": [
+      {
+        "url": "https://e-shoes.gr/apostoli-proionton/",
+        "title": "E-shoes — Delivery policy"
+      }
+    ]
+  },
+  {
+    "shopId": "ellinoekdotiki",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Ελλάδα: 3,50 € για παραγγελίες κάτω των 15 € και δωρεάν πάνω από 15 €. Κάτω από 15 €, η αποστολή με αντικαταβολή κοστίζει συνολικά 5 €. Το κόστος για παραγγελία ακριβώς 15 € δεν διευκρινίζεται. Δωρεάν παραλαβή από την έδρα.",
+      "en": "Greece: €3.50 for orders below €15; free above €15. Below €15, delivery with cash on delivery costs €5 in total. The charge at exactly €15 is not specified. Collection from the publisher is free."
+    },
+    "deliveryTime": {
+      "el": "Συνήθως 1–4 ημέρες, ανάλογα με την περιοχή.",
+      "en": "Usually 1–4 days, depending on destination."
+    },
+    "conditions": {
+      "el": "Το όριο ακριβώς 15 € παραμένει ασαφές. Τα 5 € είναι συνολική χρέωση αποστολής με αντικαταβολή κάτω από το όριο.",
+      "en": "The exact €15 boundary is unclear. The €5 amount is total shipping with COD below the threshold."
+    },
+    "sources": [
+      {
+        "url": "https://ellinoekdotiki.gr/gr/plirofories/paraggelies-tropoi-apostolis-paralavis",
+        "title": "Παραγγελίες και τρόποι αποστολής – παραλαβής"
+      },
+      {
+        "url": "https://ellinoekdotiki.gr/gr/plirofories/sixnes-erotiseis-apantiseis",
+        "title": "Συχνές ερωτήσεις"
+      }
+    ]
+  },
+  {
+    "shopId": "ergaleio-net",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Courier στην Ελλάδα: συνήθως 2,50 € έως 2 kg, με επιπλέον 2,50 € για αντικαταβολή. Βάρος, όγκος και δυσπρόσιτος προορισμός μπορούν να αλλάξουν τη χρέωση. Βαριά ή ογκώδη είδη αποστέλλονται με μεταφορική κατόπιν συμφωνίας.",
+      "en": "Courier in Greece: usually €2.50 up to 2 kg, plus €2.50 for COD. Weight, volume and remote destinations may change the fee. Heavy or bulky items use a freight carrier at an agreed charge."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "Το κόστος ενδέχεται να αναθεωρηθεί ακόμη και μετά την παραγγελία για δυσπρόσιτη περιοχή.",
+      "en": "Remote-area charges may be revised even after the order is placed."
+    },
+    "sources": [
+      {
+        "url": "https://ergaleio.net/%CF%84%CF%81%CF%8C%CF%80%CE%BF%CE%B9-%CF%80%CE%B1%CF%81%CE%B1%CE%BB%CE%B1%CE%B2%CE%AE%CF%82/",
+        "title": "Τρόποι παραλαβής"
+      }
+    ]
+  },
+  {
+    "shopId": "fitness-store",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Δωρεάν μεταφορικά στην Ελλάδα με ελάχιστη αγορά 20 €. Αντικαταβολή +1,80 €, δωρεάν πάνω από 50 €. Είδη 20 kg και άνω χρειάζονται προπληρωμή και αποστέλλονται σε γραφείο μεταφορικής για παραλαβή από τον πελάτη.",
+      "en": "Free shipping in Greece with a €20 minimum order. COD costs €1.80 and is free above €50. Items weighing 20 kg or more require prepayment and collection from the freight carrier’s depot."
+    },
+    "deliveryTime": {
+      "el": "1–3 ημέρες· σε εξαιρετικά δυσπρόσιτες περιοχές έως 6 ημέρες.",
+      "en": "1–3 days; exceptionally remote areas may take up to 6 days."
+    },
+    "conditions": {
+      "el": "Τα 20 € είναι ελάχιστη αγορά. Βαριά ή ογκώδη είδη ≥20 kg δεν παραδίδονται με τη συνήθη courier ούτε υποστηρίζουν αντικαταβολή.",
+      "en": "€20 is a minimum order value. Heavy or bulky items ≥20 kg use depot collection and do not support COD."
+    },
+    "sources": [
+      {
+        "url": "https://fitness-store.gr/content/tropoi-plhromis-apostolis",
+        "title": "Τρόποι πληρωμής & αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "fms-stores",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Ελλάδα: μεταφορικά 3 € κάτω από 45 € και δωρεάν πάνω από 45 €. Αντικαταβολή +2 €. Αποστολή με Γενική Ταχυδρομική ή ACS. Το ακριβές κόστος για παραγγελία 45 € δεν διευκρινίζεται.",
+      "en": "Greece: €3 shipping below €45 and free above €45. COD adds €2. Sent with Geniki Taxydromiki or ACS. The fee for an order of exactly €45 is not specified."
+    },
+    "deliveryTime": {
+      "el": "Συνήθως 2–7 εργάσιμες μετά τη λήψη/επιβεβαίωση, ανάλογα με τη διαθεσιμότητα.",
+      "en": "Usually 2–7 working days after receipt/confirmation, subject to availability."
+    },
+    "conditions": {
+      "el": "Η πολιτική δεν καλύπτει ρητά την παραγγελία ακριβώς 45 €. Διαφορετικοί όροι ισχύουν εκτός Ελλάδας.",
+      "en": "The exact €45 order value is not covered. Different conditions apply outside Greece."
+    },
+    "sources": [
+      {
+        "url": "https://www.fmsstores.gr/el/pages/8-tropoi-apostolis",
+        "title": "Τρόποι Αποστολής"
+      },
+      {
+        "url": "https://www.fmsstores.gr/el/pages/5-plirofories-apostolis",
+        "title": "Πληροφορίες Αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "fountoukis",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Κάτω από 50 €: 3 € για ηπειρωτική Ελλάδα/Κρήτη, 4 € για άλλα νησιά. Από 50 € δωρεάν, εκτός βαλιτσών που έχουν 7 €. Δυσπρόσιτες περιοχές επιβαρύνονται χωριστά. BOX NOW δωρεάν όπου διατίθεται. Αντικαταβολή +2 €.",
+      "en": "Below €50: €3 for mainland Greece/Crete and €4 for other islands. Free from €50, except suitcases (€7). Remote areas may cost extra. BOX NOW is free where available. COD adds €2."
+    },
+    "deliveryTime": {
+      "el": "Ετοιμοπαράδοτα: έως 2 εργάσιμες σε μεγάλες πόλεις, έως 4 σε νησιά/απομακρυσμένες περιοχές.",
+      "en": "Ready-to-ship items: up to 2 working days in major cities, up to 4 for islands/remote areas."
+    },
+    "conditions": {
+      "el": "Η χρέωση εξαρτάται από προορισμό, είδος και τρόπο παραλαβής. Οι βαλίτσες αποστέλλονται με Γενική Ταχυδρομική.",
+      "en": "Charges depend on destination, product type and delivery method. Suitcases use Geniki Taxydromiki."
+    },
+    "sources": [
+      {
+        "url": "https://fountoukis.gr/tropoi-apostolis",
+        "title": "Τρόποι αποστολής"
+      },
+      {
+        "url": "https://fountoukis.gr/tropoi-pliromis",
+        "title": "Τρόποι πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "fun4all",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Ελλάδα: courier 3,50 € έως 2 kg, 4,50 € για 2–5 kg και +1 €/επιπλέον kg πάνω από 5 kg. Δωρεάν από 39 € μόνο για παραγγελίες έως 5 kg. BOX NOW 3,60 €. Η ακριβής χρέωση εμφανίζεται στο καλάθι.",
+      "en": "Greece: courier €3.50 up to 2 kg, €4.50 for 2–5 kg and €1 per extra kg above 5 kg. Free from €39 only for orders up to 5 kg. BOX NOW costs €3.60. The basket calculates the final shipping charge."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "Η σελίδα πληρωμών αναφέρει παράδοση με αντικαταβολή 5 € επιπλέον της αξίας προϊόντων, χωρίς να ξεκαθαρίζει αν περιλαμβάνει τη συνήθη αποστολή. Το ακριβές όριο 2 kg επικαλύπτεται στη διατύπωση.",
+      "en": "The payment page quotes €5 for COD delivery above the goods value, without clarifying whether ordinary shipping is included. The two weight bands overlap at exactly 2 kg."
+    },
+    "sources": [
+      {
+        "url": "https://www.fun4all.gr/deliveries/",
+        "title": "Πολιτική Αποστολών & Επιστροφών"
+      },
+      {
+        "url": "https://www.fun4all.gr/paymentmethods/",
+        "title": "Τρόποι Πληρωμής – Ασφάλεια Συναλλαγών"
+      }
+    ]
+  },
+  {
+    "shopId": "funky-man",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Courier σε όλη την Ελλάδα. Δωρεάν μεταφορικά για συνολική καθαρή αξία προϊόντων πάνω από 60 €. Η βασική χρέωση και τυχόν αντικαταβολή εμφανίζονται στο ταμείο· δεν δημοσιεύεται ενιαίος αριθμητικός τιμοκατάλογος.",
+      "en": "Courier throughout Greece. Free shipping when the total net product value exceeds €60. The standard fee and any COD charge appear at checkout; no single numerical base tariff is published."
+    },
+    "deliveryTime": {
+      "el": "Παραγγελίες μέχρι 12:30: εντός 3 εργάσιμων· αργότερα προστίθεται 1 εργάσιμη.",
+      "en": "Orders placed by 12:30: within 3 working days; later orders add 1 working day."
+    },
+    "conditions": {
+      "el": "Ο όρος «καθαρή αξία» δεν αποσαφηνίζει μόνος του τη βάση υπολογισμού. Ισχύουν εξαιρέσεις λόγω απεργιών ή ακραίων συνθηκών.",
+      "en": "The term “net value” does not by itself clarify the calculation basis. Strikes or severe conditions can delay delivery."
+    },
+    "sources": [
+      {
+        "url": "https://funky-man.gr/dorean-apostolh/",
+        "title": "Δωρεάν Αποστολή"
+      },
+      {
+        "url": "https://funky-man.gr/apostoles-proiontwn/",
+        "title": "Αποστολή και Παράδοση Προϊόντων"
+      }
+    ]
+  },
+  {
+    "shopId": "game-show",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "ACS ή ΕΛΤΑ Courier: 5,50 € σε όλη την Ελλάδα έως 2 kg, με +1,20 € για κάθε επιπλέον kg. Παράδοση Σάββατο +2 €. Η χρέωση αντικαταβολής χρειάζεται επιβεβαίωση στο ταμείο.",
+      "en": "ACS or ELTA Courier: €5.50 throughout Greece up to 2 kg, plus €1.20 per extra kg. Saturday delivery adds €2. Confirm the COD charge at checkout."
+    },
+    "deliveryTime": {
+      "el": "Τα διαθέσιμα είδη αποστέλλονται την ίδια ή την επόμενη εργάσιμη. Δεν ορίζεται χρόνος άφιξης.",
+      "en": "Available items are dispatched the same or next working day. An arrival time is not specified."
+    },
+    "conditions": {
+      "el": "Η σελίδα πληρωμών αναφέρει 5,50 € για αντικαταβολή χωρίς να διευκρινίζει αν είναι πρόσθετα ή συνολικά μεταφορικά.",
+      "en": "The payment page quotes €5.50 for COD without clarifying whether this is additional to or inclusive of shipping."
+    },
+    "sources": [
+      {
+        "url": "https://www.game-show.gr/tropoi-apostolis/",
+        "title": "Τρόποι Αποστολής – Συχνές Ερωτήσεις"
+      },
+      {
+        "url": "https://www.game-show.gr/tropoi-pliromis/",
+        "title": "Τρόποι πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "giorgos-tsamis",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Στις περισσότερες περιοχές της Αττικής: 5 €, με δωρεάν αποστολή από 230 € σύμφωνα με τις FAQ. Απομακρυσμένοι Τ.Κ., νησιά και κατηγορίες ογκωδών ειδών χρεώνονται διαφορετικά. Το τελικό κόστος υπολογίζεται με τον Τ.Κ. στο ταμείο.",
+      "en": "Most Attica areas: €5, with free delivery from €230 according to the FAQ. Remote postcodes, islands and bulky product categories have different charges. Checkout calculates the final fee using the postcode."
+    },
+    "deliveryTime": {
+      "el": "Ενδεικτικά 1–3 εργάσιμες Αττική/Θεσσαλονίκη/Πάτρα, 2–4 λοιπή ηπειρωτική, 3–5 νησιά· δυσπρόσιτα +1. Ανάλογα με διαθεσιμότητα, έως 30 ημέρες.",
+      "en": "Indicatively 1–3 working days Attica/Thessaloniki/Patras, 2–4 other mainland, 3–5 islands; remote areas +1. Depending on availability, up to 30 days."
+    },
+    "conditions": {
+      "el": "Το banner γράφει «πάνω από 230 €», ενώ οι FAQ περιλαμβάνουν τα 230 €. Ηλιακοί θερμοσίφωνες/κλιματιστικά κατόπιν συνεννόησης. Αντικαταβολή μόνο εντός Αττικής, χωρίς δημοσιευμένη χρέωση.",
+      "en": "The banner says above €230 whereas the FAQ includes €230. Solar water heaters/air conditioners require a quote. COD is limited to Attica; no fee is stated."
+    },
+    "sources": [
+      {
+        "url": "https://giorgostsamis.gr/syxnes-erotiseis/",
+        "title": "Συχνές ερωτήσεις"
+      },
+      {
+        "url": "https://giorgostsamis.gr/tropoi-apostolis/",
+        "title": "Τρόποι Αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "graloro",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Μεταφορικά βάσει τιμοκαταλόγου DHL/ACS. Υπάρχουν αντικρουόμενα όρια δωρεάν αποστολής: πάνω από 29 € στην πολιτική και πάνω από 50 € στην αρχική, με εξαίρεση δυσπρόσιτες περιοχές. Επιβεβαιώστε το τελικό κόστος στο κατάστημα.",
+      "en": "Shipping follows DHL/ACS rates. Published free-shipping thresholds conflict: above €29 in the policy and above €50 on the homepage, excluding remote areas. Confirm the final charge with the shop."
+    },
+    "deliveryTime": {
+      "el": "Η πολιτική αναφέρει 2–3 εργάσιμες από την παραγγελία.",
+      "en": "The policy states 2–3 working days from ordering."
+    },
+    "conditions": {
+      "el": "Η αντικαταβολή έχει ασαφή αριθμητική διατύπωση και αναφορά επιπλέον ΦΠΑ. Δεν μετατρέπεται σε βέβαιη χρέωση.",
+      "en": "The COD amount is ambiguously formatted and mentions extra VAT; it cannot be represented as a confirmed charge."
+    },
+    "sources": [
+      {
+        "url": "https://graloro.com/shipping-payment/",
+        "title": "Shipping – Payment"
+      },
+      {
+        "url": "https://graloro.com/",
+        "title": "Graloro – Αρχική"
+      }
+    ]
+  },
+  {
+    "shopId": "inmyhome",
+    "country": "gr",
+    "status": "unverified",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Δεν βρέθηκε επαληθεύσιμο τιμολόγιο ή χρόνος αποστολής στις δημόσιες σελίδες του καταστήματος. Το κόστος μεταφορικών χρειάζεται επιβεβαίωση στο κατάστημα πριν από την παραγγελία.",
+      "en": "No verifiable shipping tariff or delivery-time estimate was found on the shop’s public pages. Confirm delivery costs with the shop before ordering."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "",
+      "en": ""
+    },
+    "sources": [
+      {
+        "url": "https://www.inmyhome.gr/oroi-xrisis",
+        "title": "Όροι Χρήσης"
+      },
+      {
+        "url": "https://www.inmyhome.gr/tropoi-pliromis",
+        "title": "Τρόποι πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "kidsdressup",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "ΕΛΤΑ/ACS: κόστος ανάλογα με το βάρος, χωρίς δημοσιευμένο τιμολόγιο. Δωρεάν πάνω από 70 €. Δυσπρόσιτες περιοχές μπορεί να έχουν πρόσθετη χρέωση μετά από ενημέρωση. Επιβεβαιώστε την αντικαταβολή λόγω αντικρουόμενων όρων.",
+      "en": "ELTA/ACS: charges depend on weight; no numerical tariff is published. Free above €70. Remote destinations may carry an additional charge after notice. Confirm COD terms because published conditions conflict."
+    },
+    "deliveryTime": {
+      "el": "Εκτέλεση συνήθως εντός 24 ωρών εργάσιμων ημερών· μετά την αποστολή 1–2 ημέρες, έως 4 για απομακρυσμένες περιοχές.",
+      "en": "Usually processed within 24 hours on working days; 1–2 days after dispatch, up to 4 for remote destinations."
+    },
+    "conditions": {
+      "el": "Η σελίδα πληρωμών αναφέρει αντικαταβολή 2,50 € για παραγγελίες έως 80 €, ενώ το banner δωρεάν αντικαταβολή πάνω από 50 €.",
+      "en": "The payment page states COD €2.50 for orders up to €80, while the banner advertises free COD above €50."
+    },
+    "sources": [
+      {
+        "url": "https://kidsdressup.gr/nomikes-plirofories/apostoles-kai-chronos-paradosis/",
+        "title": "Αποστολές και χρόνος παράδοσης"
+      },
+      {
+        "url": "https://kidsdressup.gr/nomikes-plirofories/tropoi-pliromis/",
+        "title": "Τρόποι πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "koniaris-shoes",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Η αρχική διαφημίζει δωρεάν μεταφορικά για αγορές πάνω από 60 €. Αποστολή με courier στην Ελλάδα. Η σελίδα αποστολών δεν αναφέρει βασική χρέωση κάτω από το όριο ούτε ποσό αντικαταβολής· επιβεβαιώστε στο ταμείο.",
+      "en": "The homepage advertises free shipping for orders above €60. Courier delivery is available in Greece. The shipping page does not state the charge below that threshold or a COD fee; confirm at checkout."
+    },
+    "deliveryTime": {
+      "el": "Διαθέσιμα είδη: 1–3 εργάσιμες στις πρωτεύουσες νομών, 2–5 σε δυσπρόσιτες περιοχές.",
+      "en": "Available items: 1–3 working days in regional capitals, 2–5 in remote areas."
+    },
+    "conditions": {
+      "el": "Η σελίδα πληρωμών επιτρέπει αντικαταβολή μέχρι 500 €, χωρίς δημοσιευμένη προμήθεια.",
+      "en": "The payment page allows COD up to €500 but does not publish its fee."
+    },
+    "sources": [
+      {
+        "url": "https://www.koniarisshoes.gr/gr/",
+        "title": "Koniaris Shoes – Αρχική"
+      },
+      {
+        "url": "https://www.koniarisshoes.gr/gr/apostolh-kai-paradosh.html",
+        "title": "Αποστολή & Παράδοση"
+      },
+      {
+        "url": "https://www.koniarisshoes.gr/gr/tropoi-plirwmis.html",
+        "title": "Τρόποι Πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "kouzinika",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Ελλάδα: 4,99 € για παραγγελίες έως 50 €, δωρεάν πάνω από 50 €. Πολύ ογκώδεις παραγγελίες μπορεί να επιβαρυνθούν μετά από προηγούμενη ενημέρωση και έγκριση. Αντικαταβολή χωρίς επιπλέον χρέωση.",
+      "en": "Greece: €4.99 for orders up to €50; free above €50. Very bulky orders may carry extra shipping after prior notice and approval. COD has no additional charge."
+    },
+    "deliveryTime": {
+      "el": "Συνήθως αποστολή σε 1–4 εργάσιμες· είδη «κατόπιν παραγγελίας» σε 5–8 ημέρες.",
+      "en": "Usually dispatched in 1–4 working days; items ordered from suppliers in 5–8 days."
+    },
+    "conditions": {
+      "el": "Ο μεγάλος όγκος αποτελεί ρητή εξαίρεση στην ενιαία χρέωση. Οι χρόνοι αφορούν αποστολή και εξαρτώνται από τη διαθεσιμότητα.",
+      "en": "Very large volume is an explicit exception to the standard rate. Times describe dispatch and depend on availability."
+    },
+    "sources": [
+      {
+        "url": "https://kouzinika.com/content/1-delivery",
+        "title": "Αποστολή και Παράδοση Προϊόντων"
+      },
+      {
+        "url": "https://kouzinika.com/content/15-payment",
+        "title": "Τρόποι Πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "leatherbrands",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Ελλάδα: αποστολή 3,50 € μέσω ACS, Speedex ή BOX NOW. Η αναλυτική πολιτική δίνει δωρεάν από 200 €, ενώ η αρχική γράφει πάνω από 200 €. Η αντικαταβολή αναφέρεται με αντικρουόμενα ποσά· επιβεβαιώστε στο ταμείο.",
+      "en": "Greece: €3.50 shipping with ACS, Speedex or BOX NOW. The detailed policy gives free delivery from €200, but the homepage says above €200. Published COD amounts conflict; confirm at checkout."
+    },
+    "deliveryTime": {
+      "el": "Η πολιτική αναφέρει 2–3 εργάσιμες για Ελλάδα· η αρχική συνήθως 1–3, ανάλογα με περιοχή/courier.",
+      "en": "The policy states 2–3 working days in Greece; the homepage usually 1–3 depending on area/carrier."
+    },
+    "conditions": {
+      "el": "Η αντικαταβολή περιγράφεται ως 3 € ολογράφως αλλά 2,50 € αριθμητικά. Το ακριβές όριο 200 € διαφέρει μεταξύ σελίδων.",
+      "en": "COD is written as €3 in words but €2.50 in numerals. The exact €200 boundary differs between pages."
+    },
+    "sources": [
+      {
+        "url": "https://leatherbrands.gr/%CE%B1%CF%80%CE%BF%CF%83%CF%84%CE%BF%CE%BB%CE%AE-%CF%80%CF%81%CE%BF%CF%8A%CF%8C%CE%BD%CF%84%CF%89%CE%BD/",
+        "title": "Αποστολή Προϊόντων"
+      },
+      {
+        "url": "https://leatherbrands.gr/",
+        "title": "LeatherBrands – Αρχική"
+      }
+    ]
+  },
+  {
+    "shopId": "mastrogiannakis",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "ΕΛΤΑ Courier έως 2 kg: 3,05 € εντός Αττικής και 3,47 € εκτός. Κάθε επιπλέον kg: +1,24 € ή +1,52 € αντίστοιχα. Ογκώδη προϊόντα αποστέλλονται με μεταφορική, με χρέωση κατόπιν ενημέρωσης.",
+      "en": "ELTA Courier up to 2 kg: €3.05 within Attica or €3.47 outside. Each extra kg adds €1.24 or €1.52 respectively. Bulky goods use freight transport, with charges communicated separately."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "Δεν δημοσιεύεται ενιαίος χρόνος παράδοσης, όριο δωρεάν αποστολής ή κόστος αντικαταβολής στη σελίδα.",
+      "en": "The page does not publish a general delivery time, free-shipping threshold or COD fee."
+    },
+    "sources": [
+      {
+        "url": "https://mastrogiannakis.gr/%CF%84%CF%81%CF%8C%CF%80%CE%BF%CE%B9-%CE%B1%CF%80%CE%BF%CF%83%CF%84%CE%BF%CE%BB%CE%AE%CF%82-%CF%80%CE%BB%CE%B7%CF%81%CF%89%CE%BC%CE%AE%CF%82/",
+        "title": "Τρόποι Αποστολής & Πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "maxfeel",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "ACS: 4,72 € για βάρος κάτω από 2 kg. Δημοσιεύονται κλίμακες 7,44–13,64 € για 2,01–10 kg. Αντικαταβολή +3 €. Η πολιτική αναφέρει επιπλέον ΦΠΑ στο ταμείο χωρίς σαφή διευκρίνιση για τα μεταφορικά· επιβεβαιώστε το τελικό ποσό.",
+      "en": "ACS: €4.72 for weight below 2 kg. Published bands range from €7.44 to €13.64 for 2.01–10 kg. COD adds €3. The policy mentions extra VAT at checkout without clearly explaining shipping tax treatment; confirm the final amount."
+    },
+    "deliveryTime": {
+      "el": "Επεξεργασία 1–3 εργάσιμες και μεταφορά επιπλέον 1–3 εργάσιμες.",
+      "en": "Processing 1–3 working days, followed by another 1–3 working days in transit."
+    },
+    "conditions": {
+      "el": "Κλίμακες: 2,01–4 kg 7,44 €, 4,01–6 kg 9,92 €, 6,01–8 kg 11,78 €, 8,01–10 kg 13,64 €. Το ακριβές βάρος 2 kg και η φορολογική μεταχείριση μένουν ασαφή.",
+      "en": "Bands: 2.01–4 kg €7.44; 4.01–6 kg €9.92; 6.01–8 kg €11.78; 8.01–10 kg €13.64. Exactly 2 kg and tax treatment are unclear."
+    },
+    "sources": [
+      {
+        "url": "https://maxfeel.gr/%CE%B1%CF%80%CE%BF%CF%83%CF%84%CE%BF%CE%BB%CE%AD%CF%82-%CF%80%CF%81%CE%BF%CF%8A%CF%8C%CE%BD%CF%84%CF%89%CE%BD/",
+        "title": "Αποστολές Προϊόντων"
+      }
+    ]
+  },
+  {
+    "shopId": "melshoes",
+    "country": "gr",
+    "status": "verified",
+    "checkedAt": "2026-11-04T20:13:28.039731+00:00",
+    "summary": {
+      "el": "Ελλάδα: ΕΛΤΑ Courier 2,50 € έως και 49 €, δωρεάν πάνω από 49 €. Εναλλακτικά ACS 4 € ή BOX NOW 2 € κάτω από το όριο. Η αντικαταβολή έχει πρόσθετους όρους και χρειάζεται επιβεβαίωση ακριβώς στα 49 €.",
+      "en": "Greece: ELTA Courier €2.50 up to and including €49; free above €49. Alternatives below the threshold: ACS €4 or BOX NOW €2. COD has separate conditions; confirm its charge at exactly €49."
+    },
+    "deliveryTime": {
+      "el": "Συνήθως 2–4 εργάσιμες, ανάλογα με διαθεσιμότητα και προορισμό.",
+      "en": "Usually 2–4 working days, depending on availability and destination."
+    },
+    "conditions": {
+      "el": "Η FAQ διευκρινίζει τη βασική αποστολή στα 49 €. Η αντικαταβολή αναφέρει 2,50 € μέχρι 49 € αλλά δωρεάν από 49 €, άρα το ακριβές όριό της είναι αντιφατικό.",
+      "en": "The FAQ resolves standard shipping at €49. COD is stated as €2.50 through €49 but free from €49, so its exact boundary conflicts."
+    },
+    "sources": [
+      {
+        "url": "https://www.melshoes.gr/tropoi-apostolis/",
+        "title": "Τρόποι αποστολής"
+      },
+      {
+        "url": "https://www.melshoes.gr/faq/",
+        "title": "Συχνές ερωτήσεις"
+      },
+      {
+        "url": "https://www.melshoes.gr/tropoi-pliromis/",
+        "title": "Τρόποι πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "mobiletech",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "BOX NOW: 2€ με πληρωμή κάρτας. Για courier η ίδια πολιτική αναφέρει τόσο 6€ με αντικαταβολή όσο και 4,90€ έως 2 κιλά, με επιπλέον χρέωση βάρους. Επιβεβαιώστε το τελικό ποσό στο κατάστημα.",
+      "en": "BOX NOW costs €2 with card payment. The courier policy gives conflicting totals: €6 including COD and €4.90 up to 2 kg, with extra weight charges. Confirm the final fee with the shop."
+    },
+    "deliveryTime": {
+      "el": "Συνήθως 48 ώρες από την αποστολή· δυσπρόσιτα έως 72 ώρες.",
+      "en": "Usually 48 hours after dispatch; remote areas up to 72 hours."
+    },
+    "conditions": {
+      "el": "Δεν αποστέλλει στην Κύπρο. Η χρέωση courier και αντικαταβολής χρειάζεται επιβεβαίωση.",
+      "en": "No Cyprus delivery. Courier and COD totals require confirmation."
+    },
+    "sources": [
+      {
+        "url": "https://mobiletech.com.gr/τρόποι-αποστολής/",
+        "title": "Τρόποι αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "moda-borsa",
+    "country": "gr",
+    "status": "unverified",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Τα μεταφορικά διαφέρουν ανά εταιρεία παράδοσης, μέγεθος δέματος και περιοχή. Δεν επιβεβαιώθηκε η τρέχουσα πολιτική και υπάρχουν αντικρουόμενες χρεώσεις. Δείτε το τελικό κόστος και τις προϋποθέσεις στο κατάστημα.",
+      "en": "Delivery charges vary by carrier, parcel size and destination. The current policy could not be verified and available versions contain conflicting fees. Check the shop for the final charge and conditions."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "",
+      "en": ""
+    },
+    "sources": [
+      {
+        "url": "https://modaborsa.gr/tropoi-apostolis/",
+        "title": "Τρόποι αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "mypharmacy",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Courier από 2,49€ με όριο βάρους· BOX NOW 2,10€ έως 2 κιλά. Δωρεάν μεταφορικά πάνω από 59€ με courier ή πάνω από 49€ με BOX NOW. Πρόσθετο βάρος, δυσπρόσιτες περιοχές και αντικαταβολή μπορεί να χρεώνονται επιπλέον.",
+      "en": "Courier starts at €2.49 with a weight limit; BOX NOW is €2.10 up to 2 kg. Free delivery above €59 by courier or above €49 by BOX NOW. Excess weight, remote destinations and COD can add charges."
+    },
+    "deliveryTime": {
+      "el": "Επεξεργασία έως 1 εργάσιμη· παράδοση συνήθως 1–3 εργάσιμες, με πιθανές καθυστερήσεις σε δυσπρόσιτα.",
+      "en": "Processing within one working day; delivery usually 1–3 working days, with possible remote delays."
+    },
+    "conditions": {
+      "el": "Το όριο δωρεάν αποστολής διαφέρει ανά υπηρεσία. Η τελική χρέωση υπολογίζεται στο ταμείο.",
+      "en": "Free thresholds differ by service. Final charges are calculated at checkout."
+    },
+    "sources": [
+      {
+        "url": "https://www.mypharmacy.gr/page/politiki-apostolwn",
+        "title": "Πολιτική Αποστολών"
+      }
+    ]
+  },
+  {
+    "shopId": "nomud",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Βασικά μεταφορικά Speedex 3,50€ ανά παραγγελία. Για δύο Coffee Broker ισχύει συνολική τιμή προϊόντων 30€ με δωρεάν μεταφορικά. Η τελική χρέωση εμφανίζεται πριν ολοκληρωθεί η αγορά.",
+      "en": "Speedex base delivery costs €3.50 per order. Two Coffee Broker units have a combined product price of €30 with free delivery. The final delivery charge is shown before purchase."
+    },
+    "deliveryTime": {
+      "el": "Συνήθως 1–3 εργάσιμες, χωρίς αυθημερόν αποστολή.",
+      "en": "Usually 1–3 working days, without same-day dispatch."
+    },
+    "conditions": {
+      "el": "Η δωρεάν αποστολή αφορά συγκεκριμένο συνδυασμό προϊόντων, όχι όλες τις αγορές 30€.",
+      "en": "Free delivery applies to the specified product bundle, not every €30 basket."
+    },
+    "sources": [
+      {
+        "url": "https://nomud.gr/returns/",
+        "title": "Επιστροφές και αποστολές"
+      }
+    ]
+  },
+  {
+    "shopId": "ofthalmorama",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Στην Ελλάδα: 2,70€ για παραγγελίες κάτω από 70€ και δωρεάν μεταφορικά πάνω από 70€. Αντικαταβολή +1€. Η πολιτική δεν διευκρινίζει τη χρέωση για παραγγελία ακριβώς 70€.",
+      "en": "Greece: €2.70 for orders below €70 and free delivery above €70. COD adds €1. The policy does not specify the delivery charge for an order of exactly €70."
+    },
+    "deliveryTime": {
+      "el": "1–4 ημέρες· φακοί επαφής 1–30 ημέρες ανάλογα με διαθεσιμότητα.",
+      "en": "1–4 days; contact lenses 1–30 days depending on availability."
+    },
+    "conditions": {
+      "el": "Η δωρεάν αποστολή αφορά συνολική αξία παραγγελίας. Επιβεβαίωση στο όριο των 70€.",
+      "en": "The free threshold concerns basket value. Confirm the exact €70 boundary."
+    },
+    "sources": [
+      {
+        "url": "https://ofthalmorama.gr/el/oroi-xrisis/",
+        "title": "Όροι Χρήσης — Τρόποι Αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "opticon-online",
+    "country": "gr",
+    "status": "verified",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Μεταφορικά για Ελλάδα 2,50€. Προαιρετική αντικαταβολή +1,80€. Δεν δημοσιεύεται όριο δωρεάν αποστολής στη συγκεκριμένη πολιτική.",
+      "en": "Delivery within Greece costs €2.50. Optional COD adds €1.80. No free-delivery threshold is published in this policy."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "Οι χρεώσεις Κύπρου και εξωτερικού διαφέρουν. Δεν αναφέρεται συγκεκριμένος χρόνος παράδοσης.",
+      "en": "Cyprus and international delivery have different rates. No delivery time is specified."
+    },
+    "sources": [
+      {
+        "url": "https://opticon-online.gr/shipping/",
+        "title": "Πληρωμή & Αποστολή"
+      }
+    ]
+  },
+  {
+    "shopId": "paidiko-spiti",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Προπληρωμένο δέμα κάτω από 2 κιλά: 3,50€ κάτω από 69€. Courier δωρεάν από 69€ έως 2 κιλά. Ογκώδη ή βαριά προϊόντα μπορεί να έχουν επιπλέον κόστος· σε δυσπρόσιτες περιοχές ίσως απαιτείται παραλαβή από πρακτορείο.",
+      "en": "Prepaid parcels below 2 kg cost €3.50 below €69. Courier delivery is free from €69 up to 2 kg. Bulky/heavy products may cost extra; remote freight deliveries may require collection from a depot."
+    },
+    "deliveryTime": {
+      "el": "Ετοιμοπαράδοτα: αποστολή ίδια/επόμενη εργάσιμη και μεταφορά 1–4 εργάσιμες. Ειδικές παραγγελίες περισσότερο.",
+      "en": "Stock items: same/next working-day dispatch, then 1–4 working days in transit. Special orders take longer."
+    },
+    "conditions": {
+      "el": "Βάρος, όγκος και προορισμός επηρεάζουν τη χρέωση. Αντικαταβολή +2€ κάτω από 69€.",
+      "en": "Weight, volume and destination affect fees. COD adds €2 below €69."
+    },
+    "sources": [
+      {
+        "url": "https://paidikospiti.gr/tropoi-pliromis-apostolis/",
+        "title": "Τρόποι Πληρωμής – Αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "passaggio-leather",
+    "country": "gr",
+    "status": "verified",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Παράδοση στην Ελλάδα με Γενική Ταχυδρομική ή ΕΛΤΑ Courier: 3€. Παραλαβή BOX NOW: 2€. Αντικαταβολή +2€. Δεν αναφέρεται όριο δωρεάν αποστολής.",
+      "en": "Greece home delivery with Geniki or ELTA Courier costs €3. BOX NOW locker collection costs €2. COD adds €2. No free-delivery threshold is stated."
+    },
+    "deliveryTime": {
+      "el": "1–3 εργάσιμες ανάλογα με την περιοχή.",
+      "en": "1–3 working days depending on destination."
+    },
+    "conditions": {
+      "el": "Η τιμή 2€ αφορά θυρίδα, όχι παράδοση στο σπίτι. Οι αποστολές Κύπρου χρεώνονται διαφορετικά.",
+      "en": "The €2 service is locker collection, not home delivery. Cyprus rates differ."
+    },
+    "sources": [
+      {
+        "url": "https://www.passaggioleather.gr/tropoi-apostolis/",
+        "title": "Τρόποι αποστολής"
+      },
+      {
+        "url": "https://www.passaggioleather.gr/oroi-xrisis/",
+        "title": "Όροι Χρήσης"
+      }
+    ]
+  },
+  {
+    "shopId": "pharmacylive",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Έως 2 κιλά: Αττική 2,40€, δωρεάν από 39€· υπόλοιπη Ελλάδα 2,80€, δωρεάν από 55€. Κάθε επιπλέον κιλό +1€. Για δυσπρόσιτους προορισμούς υπάρχει ειδική χρέωση κατόπιν συνεννόησης. Αντικαταβολή +1,50€.",
+      "en": "Up to 2 kg: Attica €2.40, free from €39; elsewhere in Greece €2.80, free from €55. Each additional kg costs €1. Remote destinations have an individually confirmed surcharge. COD adds €1.50."
+    },
+    "deliveryTime": {
+      "el": "1–3 εργάσιμες· δυσπρόσιτες περιοχές πιθανώς 1–2 επιπλέον ημέρες.",
+      "en": "1–3 working days; remote areas may take 1–2 additional days."
+    },
+    "conditions": {
+      "el": "Τα δύο όρια δωρεάν αποστολής εξαρτώνται από περιοχή και βάρος.",
+      "en": "The two free thresholds depend on destination and weight."
+    },
+    "sources": [
+      {
+        "url": "https://pharmacylive.gr/el/tropoi-apostolis",
+        "title": "Τρόποι Αποστολής"
+      },
+      {
+        "url": "https://pharmacylive.gr/el/tropoi-pliromis",
+        "title": "Τρόποι Πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "printking",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Δωρεάν μεταφορικά για αγορές αναλωσίμων πάνω από 50€. Δεν δημοσιεύεται ενιαία βασική χρέωση για όλα τα προϊόντα· ελέγξτε το κόστος του επιλεγμένου είδους στο κατάστημα.",
+      "en": "Free delivery above €50 applies to consumables. No universal base fee is published for all products; check the selected item’s delivery cost with the shop."
+    },
+    "deliveryTime": {
+      "el": "Έως 14:00 εργάσιμη: αυθημερόν αποστολή. Αθήνα/Θεσσαλονίκη 1 ημέρα, υπόλοιπη Ελλάδα 2–3.",
+      "en": "Weekday orders by 14: 00: same-day dispatch. Athens/Thessaloniki 1 day; elsewhere in Greece 2–3 days."
+    },
+    "conditions": {
+      "el": "Η προσφορά περιορίζεται σε αναλώσιμα. Οι επιμέρους χρεώσεις προϊόντων υπερισχύουν.",
+      "en": "The offer is limited to consumables. Item-specific delivery charges take precedence."
+    },
+    "sources": [
+      {
+        "url": "https://www.printking.gr/en/apostoli-and-paradosi/",
+        "title": "Shipping and Delivery"
+      }
+    ]
+  },
+  {
+    "shopId": "rafiashop",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Εκτός Θεσσαλονίκης: courier 10–25€ ή μεταφορική 8–20€ ανά ραφιέρα, ανάλογα με την περιοχή. Εκτός πόλης μπορεί να απαιτείται παραλαβή από πρακτορείο. Εντός Θεσσαλονίκης παράδοση με όχημα καταστήματος, χωρίς δημοσιευμένη ενιαία χρέωση.",
+      "en": "Outside Thessaloniki: courier €10–25 or freight €8–20 per shelving unit, depending on destination. Outside-city addresses may require depot collection. Thessaloniki uses the shop’s vehicle, without a published flat fee."
+    },
+    "deliveryTime": {
+      "el": "Διαθέσιμα προϊόντα: αποστολή εντός 3 εργάσιμων. Ο χρόνος μεταφοράς εξαρτάται από υπηρεσία/περιοχή.",
+      "en": "Available products dispatch within 3 working days. Transit depends on service and destination."
+    },
+    "conditions": {
+      "el": "Αντικαταβολή +1,95€ με courier ή στις συγκεκριμένες περιοχές μεταφορικής που αναφέρει η πολιτική.",
+      "en": "COD adds €1.95 with courier or to the freight destinations listed in the policy."
+    },
+    "sources": [
+      {
+        "url": "https://rafiashop.gr/τρόποι-πληρωμής-αποστολής/",
+        "title": "Τρόποι Πληρωμής – Αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "tandem-concept",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Δωρεάν βασική αποστολή σε υποστηριζόμενες διευθύνσεις Ελλάδας. Διαθέσιμη μέθοδος, περιορισμοί και εκτίμηση παράδοσης επιβεβαιώνονται στο ταμείο. Οι διεθνείς αποστολές έχουν διαφορετικές χρεώσεις και όριο δωρεάν αποστολής.",
+      "en": "Standard delivery is free to supported Greek addresses. Available methods, restrictions and the delivery estimate are confirmed at checkout. International orders have separate fees and a separate free-delivery threshold."
+    },
+    "deliveryTime": {
+      "el": "Η εκτίμηση δίνεται στο ταμείο, στην επιβεβαίωση ή στο μήνυμα αποστολής.",
+      "en": "The estimate is provided at checkout, confirmation or dispatch."
+    },
+    "conditions": {
+      "el": "Η προσφορά δωρεάν βασικής αποστολής αφορά μόνο Ελλάδα. Για Κύπρο και άλλες χώρες ισχύουν διαφορετικοί όροι.",
+      "en": "The free standard-delivery offer applies only to Greece. Different terms apply to Cyprus and other countries."
+    },
+    "sources": [
+      {
+        "url": "https://tandemconcept.gr/shipping-policy/",
+        "title": "Shipping Policy"
+      }
+    ]
+  },
+  {
+    "shopId": "telestarshop",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Τα μεταφορικά υπολογίζονται στο ταμείο από το συνολικό βάρος και τον όγκο της παραγγελίας. Βαριά ή ογκώδη είδη μπορεί να σταλούν με μεταφορική. Συσκευασία και αντικαταβολή δωρεάν σε όλη την Ελλάδα.",
+      "en": "Delivery is calculated at checkout from total order weight and volume. Heavy or bulky items may travel by freight. Packaging and COD are free throughout Greece."
+    },
+    "deliveryTime": {
+      "el": "2–10 εργάσιμες από την παραγγελία.",
+      "en": "2–10 working days from ordering."
+    },
+    "conditions": {
+      "el": "Δεν υπάρχει δημοσιευμένη ενιαία τιμή αποστολής. Η δωρεάν αντικαταβολή δεν σημαίνει δωρεάν μεταφορικά.",
+      "en": "No universal shipping fee is published. Free COD does not mean free delivery."
+    },
+    "sources": [
+      {
+        "url": "https://www.telestarshop.gr/tropoi-apostolis/",
+        "title": "Τρόποι Αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "the-sport-center",
+    "country": "gr",
+    "status": "conditional",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "ΕΛΤΑ Courier σε όλη την Ελλάδα: 3,50€ για παραγγελίες κάτω από 60€ και δωρεάν πάνω από 60€, με ΦΠΑ. Δεν διευκρινίζεται η χρέωση για παραγγελία ακριβώς 60€.",
+      "en": "ELTA Courier throughout Greece: €3.50 below €60 and free above €60, including VAT. The policy does not specify the charge for an order of exactly €60."
+    },
+    "deliveryTime": {
+      "el": "2–3 εργάσιμες· δυσπρόσιτα πιθανώς 1–2 ημέρες επιπλέον.",
+      "en": "2–3 working days; remote areas may take 1–2 extra days."
+    },
+    "conditions": {
+      "el": "Το όριο αφορά το σύνολο παραγγελίας. Ελέγξτε ακριβώς τα 60€ και την προαιρετική αντικαταβολή.",
+      "en": "The threshold concerns basket value. Check the exact €60 boundary and any optional COD fee."
+    },
+    "sources": [
+      {
+        "url": "https://thesportcenter.gr/paradosi-exoda-apostolis/",
+        "title": "Παράδοση & Έξοδα Αποστολής"
+      }
+    ]
+  },
+  {
+    "shopId": "toofast",
+    "country": "gr",
+    "status": "unverified",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Αποστολές με ACS ή BOX NOW, με εξαιρέσεις για βαριά και ογκώδη προϊόντα. Οι διαθέσιμες εκδόσεις πολιτικής δίνουν διαφορετικές τιμές και όρια δωρεάν αποστολής. Επιβεβαιώστε το τελικό κόστος για το προϊόν και τη διεύθυνσή σας στο κατάστημα.",
+      "en": "ACS or BOX NOW delivery has exceptions for heavy and bulky items. Available policy versions give different rates and free-delivery thresholds. Confirm the final charge for your product and address with the shop."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "",
+      "en": ""
+    },
+    "sources": [
+      {
+        "url": "https://toofast.gr/politiki-agoron-3",
+        "title": "Πολιτική αγορών"
+      }
+    ]
+  },
+  {
+    "shopId": "walk",
+    "country": "gr",
+    "status": "verified",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Αποστολή στην Ελλάδα 5 € για παραγγελίες έως και 49 € και δωρεάν πάνω από 49 €. Παράδοση με courier όπου είναι διαθέσιμο, αλλιώς μέσω ΕΛΤΑ. Η αντικαταβολή προσθέτει 2 €.",
+      "en": "Greece delivery costs €5 for orders up to and including €49, and is free above €49. Courier is used where available, otherwise Hellenic Post. Optional cash on delivery adds €2."
+    },
+    "deliveryTime": {
+      "el": "Διαθέσιμα προϊόντα με παραγγελία έως 14:00: 1–2 ημέρες ανά περιοχή. Χωρίς παράδοση Σαββάτου.",
+      "en": "Available items ordered by 14: 00: 1–2 days depending on area. No Saturday delivery."
+    },
+    "conditions": {
+      "el": "Το όριο δωρεάν αποστολής είναι αυστηρά πάνω από 49 €. Ισχύουν διαφορετικές χρεώσεις για το εξωτερικό.",
+      "en": "Free delivery applies strictly above €49. International delivery has separate charges."
+    },
+    "sources": [
+      {
+        "url": "https://walk.com.gr/delivery/",
+        "title": "Τρόποι – Έξοδα Αποστολής"
+      },
+      {
+        "url": "https://walk.com.gr/secure-payment/",
+        "title": "Τρόποι πληρωμής"
+      }
+    ]
+  },
+  {
+    "shopId": "xristina",
+    "country": "gr",
+    "status": "verified",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Μεταφορικά Ελλάδας 2,50€, δωρεάν για παραγγελίες από 40€ και πάνω σε όλη την Ελλάδα. Προαιρετική αντικαταβολή +1,50€.",
+      "en": "Greece delivery costs €2.50 and is free on orders of €40 or more throughout Greece. Optional COD adds €1.50."
+    },
+    "deliveryTime": {
+      "el": "1–3 ημέρες.",
+      "en": "1–3 days."
+    },
+    "conditions": {
+      "el": "Οι διαφορετικές τιμές Κύπρου και εξωτερικού δεν εφαρμόζονται στην Ελλάδα.",
+      "en": "Separate Cyprus and international rates do not apply to Greece."
+    },
+    "sources": [
+      {
+        "url": "https://xristina.gr/πληρωμή-αποστολή-προϊόντων/",
+        "title": "Πληρωμή – Αποστολή Προϊόντων"
+      }
+    ]
+  },
+  {
+    "shopId": "zizanio-kids-fashion",
+    "country": "gr",
+    "status": "unverified",
+    "checkedAt": "2026-11-04T20:16:27.196829+00:00",
+    "summary": {
+      "el": "Δεν επιβεβαιώθηκε η τρέχουσα χρέωση αποστολής. Η διαθέσιμη πολιτική αναφέρει όριο δωρεάν μεταφορικών αλλά και γενική δωρεάν αποστολή, χωρίς σαφή χρέωση στο ακριβές όριο. Ελέγξτε το κόστος και την αντικαταβολή στο κατάστημα.",
+      "en": "The current delivery fee could not be verified. The available policy mentions both a free-delivery threshold and general free delivery, with the exact boundary unclear. Check shipping and COD charges with the shop."
+    },
+    "deliveryTime": {
+      "el": "",
+      "en": ""
+    },
+    "conditions": {
+      "el": "",
+      "en": ""
+    },
+    "sources": [
+      {
+        "url": "https://zizaniokidsfashion.gr/tropoi-apostolhs",
+        "title": "Τρόποι Αποστολής"
+      }
+    ]
+  }
+]

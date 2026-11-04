@@ -4,6 +4,7 @@ import { Footer } from '../components/Footer';
 import { Header } from '../components/Header';
 import { Icon } from '../components/Icons';
 import { Lightbox } from '../components/Lightbox';
+import { ShippingPolicy } from '../components/ShippingPolicy';
 import { Loader, OfferTotal, Pills, Price, ProductImage, Shipping, discountLabel } from '../components/ui';
 import { useLocale } from '../i18n';
 import { trackClick } from '../lib/api';
@@ -80,7 +81,7 @@ export function ProductPage() {
         <Price p={p} large />
         {off && <span className="badge-off badge-off--inline">{off}</span>}
       </div>
-      <Shipping fee={p.shipping} />
+      <Shipping fee={p.shipping} shopId={p.shopId} expanded />
       <a ref={buyRef} className="btn btn--buy" href={p.url} target="_blank" rel="noopener sponsored" onClick={clickOut(p)}>
         {t('product.buyAt', { shop: p.shop })} <Icon name="external" />
       </a>
@@ -131,11 +132,12 @@ export function ProductPage() {
                     <strong>{o.shop}</strong>
                     {i === 0 && offers.length > 1 && <span className="badge-best">{t('product.bestPrice')}</span>}
                   </div>
-                  <div className="offer-price"><Price p={o} /><Shipping fee={o.shipping} /></div>
+                  <div className="offer-price"><Price p={o} /><Shipping fee={o.shipping} shopId={o.shopId} showPolicy={false} /></div>
                   <OfferTotal p={o} />
                   <a className={`btn ${i === 0 ? '' : 'btn--ghost'}`} href={o.url} target="_blank" rel="noopener sponsored" onClick={clickOut(o)}>
                     {t('product.goToShop')} <Icon name="external" />
                   </a>
+                  <ShippingPolicy shopId={o.shopId} />
                 </li>
               ))}
             </ol>

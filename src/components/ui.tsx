@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocale } from '../i18n';
 import type { Product } from '../search';
 import { Icon } from './Icons';
+import { ShippingPolicy, shippingPolicyFor } from './ShippingPolicy';
 
 export function Loader({ inline = false }: { inline?: boolean }) {
   const { t } = useLocale();
@@ -43,12 +44,20 @@ export function Price({ p, large = false }: { p: Pick<Product, 'price' | 'oldPri
 const knownShipping = (fee: unknown): fee is number =>
   typeof fee === 'number' && Number.isFinite(fee) && fee >= 0;
 
-export function Shipping({ fee }: { fee?: number | null }) {
-  const { t, price } = useLocale();
+export function Shipping({ fee, shopId, expanded = false, showPolicy = true }: { fee?: number | null; shopId?: string; expanded?: boolean; showPolicy?: boolean }) {
+  const { t, price, country, lang } = useLocale();
+  const policy = shippingPolicyFor(shopId, country.code);
   return (
-    <div className={`shipping ${fee === 0 ? 'is-free' : ''}`}>
-      <Icon name="truck" />
-      {!knownShipping(fee) ? t('hit.shippingUnknown') : fee === 0 ? t('hit.freeShipping') : t('hit.shipping', { fee: price(fee) })}
+    <div className="shipping-info">
+      <div className={`shipping ${fee === 0 ? 'is-free' : ''}`}>
+        <Icon name="truck" />
+        {!knownShipping(fee)
+          ? policy && policy.status !== 'unverified'
+            ? (lang === 'el' ? 'Μεταφορικά βάσει όρων καταστήματος' : 'Delivery subject to shop terms')
+            : t('hit.shippingUnknown')
+          : fee === 0 ? t('hit.freeShipping') : t('hit.shipping', { fee: price(fee) })}
+      </div>
+      {showPolicy && <ShippingPolicy shopId={shopId} expanded={expanded} />}
     </div>
   );
 }

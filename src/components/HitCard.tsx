@@ -27,7 +27,7 @@ export function HitCard({ hit, query }: { hit: Product; query: string }) {
         <Pills p={hit} />
         <div className="hit-bottom">
           <Price p={hit} />
-          <Shipping fee={hit.shipping} />
+          <Shipping fee={hit.shipping} shopId={hit.shopId} />
         </div>
       </div>
       <div className="hit-actions">
