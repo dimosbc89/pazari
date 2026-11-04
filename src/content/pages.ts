@@ -7,7 +7,7 @@ import type { LegalPage } from './legal';
 export const rankingPage: Record<'el' | 'en', LegalPage> = {
   el: {
     title: 'Πώς κατατάσσουμε τα αποτελέσματα',
-    updated: 'Τελευταία ενημέρωση: 3 Νοεμβρίου 2026',
+    updated: 'Τελευταία ενημέρωση: 4 Νοεμβρίου 2026',
     intro: 'Θέλουμε να ξέρεις γιατί βλέπεις τα προϊόντα με αυτή τη σειρά. Εδώ εξηγούμε απλά τι μετράει, τι δεν μετράει, και από πού έρχονται οι τιμές.',
     blocks: [
       { type: 'h2', text: '1. Ποια καταστήματα εμφανίζονται' },
@@ -22,7 +22,7 @@ export const rankingPage: Record<'el' | 'en', LegalPage> = {
 
       { type: 'h2', text: '3. Η σύγκριση τιμών στη σελίδα του προϊόντος' },
       { type: 'p', text: 'Στη σελίδα ενός προϊόντος βλέπεις το ίδιο προϊόν σε όλα τα συνεργαζόμενα καταστήματα που το έχουν. Το αναγνωρίζουμε από τον γραμμωτό κώδικα (EAN) ή από τη μάρκα μαζί με τον κωδικό του κατασκευαστή (MPN). Ταξινομούμε τις προσφορές με βάση το **σύνολο: τιμή συν μεταφορικά**, και η φθηνότερη έχει την ένδειξη «Καλύτερη τιμή».' },
-      { type: 'p', text: 'Αν ένα κατάστημα δεν δίνει κόστος αποστολής στον κατάλογό του, χρησιμοποιούμε όσα μας έχει δηλώσει για την αποστολή. Αν δεν έχουμε ούτε αυτά, δεν δείχνουμε μεταφορικά και το σύνολο είναι μόνο η τιμή.' },
+      { type: 'p', text: 'Αν ένα κατάστημα δεν δίνει κόστος αποστολής στον κατάλογό του, χρησιμοποιούμε τις ρυθμίσεις αποστολής του καταστήματος, όταν υπάρχουν. Αν το κόστος παραμένει άγνωστο, εμφανίζουμε «Δεν έχει δοθεί κόστος αποστολής» και δεν εμφανίζουμε σύνολο με μεταφορικά. Η τιμή του προϊόντος και ο σύνδεσμος προς το κατάστημα παραμένουν διαθέσιμα.' },
 
       { type: 'h2', text: '4. Πληρωμές και χορηγούμενα' },
       { type: 'p', text: '**Κανένα κατάστημα δεν μπορεί να πληρώσει για να εμφανιστεί πιο ψηλά** στα αποτελέσματα ή στη σύγκριση τιμών. Σήμερα δεν υπάρχουν πληρωμένες θέσεις. Αν προσθέσουμε στο μέλλον, θα ξεχωρίζουν καθαρά με την ένδειξη «Χορηγούμενο».' },
@@ -41,7 +41,7 @@ export const rankingPage: Record<'el' | 'en', LegalPage> = {
   },
   en: {
     title: 'How we rank results',
-    updated: 'Last updated: 3 November 2026',
+    updated: 'Last updated: 4 November 2026',
     intro: 'We want you to know why products appear in the order you see. This page explains, plainly, what counts, what does not, and where the prices come from.',
     blocks: [
       { type: 'h2', text: '1. Which shops appear' },
@@ -56,7 +56,7 @@ export const rankingPage: Record<'el' | 'en', LegalPage> = {
 
       { type: 'h2', text: '3. Price comparison on a product page' },
       { type: 'p', text: 'A product page shows the same product in every partner shop that has it. We recognise it by its barcode (EAN) or by brand together with the manufacturer’s part number (MPN). Offers are sorted by **total: price plus delivery**, and the cheapest is labelled “Best price”.' },
-      { type: 'p', text: 'If a shop’s catalogue has no delivery cost, we use the delivery cost the shop gave us. If we have neither, we show no delivery cost and the total is the price alone.' },
+      { type: 'p', text: 'If a shop’s catalogue has no delivery cost, we use delivery settings for that shop when available. If the cost remains unknown, we show “Delivery cost not provided” and no delivered total. The product price and shop link remain available.' },
 
       { type: 'h2', text: '4. Payments and sponsored results' },
       { type: 'p', text: '**No shop can pay to appear higher** in the results or in the price comparison. There are no paid placements today. If we ever add them, they will be clearly labelled “Sponsored”.' },
