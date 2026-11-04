@@ -3,7 +3,7 @@
 // Fields are found by name, so one reader covers all of them.
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { fetchText, type FetchOptions } from './fetch.ts';
-import { decodeEntities, money, stripHtml } from './text.ts';
+import { decodeEntities, isHttpUrl, money, stripHtml } from './text.ts';
 import { SyncError, type SourceItem, type SourceResult } from './types.ts';
 
 /** Accepted names for each field, lowercase, without namespace prefix. First match wins. */
@@ -29,7 +29,7 @@ const FIELDS = {
 } as const;
 
 type Raw = Record<string, unknown>;
-type FeedProfile = 'default' | 'ellinoekdotiki' | 'toofast' | 'mypharmacy';
+type FeedProfile = 'default' | 'ellinoekdotiki' | 'toofast' | 'mypharmacy' | 'e-shoes' | 'pharmacylive' | 'bonprix';
 const ITEM_TAGS = new Set(['item', 'entry', 'product', 'offer']);
 const MULTI_TAGS = new Set(['additional_image_link', 'additionalimage', 'shipping', 'image']);
 
@@ -68,11 +68,16 @@ function pick(item: Raw, names: readonly string[]): unknown {
 
 const OUT = /out[ _-]?of[ _-]?stock|back[ _-]?order|^(no|n|0|false|out)$|εξαντλ|μη διαθέσιμ|μη διαθεσιμ|κατ[οό]πιν\s+παραγγελ[ιί]ας|αναμ[εέ]νεται|not available|unavailable|discontinued|sold ?out/i;
 
-function inStock(item: Raw): boolean {
-  for (const name of FIELDS.availability) {
+function inStock(item: Raw, profile: FeedProfile): boolean {
+  const names = profile === 'pharmacylive'
+    ? [...FIELDS.availability, 'product_availability', 'product_in_stock'] : FIELDS.availability;
+  for (const name of names) {
     const v = text(item[name]);
     if (v !== undefined && OUT.test(v)) return false;
   }
+  // GLAMI: 0 means in stock; positive days mean the item is not yet in stock.
+  // https://www.glami.eco/info/feed/#_feed-tag-delivery_date
+  if (profile === 'e-shoes' && text(item.delivery_date) !== '0') return false;
   const q = text(pick(item, FIELDS.quantity));
   return !(q !== undefined && /^\d+$/.test(q) && Number(q) === 0);
 }
@@ -95,11 +100,64 @@ function lowerKeys(o: Raw): Raw {
   return out;
 }
 
+const GREEK_ENTITIES: Record<string, string> = { sigmaf: 'ς', times: '×', bull: '•', trade: '™' };
+'alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi rho sigma tau upsilon phi chi psi omega'
+  .split(' ').forEach((name, i) => {
+    const letter = [...'αβγδεζηθικλμνξοπρστυφχψω'][i];
+    GREEK_ENTITIES[name] = letter;
+    GREEK_ENTITIES[name[0].toUpperCase() + name.slice(1)] = letter.toUpperCase();
+  });
+
+/** GLAMI's repeated PARAM records have their own case-insensitive nested keys. */
+function glamiParam(item: Raw, names: readonly string[]): string[] {
+  const params = Array.isArray(item.param) ? item.param : [item.param];
+  const key = (value: string) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return params.flatMap((value) => {
+    if (!value || typeof value !== 'object') return [];
+    const param = lowerKeys(value as Raw);
+    const name = text(param.param_name);
+    return name && names.some((n) => key(n) === key(name)) ? texts(param.val) : [];
+  });
+}
+
+/** GLAMI prices are decimals, including fractional cents; 69.953 is not 69,953 euros. */
+function glamiPrice(value: unknown): number | undefined {
+  const match = text(value)?.match(/^(\d+)(?:[.,](\d+))?$/);
+  if (!match) return undefined;
+  const fraction = match[2] ?? '';
+  const cents = Number(match[1]) * 100 + Number((fraction + '00').slice(0, 2))
+    + (Number(fraction[2] ?? '0') >= 5 ? 1 : 0);
+  return Number.isSafeInteger(cents) ? cents / 100 : undefined;
+}
+
+/** Map only verified retailer fields; the generic reader keeps its existing aliases. */
+function retailerFields(item: Raw, profile: FeedProfile): Raw {
+  const fallback = (field: keyof typeof FIELDS, value: unknown) => {
+    if (pick(item, FIELDS[field]) === undefined && value !== undefined) item[FIELDS[field][0]] = value;
+  };
+  if (profile === 'e-shoes') {
+    fallback('group', item.itemgroup_id);
+    fallback('image', item.imgurl);
+    fallback('category', item.categorytext);
+    fallback('size', glamiParam(item, FIELDS.size));
+    fallback('color', glamiParam(item, FIELDS.color).join(', '));
+  } else if (profile === 'pharmacylive') {
+    fallback('image', item.product_image);
+    fallback('size', item.product_size);
+    fallback('mpn', item.product_part_number);
+    fallback('description', item.product_description);
+  }
+  return item;
+}
+
 function toItem(rawItem: Raw, profile: FeedProfile = 'default'): SourceItem {
-  const it = lowerKeys(rawItem);
+  const it = retailerFields(lowerKeys(rawItem), profile);
   const priceNames = profile === 'mypharmacy' ? [...FIELDS.price, 'pricevat'] : FIELDS.price;
-  const price = money(text(pick(it, priceNames)));
-  const saleText = text(pick(it, FIELDS.sale));
+  // PharmacyLive's special price is the verified selling price. Its original_price
+  // is not corroborated as a previous retail price, so it does not create a discount.
+  const price = profile === 'e-shoes' && it.price_vat !== undefined ? glamiPrice(it.price_vat)
+    : money(text(profile === 'pharmacylive' ? it.product_special_price : pick(it, priceNames)));
+  const saleText = profile === 'pharmacylive' ? undefined : text(pick(it, FIELDS.sale));
   let sale = money(saleText);
   if (profile === 'ellinoekdotiki' && it.discount !== undefined) {
     const value = text(it.discount);
@@ -113,9 +171,14 @@ function toItem(rawItem: Raw, profile: FeedProfile = 'default'): SourceItem {
     }
   }
   const discounted = sale !== undefined && price !== undefined && sale > 0 && sale < price;
-  const desc = text(pick(it, FIELDS.description));
-  const primaryImages = texts(pick(it, FIELDS.image));
-  const additionalImages = FIELDS.images.flatMap((name) => texts(it[name]));
+  let desc = text(pick(it, FIELDS.description));
+  if (desc && profile === 'e-shoes') desc = desc.replace(/&([A-Za-z]+);/g, (entity, name: string) => GREEK_ENTITIES[name] ?? entity);
+  const primaryImages = profile === 'bonprix'
+    ? FIELDS.image.flatMap((name) => texts(it[name])).filter(isHttpUrl)
+    : texts(pick(it, FIELDS.image));
+  const imageNames = profile === 'e-shoes' ? [...FIELDS.images, 'imgurl_alternative'] : FIELDS.images;
+  const gallery = imageNames.flatMap((name) => texts(it[name]));
+  const additionalImages = profile === 'bonprix' ? gallery.filter(isHttpUrl) : gallery;
   // Some feeds only provide <images><image>…</image></images>.
   const image = primaryImages[0] ?? additionalImages[0];
   const images = [...new Set([...additionalImages, ...primaryImages.slice(1)])];
@@ -126,7 +189,7 @@ function toItem(rawItem: Raw, profile: FeedProfile = 'default'): SourceItem {
     groupId: text(pick(it, FIELDS.group)),
     title: text(pick(it, FIELDS.title)) ?? (profile === 'toofast' ? text(it.model) : undefined),
     description: desc ? stripHtml(desc) : undefined,
-    url: text(pick(it, FIELDS.link)),
+    url: profile === 'e-shoes' && isHttpUrl(text(it.url_size)) ? text(it.url_size) : text(pick(it, FIELDS.link)),
     image,
     images: images.filter((u) => u !== image),
     price: discounted ? sale : price,
@@ -138,19 +201,20 @@ function toItem(rawItem: Raw, profile: FeedProfile = 'default'): SourceItem {
     size: sizes.length ? sizes.join(', ') : undefined,
     mpn: text(pick(it, FIELDS.mpn)),
     gtin: text(pick(it, FIELDS.gtin)),
-    inStock: inStock(it),
+    inStock: inStock(it, profile),
   };
 }
 
 /** Finds the list of products: the largest array of objects that look like products. */
-function findItems(node: unknown, depth = 0): Raw[] {
+function findItems(node: unknown, profile: FeedProfile, depth = 0): Raw[] {
   if (!node || typeof node !== 'object' || depth > 6) return [];
   let best: Raw[] = [];
   for (const [key, v] of Object.entries(node as Raw)) {
-    if (Array.isArray(v) && v.length && typeof v[0] === 'object' && (ITEM_TAGS.has(key.toLowerCase()) || looksLikeProduct(v[0] as Raw))) {
+    if (Array.isArray(v) && v.length && typeof v[0] === 'object' && (ITEM_TAGS.has(key.toLowerCase())
+      || (profile === 'e-shoes' && key.toLowerCase() === 'shopitem') || looksLikeProduct(v[0] as Raw))) {
       if (v.length > best.length) best = v as Raw[];
     } else if (v && typeof v === 'object') {
-      const inner = findItems(v, depth + 1);
+      const inner = findItems(v, profile, depth + 1);
       if (inner.length > best.length) best = inner;
     }
   }
@@ -179,6 +243,12 @@ function profileOf(sourceUrl?: string): FeedProfile {
     if (['ellinoekdotiki.gr', 'www.ellinoekdotiki.gr'].includes(url.hostname) && path === '/export/feed') return 'ellinoekdotiki';
     if (['toofast.gr', 'www.toofast.gr'].includes(url.hostname) && path === '/xml/skroutz.xml') return 'toofast';
     if (['mypharmacy.gr', 'www.mypharmacy.gr'].includes(url.hostname) && path === '/skroutz.xml') return 'mypharmacy';
+    if (url.protocol === 'https:' && !url.port && !url.search && !url.hash && !url.username && !url.password) {
+      const host = url.hostname.replace(/^www\./, '');
+      if (host === 'e-shoes.gr' && url.pathname === '/wp-content/uploads/webexpert-glami-xml/glami.xml') return 'e-shoes';
+      if (host === 'pharmacylive.gr' && url.pathname === '/feeds/bestprice.xml') return 'pharmacylive';
+      if (host === 'bonprix.gr' && url.pathname === '/feeds/bestprice.xml') return 'bonprix';
+    }
   } catch {
     // A standalone parser call without a valid source URL uses the generic fields.
   }
@@ -188,6 +258,7 @@ function profileOf(sourceUrl?: string): FeedProfile {
 export function parseXml(xml: string, sourceUrl?: string): { format: string; items: SourceItem[] } {
   // XMLParser is tolerant by default; never sync a partially parsed broken feed.
   if (XMLValidator.validate(xml) !== true) throw new SyncError('bad_format', 'The file is not valid XML.');
+  const profile = profileOf(sourceUrl);
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: '@_',
@@ -195,7 +266,9 @@ export function parseXml(xml: string, sourceUrl?: string): { format: string; ite
     parseTagValue: false,
     parseAttributeValue: false,
     trimValues: true,
-    isArray: (name) => ITEM_TAGS.has(name.toLowerCase()) || MULTI_TAGS.has(name.toLowerCase()),
+    ...(profile === 'e-shoes' ? { transformTagName: (name: string) => name.toLowerCase() } : {}),
+    isArray: (name) => ITEM_TAGS.has(name.toLowerCase()) || MULTI_TAGS.has(name.toLowerCase())
+      || (profile === 'e-shoes' && name.toLowerCase() === 'shopitem'),
   });
   let root: Raw;
   try {
@@ -203,8 +276,7 @@ export function parseXml(xml: string, sourceUrl?: string): { format: string; ite
   } catch {
     throw new SyncError('bad_format', 'The file is not valid XML.');
   }
-  const raw = findItems(root);
-  const profile = profileOf(sourceUrl);
+  const raw = findItems(root, profile);
   return { format: formatOf(root), items: raw.map((item) => toItem(item, profile)) };
 }
 
