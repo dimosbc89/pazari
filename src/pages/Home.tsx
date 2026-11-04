@@ -8,13 +8,17 @@ import { useLocale } from '../i18n';
 import { useAsync, useDocumentTitle } from '../lib/hooks';
 import { backend } from '../search';
 import { LangSwitch } from '../components/LangSwitch';
+import { categorySuggestions } from '../../shared/category-suggestions';
 
 export function Home() {
-  const { t, num, path, country } = useLocale();
+  const { t, num, path, country, facetLabel } = useLocale();
   const [typed, setTyped] = useState(0);
-  const stats = useAsync(() => backend.stats(country.code), [country.code]);
+  const stats = useAsync(async () => ({ country: country.code, stats: await backend.stats(country.code) }), [country.code]);
   useDocumentTitle(t('meta.title'));
-  const s = stats.data;
+  // useAsync retains previous data; never show another country's shortcuts while loading.
+  const s = stats.data?.country === country.code ? stats.data.stats : undefined;
+  const suggestions = !stats.loading && !stats.error
+    ? categorySuggestions(s?.categories ?? [], (value) => facetLabel('category', value)) : [];
 
   return (
     <div className="home">
@@ -36,12 +40,12 @@ export function Home() {
           ) : (
             <>
               <p className="home-description">{t('home.description', { shops: s ? num(s.shops) : '…' })}</p>
-              <p className="home-try">
+              {suggestions.length > 0 && <p className="home-try">
                 <span>{t('home.try')}</span>
-                {t('home.suggestions').split('|').map((w) => (
-                  <Link key={w} to={`${path('/products')}?q=${encodeURIComponent(w)}`} className="tag">{w}</Link>
+                {suggestions.map(({ value }) => (
+                  <Link key={value} to={`${path('/products')}?${new URLSearchParams({ category: value })}`} className="tag">{facetLabel('category', value)}</Link>
                 ))}
-              </p>
+              </p>}
             </>
           )}
           {!(s && s.offers === 0) && <dl className="home-stats">

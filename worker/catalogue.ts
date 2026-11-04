@@ -3,6 +3,7 @@
 // so "akoustika" finds "ακουστικά". Filter counts are "disjunctive": each filter's
 // counts ignore that filter's own selection, like the demo and Typesense backends.
 import { hash as fnv, oneEdit, toLatin, tokens, words } from '../shared/searchtext.ts';
+import { categorySuggestions } from '../shared/category-suggestions.ts';
 import { FACETS, type CatalogueStats, type FacetKey, type FacetValue, type Product, type Refinements, type SearchResult, type SortKey } from '../src/search/types.ts';
 import type { Env } from './env.ts';
 import { nowIso } from './http.ts';
@@ -256,7 +257,15 @@ export async function getOffers(env: Env, key: string, country: string): Promise
 }
 
 export async function getStats(env: Env, country: string): Promise<CatalogueStats> {
-  const r = await env.DB.prepare('SELECT COUNT(*) AS offers, COUNT(DISTINCT shop_id) AS shops, COUNT(DISTINCT brand) AS brands FROM products WHERE listed = 1 AND countries LIKE ?')
-    .bind(`%,${country},%`).first<CatalogueStats>();
-  return r ?? { offers: 0, shops: 0, brands: 0 };
+  const market = `%,${country},%`;
+  const [totals, categories] = await env.DB.batch([
+    env.DB.prepare('SELECT COUNT(*) AS offers, COUNT(DISTINCT shop_id) AS shops, COUNT(DISTINCT brand) AS brands FROM products WHERE listed = 1 AND countries LIKE ?').bind(market),
+    // Prefer categories across several shops, then offer volume. A large single feed cannot dominate every shortcut.
+    env.DB.prepare(`SELECT category AS value, COUNT(*) AS count FROM products
+      WHERE listed = 1 AND countries LIKE ? AND category IS NOT NULL AND TRIM(category) != ''
+      GROUP BY category ORDER BY COUNT(DISTINCT shop_id) DESC, count DESC, category ASC LIMIT 100`).bind(market),
+  ]);
+  const counts = totals.results[0] as CatalogueStats | undefined;
+  return { ...(counts ?? { offers: 0, shops: 0, brands: 0 }),
+    categories: categorySuggestions(categories.results as FacetValue[], undefined, 20) };
 }

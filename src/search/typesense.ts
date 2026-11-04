@@ -1,6 +1,7 @@
 // Typesense backend (https://typesense.org). Talks to the REST API directly, so no
 // InstantSearch dependency. Disjunctive facets use one extra query per refined facet,
 // all sent in a single multi_search request.
+import { categorySuggestions } from '../../shared/category-suggestions';
 // Collection schema and import: scripts/typesense-push.mjs
 import {
   FACETS,
@@ -104,9 +105,12 @@ export function createTypesenseBackend(cfg: Config): SearchBackend {
     },
 
     async stats(country): Promise<CatalogueStats> {
-      const [r] = await multi([{ q: '*', query_by: QUERY_BY, filter_by: inList('countries', [country]), facet_by: 'shop,brand', max_facet_values: 1000, per_page: 0 }]);
+      const [r] = await multi([{ q: '*', query_by: QUERY_BY, filter_by: inList('countries', [country]), facet_by: 'shop,brand,category', max_facet_values: 1000, per_page: 0 }]);
       const n = (f: string) => r.facet_counts?.find((x) => x.field_name === f)?.counts.length ?? 0;
-      return { offers: r.found, shops: n('shop'), brands: n('brand') };
+      // Typesense facets do not provide per-category shop breadth; use offer volume here.
+      const categories = [...(r.facet_counts?.find((x) => x.field_name === 'category')?.counts ?? [])]
+        .sort((a, b) => b.count - a.count || (a.value < b.value ? -1 : a.value > b.value ? 1 : 0));
+      return { offers: r.found, shops: n('shop'), brands: n('brand'), categories: categorySuggestions(categories, undefined, 20) };
     },
   };
 }
