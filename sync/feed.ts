@@ -29,7 +29,7 @@ const FIELDS = {
 } as const;
 
 type Raw = Record<string, unknown>;
-type FeedProfile = 'default' | 'ellinoekdotiki' | 'toofast';
+type FeedProfile = 'default' | 'ellinoekdotiki' | 'toofast' | 'mypharmacy';
 const ITEM_TAGS = new Set(['item', 'entry', 'product', 'offer']);
 const MULTI_TAGS = new Set(['additional_image_link', 'additionalimage', 'shipping', 'image']);
 
@@ -97,7 +97,8 @@ function lowerKeys(o: Raw): Raw {
 
 function toItem(rawItem: Raw, profile: FeedProfile = 'default'): SourceItem {
   const it = lowerKeys(rawItem);
-  const price = money(text(pick(it, FIELDS.price)));
+  const priceNames = profile === 'mypharmacy' ? [...FIELDS.price, 'pricevat'] : FIELDS.price;
+  const price = money(text(pick(it, priceNames)));
   const saleText = text(pick(it, FIELDS.sale));
   let sale = money(saleText);
   if (profile === 'ellinoekdotiki' && it.discount !== undefined) {
@@ -177,6 +178,7 @@ function profileOf(sourceUrl?: string): FeedProfile {
     const path = url.pathname.replace(/\/+$/, '');
     if (['ellinoekdotiki.gr', 'www.ellinoekdotiki.gr'].includes(url.hostname) && path === '/export/feed') return 'ellinoekdotiki';
     if (['toofast.gr', 'www.toofast.gr'].includes(url.hostname) && path === '/xml/skroutz.xml') return 'toofast';
+    if (['mypharmacy.gr', 'www.mypharmacy.gr'].includes(url.hostname) && path === '/skroutz.xml') return 'mypharmacy';
   } catch {
     // A standalone parser call without a valid source URL uses the generic fields.
   }
