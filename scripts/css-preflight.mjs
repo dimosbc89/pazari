@@ -3,13 +3,16 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 export const ACCOUNT = 'accounts/5900257120';
+export const PROJECT_ID = 'tagora-css-2026';
+export const PROJECT_NUMBER = '404604349240';
 export const SCOPE = 'https://www.googleapis.com/auth/content';
 export const PROVIDER = 'projects/404604349240/locations/global/workloadIdentityPools/tagora-css/providers/github-pazari';
 export const SERVICE_ACCOUNT = 'tagora-css-sync@tagora-css-2026.iam.gserviceaccount.com';
 const ROOT = `https://css.googleapis.com/v1/${ACCOUNT}`;
 const PAGE_SIZE = 100, MAX_PAGES = 5, MAX_ATTEMPTS = 3, MAX_BYTES = 2 * 1024 * 1024;
 const PATHS = Object.freeze({ account: `/v1/${ACCOUNT}`, quotas: `/v1/${ACCOUNT}/quotas`, products: `/v1/${ACCOUNT}/cssProducts` });
-const ERROR_CODES = new Set(['CONFIG', 'CONTEXT', 'SCOPE', 'URL', 'CREDENTIALS', 'NETWORK', 'HTTP', 'RESPONSE', 'ACCOUNT', 'PAGINATION', 'TIMEOUT']);
+const REGISTRATION_URLS = Object.freeze({ project: 'https://merchantapi.googleapis.com/accounts/v1/accounts:getAccountForGcpRegistration', account: `https://merchantapi.googleapis.com/accounts/v1/${ACCOUNT}/developerRegistration` });
+const ERROR_CODES = new Set(['CONFIG', 'CONTEXT', 'SCOPE', 'URL', 'CREDENTIALS', 'NETWORK', 'HTTP', 'RESPONSE', 'ACCOUNT', 'PAGINATION', 'TIMEOUT', 'SERVICE_DISABLED', 'PROJECT_NOT_REGISTERED']);
 export class PreflightError extends Error {
   constructor(code, httpStatus) { super(ERROR_CODES.has(code) ? code : 'RESPONSE'); this.name = 'PreflightError'; this.code = this.message; this.httpStatus = Number.isInteger(httpStatus) && httpStatus >= 100 && httpStatus <= 599 ? httpStatus : undefined; }
 }
@@ -45,13 +48,22 @@ export function requestUrl(kind, token) {
   }
   return assertSafeRequest(parsed.href);
 }
+// Separate allowlist: no shared host switch, arbitrary account or query parameters.
+export function assertSafeRegistrationRequest(value, { method = 'GET', body } = {}) {
+  if (typeof value !== 'string' || !Object.values(REGISTRATION_URLS).includes(value) || method !== 'GET' || body !== undefined) throw new PreflightError('URL');
+  return value;
+}
+export function registrationRequestUrl(kind) {
+  if (!Object.hasOwn(REGISTRATION_URLS, kind)) throw new PreflightError('URL');
+  return assertSafeRegistrationRequest(REGISTRATION_URLS[kind]);
+}
 export function assertAccount(account) {
   let homepage;
   try { homepage = new URL(account?.homepageUri); } catch { throw new PreflightError('ACCOUNT'); }
   if (account?.name !== ACCOUNT || account?.accountType !== 'CSS_DOMAIN' || !['https:', 'http:'].includes(homepage.protocol) || !['tagora.online', 'www.tagora.online'].includes(homepage.hostname) || homepage.port || homepage.username || homepage.password || !['/', '/gr', '/gr/'].includes(homepage.pathname) || homepage.search || homepage.hash) throw new PreflightError('ACCOUNT');
   return { name: ACCOUNT, accountType: 'CSS_DOMAIN', homepageHost: 'tagora.online' };
 }
-async function limitedJson(response) {
+async function limitedJson(response, allowError = false) {
   const size = Number(response.headers.get('content-length'));
   if (Number.isFinite(size) && size > MAX_BYTES) throw new PreflightError('RESPONSE');
   if (!/\bapplication\/json\b/i.test(response.headers.get('content-type') ?? '')) throw new PreflightError('RESPONSE');
@@ -61,23 +73,49 @@ async function limitedJson(response) {
   try {
     while (true) { const { done, value } = await reader.read(); if (done) break; bytes += value.length; if (bytes > MAX_BYTES) { await reader.cancel(); throw new PreflightError('RESPONSE'); } chunks.push(Buffer.from(value)); }
     const data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-    if (!data || typeof data !== 'object' || Array.isArray(data) || Object.hasOwn(data, 'error')) throw new PreflightError('RESPONSE');
+    if (!data || typeof data !== 'object' || Array.isArray(data) || (!allowError && Object.hasOwn(data, 'error'))) throw new PreflightError('RESPONSE');
     return data;
   } catch (error) { throw error instanceof PreflightError ? error : new PreflightError('RESPONSE'); }
+}
+function registrationHttpReason(status, data) {
+  const error = data?.error;
+  if (!error || error.code !== status) return 'HTTP';
+  // Match only the documented error for this exact project, never a generic 401.
+  const unregistered = `GCP project with id ${PROJECT_ID} and number ${PROJECT_NUMBER} is not registered with the merchant account.`;
+  if (status === 401 && error.status === 'UNAUTHENTICATED' && typeof error.message === 'string' && error.message.startsWith(unregistered)) return 'PROJECT_NOT_REGISTERED';
+  if (status === 403 && error.status === 'PERMISSION_DENIED' && Array.isArray(error.details) && error.details.some(detail => detail?.['@type'] === 'type.googleapis.com/google.rpc.ErrorInfo' && detail.domain === 'googleapis.com' && detail.reason === 'SERVICE_DISABLED' && detail.metadata?.service === 'merchantapi.googleapis.com' && detail.metadata?.consumer === `projects/${PROJECT_NUMBER}`)) return 'SERVICE_DISABLED';
+  return 'HTTP';
+}
+function registrationCheck(kind, data) {
+  if (kind === 'project') {
+    if (typeof data.name !== 'string' || !/^accounts\/\d{1,20}$/.test(data.name)) throw new PreflightError('RESPONSE');
+    return { ok: true, matchesAccount: data.name === ACCOUNT };
+  }
+  if (typeof data.name !== 'string' || !/^accounts\/\d{1,20}\/developerRegistration$/.test(data.name) || !Array.isArray(data.gcpIds) || data.gcpIds.length > 1000 || data.gcpIds.some(id => typeof id !== 'string' || !/^[A-Za-z0-9-]{1,128}$/.test(id))) throw new PreflightError('RESPONSE');
+  return { ok: true, matchesAccount: data.name === `${ACCOUNT}/developerRegistration`, containsProject: data.gcpIds.includes(PROJECT_NUMBER) || data.gcpIds.includes(PROJECT_ID) };
+}
+function registrationSummary(checks) {
+  if (Object.values(checks).some(check => check.ok && (!check.matchesAccount || check.containsProject === false))) return { status: 'project_mismatch', reason: 'REGISTRATION_IDENTITY_MISMATCH', checks };
+  const failed = Object.values(checks).find(check => !check.ok);
+  if (failed) return { status: 'unknown', reason: failed.reason, checks };
+  return { status: 'confirmed', reason: 'PROJECT_ACCOUNT_LINK_CONFIRMED', checks };
 }
 export async function runPreflight({ accessToken, apiKey, scope = SCOPE, fetchImpl = globalThis.fetch, sleep = ms => new Promise(resolve => setTimeout(resolve, ms)), now = Date.now } = {}) {
   if (scope !== SCOPE) throw new PreflightError('SCOPE');
   if (typeof accessToken !== 'string' || accessToken.length < 10 || /\s/.test(accessToken) || typeof apiKey !== 'string' || apiKey.length < 10 || /\s/.test(apiKey)) throw new PreflightError('CREDENTIALS');
   const deadline = now() + 90000; let requests = 0;
-  async function get(kind, pageToken) {
-    const target = requestUrl(kind, pageToken);
+  async function fetchJson(target, registration = false) {
+    if (registration) assertSafeRegistrationRequest(target); else assertSafeRequest(target);
+    // OAuth is sufficient for Merchant API; the CSS-restricted key stays on CSS.
+    const headers = { Authorization: `Bearer ${accessToken}`, Accept: 'application/json' };
+    if (!registration) headers['X-Goog-Api-Key'] = apiKey;
     for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
       const remaining = deadline - now();
       if (remaining <= 0) throw new PreflightError('TIMEOUT');
       let response;
       try {
         requests++;
-        response = await fetchImpl(target, { method: 'GET', headers: { Authorization: `Bearer ${accessToken}`, 'X-Goog-Api-Key': apiKey, Accept: 'application/json' }, redirect: 'error', signal: AbortSignal.timeout(Math.min(10000, remaining)) });
+        response = await fetchImpl(target, { method: 'GET', headers, redirect: 'error', signal: AbortSignal.timeout(Math.min(10000, remaining)) });
       } catch {
         if (attempt + 1 === MAX_ATTEMPTS) throw new PreflightError('NETWORK');
         await sleep(250 * 2 ** attempt); continue;
@@ -89,11 +127,18 @@ export async function runPreflight({ accessToken, apiKey, scope = SCOPE, fetchIm
         const retrySeconds = Number(response.headers.get('retry-after'));
         await sleep(Number.isFinite(retrySeconds) && retrySeconds > 0 ? Math.min(2000, retrySeconds * 1000) : 250 * 2 ** attempt); continue;
       }
-      if (response.status !== 200) { await response.body?.cancel(); throw new PreflightError('HTTP', response.status); }
+      if (response.status !== 200) {
+        let reason = 'HTTP';
+        if (registration) {
+          try { reason = registrationHttpReason(response.status, await limitedJson(response, true)); } catch { /* Never log an error envelope. */ }
+        } else await response.body?.cancel();
+        throw new PreflightError(reason, response.status);
+      }
       return limitedJson(response);
     }
     throw new PreflightError('NETWORK');
   }
+  const get = (kind, pageToken) => fetchJson(requestUrl(kind, pageToken));
   const account = assertAccount(await get('account'));
   async function list(kind, field) {
     const seenTokens = new Set(), names = new Set(), rows = []; let token;
@@ -114,12 +159,18 @@ export async function runPreflight({ accessToken, apiKey, scope = SCOPE, fetchIm
   }
   const quotas = await list('quotas', 'quotaGroups');
   const products = await list('products', 'cssProducts');
+  const checks = {};
+  for (const kind of ['project', 'account']) {
+    try { checks[kind] = registrationCheck(kind, await fetchJson(registrationRequestUrl(kind), true)); }
+    catch (error) { const safe = publicError(error); checks[kind] = { ok: false, reason: safe.error, ...(safe.httpStatus ? { httpStatus: safe.httpStatus } : {}) }; }
+  }
+  const registration = registrationSummary(checks);
   // Only numerical quota fields leave the client; product bodies and resource IDs do not.
   const numberString = value => typeof value === 'string' && /^\d{1,19}$/.test(value) ? value : null;
-  return { ok: true, readOnly: true, account, authScopeRequested: SCOPE,
+  return { ok: registration.status === 'confirmed', readOnly: true, account, authScopeRequested: SCOPE, registration,
     quotaGroups: quotas.rows.map((row, i) => ({ group: i + 1, dailyUsage: numberString(row.quotaUsage), dailyLimit: numberString(row.quotaLimit), minuteLimit: numberString(row.quotaMinuteLimit) })),
     processedProducts: products.rows.length, pages: { quotas: quotas.pages, products: products.pages }, requests, writes: 0, submittedProducts: 0,
-    limitation: 'Access verification only. No product approval or eligibility determination; no product inputs were submitted.' };
+    limitation: 'Access and project-registration association checks only. Human developer-contact acceptance is not checked. No product approval or eligibility determination; no product inputs were submitted.' };
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
@@ -129,6 +180,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       if (process.argv.length !== 2) throw new PreflightError('CONFIG');
       const result = await runPreflight({ accessToken: process.env.CSS_ACCESS_TOKEN, apiKey: process.env.CSS_API_KEY, scope: process.env.CSS_OAUTH_SCOPE });
       console.log(JSON.stringify(result));
+      if (!result.ok) process.exitCode = 1;
     }
   } catch (error) { console.error(JSON.stringify(publicError(error))); process.exitCode = 1; }
 }

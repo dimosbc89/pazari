@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { ACCOUNT, PROVIDER, SCOPE, SERVICE_ACCOUNT, PreflightError, publicError, assertGithubContext, assertSafeRequest, assertAccount, requestUrl, runPreflight } from './css-preflight.mjs';
+import { ACCOUNT, PROJECT_ID, PROJECT_NUMBER, PROVIDER, SCOPE, SERVICE_ACCOUNT, PreflightError, publicError, assertGithubContext, assertSafeRequest, assertSafeRegistrationRequest, assertAccount, requestUrl, registrationRequestUrl, runPreflight } from './css-preflight.mjs';
 
 const token = 'TEST-BEARER-TOKEN-DO-NOT-PRINT';
 const key = 'TEST-API-KEY-DO-NOT-PRINT';
@@ -10,6 +10,8 @@ const env = { GITHUB_ACTIONS: 'true', GITHUB_REPOSITORY: 'dimosbc89/pazari', GIT
 const json = (body, status = 200, headers = {}) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', ...headers } });
 const product = suffix => ({ name: `${ACCOUNT}/cssProducts/el~GR~${suffix}`, attributes: { description: 'A response body must never appear in the summary.' } });
 const quota = suffix => ({ name: `${ACCOUNT}/quotas/${suffix}`, quotaUsage: '0', quotaLimit: '10000', quotaMinuteLimit: '100' });
+const registered = (id = PROJECT_NUMBER) => [json({ name: ACCOUNT }), json({ name: `${ACCOUNT}/developerRegistration`, gcpIds: [id] })];
+const cssReads = () => [json(account), json({}), json({})];
 function stub(sequence) {
   const calls = [], sleepCalls = [];
   return { calls, sleepCalls, options: { accessToken: token, apiKey: key, scope: SCOPE,
@@ -43,12 +45,15 @@ test('wrong account, merchant account, homepage and homepage credentials rejecte
   assert.doesNotThrow(() => assertAccount(account));
   for (const bad of [{ ...account, name: 'accounts/5899395261' }, { ...account, accountType: 'MC_CSS_MCA' }, { ...account, homepageUri: 'https://evil.example/' }, { ...account, homepageUri: 'https://tagora.online.evil.example/' }, { ...account, homepageUri: 'https://user:pass@tagora.online/' }, { ...account, homepageUri: 'https://tagora.online/?redirect=evil' }]) assert.throws(() => assertAccount(bad), code('ACCOUNT'));
 });
-test('successful read fetches account first, quotas, products with headers only', async () => {
-  const mock = stub([json(account), json({ quotaGroups: [quota('list')] }), json({ cssProducts: [product('one')] })]);
+test('successful read checks CSS before both registration GETs and keeps key on CSS', async () => {
+  const mock = stub([json(account), json({ quotaGroups: [quota('list')] }), json({ cssProducts: [product('one')] }), ...registered()]);
   const result = await runPreflight(mock.options);
-  assert.equal(result.processedProducts, 1); assert.equal(result.requests, 3); assert.equal(result.writes, 0); assert.equal(result.submittedProducts, 0);
+  assert.equal(result.processedProducts, 1); assert.equal(result.requests, 5); assert.equal(result.writes, 0); assert.equal(result.submittedProducts, 0);
+  assert.equal(result.ok, true); assert.equal(result.registration.status, 'confirmed');
   assert.equal(result.quotaGroups[0].dailyLimit, '10000');
-  for (const call of mock.calls) { assert.equal(call.options.method, 'GET'); assert.equal(call.options.redirect, 'error'); assert.equal(call.options.body, undefined); assert.equal(call.options.headers.Authorization, `Bearer ${token}`); assert.equal(call.options.headers['X-Goog-Api-Key'], key); assert(!call.url.includes(token)); assert(!call.url.includes(key)); }
+  assert.deepEqual(mock.calls.map(call => new URL(call.url).hostname), ['css.googleapis.com', 'css.googleapis.com', 'css.googleapis.com', 'merchantapi.googleapis.com', 'merchantapi.googleapis.com']);
+  for (const call of mock.calls) { assert.equal(call.options.method, 'GET'); assert.equal(call.options.redirect, 'error'); assert.equal(call.options.body, undefined); assert.equal(call.options.headers.Authorization, `Bearer ${token}`); assert.equal(call.options.headers['X-Goog-Api-Key'], new URL(call.url).hostname === 'css.googleapis.com' ? key : undefined); assert(!call.url.includes(token)); assert(!call.url.includes(key)); }
+  for (const call of mock.calls.slice(3)) { assert.equal(new URL(call.url).search, ''); assert(!JSON.stringify(call.options).includes(key)); }
   assert(!JSON.stringify(result).includes(token)); assert(!JSON.stringify(result).includes(key)); assert(!JSON.stringify(result).includes('response body'));
 });
 test('account mismatch stops before quota/product requests', async () => {
@@ -63,13 +68,13 @@ test('only auth/content scope accepted and credentials required before network',
   assert.equal(mock.calls.length, 0);
 });
 test('empty processed collection is a valid complete read', async () => {
-  const mock = stub([json(account), json({}), json({})]);
+  const mock = stub([...cssReads(), ...registered()]);
   const result = await runPreflight(mock.options); assert.equal(result.processedProducts, 0); assert.equal(result.pages.products, 1);
 });
 test('pagination uses unchanged own-account endpoint and counts both pages', async () => {
-  const mock = stub([json(account), json({ quotaGroups: [quota('one')] }), json({ cssProducts: [product('one')], nextPageToken: 'opaque/token?x=1' }), json({ cssProducts: [product('two')] })]);
+  const mock = stub([json(account), json({ quotaGroups: [quota('one')] }), json({ cssProducts: [product('one')], nextPageToken: 'opaque/token?x=1' }), json({ cssProducts: [product('two')] }), ...registered()]);
   const result = await runPreflight(mock.options); assert.equal(result.processedProducts, 2); assert.equal(result.pages.products, 2);
-  assert.equal(new URL(mock.calls.at(-1).url).searchParams.get('pageToken'), 'opaque/token?x=1');
+  assert.equal(new URL(mock.calls[3].url).searchParams.get('pageToken'), 'opaque/token?x=1');
 });
 test('other-account returned product is rejected', async () => {
   const mock = stub([json(account), json({}), json({ cssProducts: [{ name: 'accounts/other/cssProducts/el~GR~one' }] })]);
@@ -89,8 +94,8 @@ test('pagination is capped at five pages, not silently truncated', async () => {
   await assert.rejects(runPreflight(mock.options), code('PAGINATION')); assert.equal(mock.calls.length, 7);
 });
 test('429 retry is bounded and Retry-After capped', async () => {
-  const mock = stub([json({}, 429, { 'retry-after': '99999' }), json(account), json({}), json({})]);
-  const result = await runPreflight(mock.options); assert.equal(result.requests, 4); assert.deepEqual(mock.sleepCalls, [2000]);
+  const mock = stub([json({}, 429, { 'retry-after': '99999' }), ...cssReads(), ...registered()]);
+  const result = await runPreflight(mock.options); assert.equal(result.requests, 6); assert.deepEqual(mock.sleepCalls, [2000]);
 });
 test('503 failure stops after three attempts', async () => {
   const mock = stub([json({}, 503), json({}, 503), json({}, 503)]);
@@ -139,4 +144,146 @@ test('workflow audience, secret name and token lifetime match the fixed contract
   assert(workflow.includes('CSS_API_KEY: ${{ secrets.TAGORA_CSS_API_KEY }}'));
   assert.equal(workflow.match(/^\s+access_token_lifetime:\s*(\S+)$/m)?.[1], '600s');
   assert(workflow.includes('            /.github/workflows/css-preflight.yml'));
+});
+
+test('Merchant allowlist accepts only two exact GET URLs and no request body', () => {
+  for (const kind of ['project', 'account']) {
+    const url = registrationRequestUrl(kind);
+    assert.equal(assertSafeRegistrationRequest(url), url);
+    assert.throws(() => assertSafeRequest(url), code('URL'));
+    for (const method of ['POST', 'PATCH', 'DELETE', 'PUT', 'HEAD']) assert.throws(() => assertSafeRegistrationRequest(url, { method }), code('URL'));
+    for (const body of ['', null, {}, 'developerEmail=test@example.com']) assert.throws(() => assertSafeRegistrationRequest(url, { body }), code('URL'));
+    for (const unsafe of [`${url}?key=${key}`, `${url}?pageSize=100`, `${url}#token`, `${url}/`, url.replace('https:', 'http:'), url.replace('merchantapi.googleapis.com', 'merchantapi.googleapis.com.evil.example'), url.replace('https://', 'https://user:pass@'), url.replace('googleapis.com/', 'googleapis.com:443/')]) assert.throws(() => assertSafeRegistrationRequest(unsafe), code('URL'));
+  }
+  for (const unsafe of [requestUrl('account'), registrationRequestUrl('account').replace('5900257120', '5899395261'), `${registrationRequestUrl('account')}:registerGcp`, `${registrationRequestUrl('account')}:unregisterGcp`]) assert.throws(() => assertSafeRegistrationRequest(unsafe), code('URL'));
+  assert.throws(() => registrationRequestUrl('registerGcp'), code('URL'));
+});
+
+test('registration confirms only both matching responses for the current project', async () => {
+  for (const id of [PROJECT_NUMBER, PROJECT_ID]) {
+    const mock = stub([...cssReads(), ...registered(id)]);
+    const result = await runPreflight(mock.options);
+    assert.equal(result.ok, true); assert.equal(result.registration.status, 'confirmed');
+    assert.deepEqual(result.registration.checks, { project: { ok: true, matchesAccount: true }, account: { ok: true, matchesAccount: true, containsProject: true } });
+    assert(result.limitation.includes('Human developer-contact acceptance is not checked'));
+  }
+});
+
+test('different registration account or absent project membership is a mismatch', async () => {
+  const cases = [
+    [{ name: 'accounts/5899395261' }, { name: `${ACCOUNT}/developerRegistration`, gcpIds: [PROJECT_NUMBER] }],
+    [{ name: ACCOUNT }, { name: 'accounts/5899395261/developerRegistration', gcpIds: [PROJECT_NUMBER] }],
+    [{ name: ACCOUNT }, { name: `${ACCOUNT}/developerRegistration`, gcpIds: ['111111111111'] }],
+    [{ name: ACCOUNT }, { name: `${ACCOUNT}/developerRegistration`, gcpIds: [] }]
+  ];
+  for (const pair of cases) {
+    const mock = stub([...cssReads(), ...pair.map(body => json(body))]);
+    const result = await runPreflight(mock.options);
+    assert.equal(result.ok, false); assert.equal(result.registration.status, 'project_mismatch'); assert.equal(result.writes, 0); assert.equal(mock.calls.length, 5);
+    assert(!JSON.stringify(result).includes('111111111111'));
+  }
+});
+
+const disabledBody = (consumer = `projects/${PROJECT_NUMBER}`, service = 'merchantapi.googleapis.com') => ({ error: { code: 403, status: 'PERMISSION_DENIED', message: `${token} ${key}`, details: [{ '@type': 'type.googleapis.com/google.rpc.ErrorInfo', domain: 'googleapis.com', reason: 'SERVICE_DISABLED', metadata: { service, consumer } }] } });
+test('disabled Merchant API is unknown, never auto-enabled or retried', async () => {
+  const mock = stub([...cssReads(), json(disabledBody(), 403), json(disabledBody(), 403)]);
+  const result = await runPreflight(mock.options);
+  assert.equal(result.ok, false); assert.equal(result.registration.status, 'unknown'); assert.equal(result.registration.reason, 'SERVICE_DISABLED'); assert.equal(result.processedProducts, 0);
+  assert.equal(mock.calls.length, 5); assert.deepEqual(mock.sleepCalls, []);
+  assert(!JSON.stringify(result).includes(token)); assert(!JSON.stringify(result).includes(key));
+});
+test('SERVICE_DISABLED for another project or API is not attributed to Tagora', async () => {
+  for (const body of [disabledBody('projects/111111111111'), disabledBody(`projects/${PROJECT_NUMBER}`, 'css.googleapis.com')]) {
+    const mock = stub([...cssReads(), json(body, 403), registered()[1]]);
+    const result = await runPreflight(mock.options);
+    assert.equal(result.registration.status, 'unknown'); assert.equal(result.registration.reason, 'HTTP'); assert.equal(result.registration.checks.project.httpStatus, 403);
+  }
+});
+
+const unregisteredBody = (projectId = PROJECT_ID, projectNumber = PROJECT_NUMBER) => ({ error: { code: 401, status: 'UNAUTHENTICATED', message: `GCP project with id ${projectId} and number ${projectNumber} is not registered with the merchant account. Follow the registration documentation. ${token} ${key}` } });
+test('specific documented unregistered-project error is separated from generic 401', async () => {
+  const mock = stub([...cssReads(), json(unregisteredBody(), 401), json(unregisteredBody(), 401)]);
+  const result = await runPreflight(mock.options);
+  assert.equal(result.ok, false); assert.equal(result.registration.status, 'unknown'); assert.equal(result.registration.reason, 'PROJECT_NOT_REGISTERED'); assert.equal(mock.calls.length, 5);
+  assert(!JSON.stringify(result).includes(token)); assert(!JSON.stringify(result).includes(key));
+  for (const body of [unregisteredBody('another-project', '111111111111'), { error: { code: 401, status: 'UNAUTHENTICATED', message: 'Invalid credentials' } }]) {
+    const other = stub([...cssReads(), json(body, 401), registered()[1]]);
+    assert.equal((await runPreflight(other.options)).registration.reason, 'HTTP');
+  }
+});
+
+test('generic Merchant 403/404 remain unknown and never imply no registration', async () => {
+  for (const status of [403, 404]) {
+    const mock = stub([...cssReads(), json({ error: { code: status, message: `${token} ${key}` } }, status), registered()[1]]);
+    const result = await runPreflight(mock.options);
+    assert.equal(result.ok, false); assert.equal(result.registration.status, 'unknown'); assert.equal(result.registration.reason, 'HTTP'); assert.equal(result.registration.checks.project.httpStatus, status);
+    assert.equal(mock.calls.length, 5); assert.deepEqual(mock.sleepCalls, []); assert(!JSON.stringify(result).includes(token)); assert(!JSON.stringify(result).includes(key));
+  }
+});
+
+test('one confirmed response cannot hide an unknown second response', async () => {
+  const mock = stub([...cssReads(), registered()[0], json({ error: { code: 403, message: key } }, 403)]);
+  const result = await runPreflight(mock.options);
+  assert.equal(result.registration.status, 'unknown'); assert.equal(result.ok, false); assert.equal(result.registration.checks.project.ok, true); assert.equal(result.registration.checks.account.ok, false);
+});
+
+test('positive identity mismatch remains visible even if the other read fails', async () => {
+  const mock = stub([...cssReads(), json({ name: 'accounts/5899395261' }), json({}, 403)]);
+  const result = await runPreflight(mock.options);
+  assert.equal(result.registration.status, 'project_mismatch'); assert.equal(result.registration.checks.account.reason, 'HTTP'); assert.equal(result.ok, false);
+});
+
+test('malformed registration success bodies fail closed without leaking fields', async () => {
+  for (const pair of [
+    [{ name: `${token}` }, { name: `${ACCOUNT}/developerRegistration`, gcpIds: [PROJECT_NUMBER] }],
+    [{ name: ACCOUNT }, { name: `${ACCOUNT}/developerRegistration` }],
+    [{ name: ACCOUNT }, { name: `${ACCOUNT}/developerRegistration`, gcpIds: [404604349240] }],
+    [{ name: ACCOUNT }, { name: `${ACCOUNT}/developerRegistration`, gcpIds: [key + '\n'] }],
+    [{ error: { message: key } }, { name: `${ACCOUNT}/developerRegistration`, gcpIds: [PROJECT_NUMBER] }]
+  ]) {
+    const result = await runPreflight(stub([...cssReads(), ...pair.map(body => json(body))]).options);
+    assert.equal(result.ok, false); assert.equal(result.registration.status, 'unknown'); assert.equal(result.registration.reason, 'RESPONSE');
+    assert(!JSON.stringify(result).includes(token)); assert(!JSON.stringify(result).includes(key));
+  }
+});
+
+test('Merchant response body and content-length limits cover success and error bodies', async () => {
+  for (const response of [json({ name: ACCOUNT }, 200, { 'content-length': String(3 * 1024 * 1024) }), json({ name: ACCOUNT, padding: 'x'.repeat(2 * 1024 * 1024) }), new Response(`${token} invalid`, { headers: { 'content-type': 'application/json' } }), json(disabledBody(), 403, { 'content-length': String(3 * 1024 * 1024) })]) {
+    const result = await runPreflight(stub([...cssReads(), response, registered()[1]]).options);
+    assert.equal(result.ok, false); assert.equal(result.registration.status, 'unknown'); assert(['HTTP', 'RESPONSE'].includes(result.registration.reason));
+    assert(!JSON.stringify(result).includes(token)); assert(!JSON.stringify(result).includes(key));
+  }
+});
+
+test('Merchant redirect and changed response URL are not followed or trusted', async () => {
+  for (const altered of ['redirected', 'url']) {
+    const response = json({ name: ACCOUNT });
+    Object.defineProperty(response, altered, { value: altered === 'redirected' ? true : 'https://evil.example/' });
+    const mock = stub([...cssReads(), response, registered()[1]]);
+    const result = await runPreflight(mock.options);
+    assert.equal(result.registration.status, 'unknown'); assert.equal(result.registration.reason, 'URL'); assert.equal(mock.calls.length, 5);
+    assert(mock.calls.every(call => !call.url.includes('evil.example')));
+  }
+});
+
+test('Merchant retry remains bounded and does not acquire the CSS key', async () => {
+  const mock = stub([...cssReads(), ...Array.from({ length: 3 }, () => new Error(`${token} ${key}`)), registered()[1]]);
+  const result = await runPreflight(mock.options);
+  assert.equal(result.registration.status, 'unknown'); assert.equal(result.registration.reason, 'NETWORK'); assert.equal(mock.calls.length, 7); assert.deepEqual(mock.sleepCalls, [250, 500]);
+  for (const call of mock.calls.slice(3)) assert(!JSON.stringify(call.options).includes(key));
+  assert(!JSON.stringify(result).includes(token)); assert(!JSON.stringify(result).includes(key));
+});
+
+test('Merchant 429 can retry then confirm, without extending the existing bounds', async () => {
+  const mock = stub([...cssReads(), json({}, 429, { 'retry-after': '900' }), ...registered()]);
+  const result = await runPreflight(mock.options);
+  assert.equal(result.registration.status, 'confirmed'); assert.equal(result.requests, 6); assert.deepEqual(mock.sleepCalls, [2000]);
+  assert(mock.calls.slice(3).every(call => call.options.headers['X-Goog-Api-Key'] === undefined));
+});
+
+test('shared deadline can stop Merchant checks while preserving completed CSS reads', async () => {
+  let clockCalls = 0;
+  const mock = stub(cssReads());
+  const result = await runPreflight({ ...mock.options, now: () => clockCalls++ < 4 ? 0 : 90001 });
+  assert.equal(result.ok, false); assert.equal(result.registration.status, 'unknown'); assert.equal(result.registration.reason, 'TIMEOUT'); assert.equal(result.processedProducts, 0); assert.equal(mock.calls.length, 3);
 });
