@@ -28,8 +28,10 @@ export function createApiBackend(base = '/api/catalogue'): SearchBackend {
     async getVariants(groupId, country) {
       return (await get<{ products: Product[] }>('/variants', { group: groupId, country }))?.products ?? [];
     },
-    async getOffers(key, country) {
-      return (await get<{ products: Product[] }>('/offers', { key, country }))?.products ?? [];
+    async getOffers(key, country, referenceId, size) {
+      if (!referenceId) return [];
+      return (await get<{ products: Product[] }>('/offers', { key, country, product: referenceId,
+        ...(size !== undefined ? { size } : {}) }))?.products ?? [];
     },
     async stats(country): Promise<CatalogueStats> {
       return (await get<CatalogueStats>('/stats', { country })) ?? { offers: 0, shops: 0, brands: 0 };

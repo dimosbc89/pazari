@@ -6,6 +6,7 @@ import { pickLang } from '../i18n';
 import type { Lang } from '../config';
 import { fold, hash, oneEdit, toLatin, words } from '../../shared/searchtext';
 import { categorySuggestions } from '../../shared/category-suggestions';
+import { matchingOffers } from '../../shared/offer-comparison';
 import {
   FACETS,
   type CatalogueStats,
@@ -148,10 +149,15 @@ export function createLocalBackend(url = '/demo/products.json'): SearchBackend {
       return (await load()).filter((p) => p.groupId === groupId && p.countries.includes(country)).sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
     },
 
-    async getOffers(key, country) {
-      return (await load())
+    async getOffers(key, country, referenceId, size) {
+      if (!referenceId) return [];
+      const products = await load();
+      const reference = products.find((p) => p.id === referenceId && p.countries.includes(country));
+      if (!reference || (reference.matchKey ?? reference.mpn) !== key) return [];
+      const offers = products
         .filter((p) => (p.matchKey ?? p.mpn) === key && p.countries.includes(country))
         .sort((a, b) => a.price + (a.shipping ?? 0) - (b.price + (b.shipping ?? 0)));
+      return matchingOffers(reference, offers, size);
     },
 
     async stats(country): Promise<CatalogueStats> {

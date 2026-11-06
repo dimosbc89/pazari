@@ -4,6 +4,7 @@
 // counts ignore that filter's own selection, like the demo and Typesense backends.
 import { hash as fnv, oneEdit, toLatin, tokens, words } from '../shared/searchtext.ts';
 import { categorySuggestions } from '../shared/category-suggestions.ts';
+import { matchingOffers } from '../shared/offer-comparison.ts';
 import { FACETS, type CatalogueStats, type FacetKey, type FacetValue, type Product, type Refinements, type SearchResult, type SortKey } from '../src/search/types.ts';
 import type { Env } from './env.ts';
 import { nowIso } from './http.ts';
@@ -250,10 +251,14 @@ export async function getVariants(env: Env, groupId: string, country: string): P
 }
 
 /** The same product in every shop, cheapest total (price + delivery) first. */
-export async function getOffers(env: Env, key: string, country: string): Promise<Product[]> {
+export async function getOffers(env: Env, key: string, country: string, referenceId?: string, size?: string): Promise<Product[]> {
+  if (!referenceId) return [];
+  const reference = await getProduct(env, referenceId);
+  if (!reference || !reference.countries.includes(country) || (reference.matchKey ?? reference.mpn) !== key) return [];
   const { results } = await env.DB.prepare('SELECT doc FROM products WHERE match_key = ? AND listed = 1 AND countries LIKE ? LIMIT 100')
     .bind(key, `%,${country},%`).all<{ doc: string }>();
-  return results.map((r) => JSON.parse(r.doc) as Product).sort((a, b) => a.price + (a.shipping ?? 0) - (b.price + (b.shipping ?? 0)));
+  return matchingOffers(reference, results.map((r) => JSON.parse(r.doc) as Product), size)
+    .sort((a, b) => a.price + (a.shipping ?? 0) - (b.price + (b.shipping ?? 0)));
 }
 
 export async function getStats(env: Env, country: string): Promise<CatalogueStats> {

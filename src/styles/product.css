@@ -21,6 +21,10 @@
 .product-brand { font-size: 13px; font-weight: 750; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
 .product-title { margin: -6px 0 0; font-size: clamp(25px, 3vw, 36px); font-weight: 750; letter-spacing: -0.025em; line-height: 1.12; }
 .product-price { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.product-size-selector { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.product-size-selector label { font-size: 14px; font-weight: 650; }
+.product-size-selector select { min-width: 170px; max-width: 100%; min-height: 44px; padding: 9px 36px 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--white); color: var(--ink); font: inherit; }
+.product-size-help { margin: 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--ink-2); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
 .btn--buy { min-height: 56px; margin-top: 6px; font-size: 17px; border-radius: 14px; }
 .product-note { margin: 0; color: var(--muted); font-size: 13px; }
 .product-description { margin-top: 6px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 15.5px; line-height: 1.6; }
@@ -40,6 +44,7 @@
 .offer.is-current { box-shadow: inset 0 0 0 2px var(--ink); border-color: transparent; }
 .offer-shop { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 15.5px; }
 .offer-shop .icon { width: 20px; height: 20px; color: var(--muted); }
+.offer-sizes { flex-basis: 100%; display: flex; flex-direction: column; gap: 3px; padding-left: 30px; color: var(--muted); font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 .offer-price { display: flex; flex-direction: column; gap: 2px; }
 .offer-price .price-now { font-size: 17px; }
 .offer-total { font-size: 14px; }

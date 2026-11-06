@@ -315,6 +315,8 @@ async function cached(req: Request, exec: ExecutionContext, seconds: number, mak
   const url = new URL(req.url);
   const known = new URLSearchParams();
   for (const k of [...CACHE_PARAMS].sort()) for (const v of url.searchParams.getAll(k)) known.append(k, v);
+  // Do not reuse model-only responses cached before exact-size comparisons shipped.
+  if (url.pathname === '/api/catalogue/offers') known.set('_comparison', '2');
   url.search = known.toString();
   const key = new Request(url.toString(), { method: 'GET' });
   const hit = await cache.match(key);
@@ -327,7 +329,7 @@ async function cached(req: Request, exec: ExecutionContext, seconds: number, mak
   return out;
 }
 
-const CACHE_PARAMS = new Set<string>(['q', 'country', 'sort', 'limit', 'group', 'key', ...FACETS]);
+const CACHE_PARAMS = new Set<string>(['q', 'country', 'sort', 'limit', 'group', 'key', 'product', ...FACETS]);
 
 const market = (url: URL) => {
   const c = url.searchParams.get('country') ?? '';
@@ -366,7 +368,10 @@ const catalogueVariants: Handler = ({ req, env, exec }) => cached(req, exec, 300
 
 const catalogueOffers: Handler = ({ req, env, exec }) => cached(req, exec, 300, async () => {
   const url = new URL(req.url);
-  return json({ ok: true, products: await getOffers(env, url.searchParams.get('key') ?? '', market(url)) });
+  const product = url.searchParams.get('product') ?? undefined;
+  const size = url.searchParams.get('size') ?? undefined;
+  if ((product?.length ?? 0) > 200 || (size?.length ?? 0) > 80) throw new HttpError(400, 'bad_variant');
+  return json({ ok: true, products: await getOffers(env, url.searchParams.get('key') ?? '', market(url), product, size) });
 });
 
 const catalogueStats: Handler = ({ req, env, exec }) => cached(req, exec, 300, async () => {
