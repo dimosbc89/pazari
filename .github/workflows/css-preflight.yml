@@ -1,0 +1,72 @@
+# LOCAL REVIEW DRAFT: publication, WIF configuration and execution need separate approval.
+name: CSS read-only preflight
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: css-preflight-5900257120
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.repository == 'dimosbc89/pazari' &&
+      github.repository_id == '1442881486' &&
+      github.repository_owner_id == '72251765' &&
+      github.ref == 'refs/heads/main' &&
+      github.workflow_ref == 'dimosbc89/pazari/.github/workflows/css-preflight.yml@refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
+      CSS_OAUTH_SCOPE: https://www.googleapis.com/auth/content
+    steps:
+      - name: Check out the dispatched commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/css-preflight.yml
+            /scripts/css-preflight.mjs
+            /scripts/css-preflight.test.mjs
+
+      - name: Set up Node without package installation or cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Verify execution context and offline tests before authentication
+        run: |
+          node scripts/css-preflight.mjs --validate-context
+          node --test scripts/css-preflight.test.mjs
+
+      - name: Obtain a short-lived CSS access token
+        id: google-auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: tagora-css-2026
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          audience: https://iam.googleapis.com/projects/404604349240/locations/global/workloadIdentityPools/tagora-css/providers/github-pazari
+          service_account: tagora-css-sync@tagora-css-2026.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/content
+          access_token_lifetime: 600s
+          create_credentials_file: false
+          export_environment_variables: false
+
+      - name: Read Tagora CSS account, quotas and processed-product count
+        env:
+          CSS_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
+          CSS_API_KEY: ${{ secrets.TAGORA_CSS_API_KEY }}
+        run: node scripts/css-preflight.mjs
