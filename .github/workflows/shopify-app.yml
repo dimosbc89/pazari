@@ -7,6 +7,10 @@ on:
     paths:
       - 'worker/**'
       - 'sync/**'
+      - 'shared/**'
+      - 'src/**'
+      - 'scripts/*test*'
+      - 'package*.json'
       - 'plugins/shopify/**'
       - 'migrations/**'
       - '.dev.vars.example'
@@ -31,6 +35,7 @@ jobs:
           npm run typecheck
           npm run test:feed
           npm run test:notifications
+          npm run test:offers
           cp .dev.vars.example .dev.vars
           npx vite build
           npx wrangler d1 migrations apply DB --local

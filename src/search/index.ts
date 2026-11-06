@@ -51,7 +51,7 @@ export const backend: SearchBackend = {
   search: async (p) => (await pick()).search(p),
   getProduct: async (id) => (await pick()).getProduct(id),
   getVariants: async (g, c) => (await pick()).getVariants(g, c),
-  getOffers: async (k, c) => (await pick()).getOffers(k, c),
+  getOffers: async (k, c, referenceId, size) => (await pick()).getOffers(k, c, referenceId, size),
   stats: async (c) => (await pick()).stats(c),
 };
 

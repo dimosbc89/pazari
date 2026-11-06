@@ -86,7 +86,7 @@ export interface SearchBackend {
   getProduct(id: string): Promise<Product | null>;
   /** Other variants (same groupId) */
   getVariants(groupId: string, country: string): Promise<Product[]>;
-  /** The same product from every shop (same matchKey, or mpn for the demo data) */
-  getOffers(key: string, country: string): Promise<Product[]>;
+  /** Offers for the selected product and exact size. A reference is required for comparisons. */
+  getOffers(key: string, country: string, referenceId?: string, size?: string): Promise<Product[]>;
   stats(country: string): Promise<CatalogueStats>;
 }

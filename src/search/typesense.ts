@@ -2,6 +2,7 @@
 // InstantSearch dependency. Disjunctive facets use one extra query per refined facet,
 // all sent in a single multi_search request.
 import { categorySuggestions } from '../../shared/category-suggestions';
+import { matchingOffers } from '../../shared/offer-comparison';
 // Collection schema and import: scripts/typesense-push.mjs
 import {
   FACETS,
@@ -98,10 +99,13 @@ export function createTypesenseBackend(cfg: Config): SearchBackend {
 
     getVariants: (groupId, country) => find(`${inList('groupId', [groupId])} && ${inList('countries', [country])}`),
 
-    async getOffers(key, country) {
+    async getOffers(key, country, referenceId, size) {
+      if (!referenceId) return [];
+      const reference = (await find(`${inList('id', [referenceId])} && ${inList('countries', [country])}`, 'rank:asc', 1))[0];
+      if (!reference || (reference.matchKey ?? reference.mpn) !== key) return [];
       const field = key.startsWith('gtin:') || key.startsWith('mpn:') ? 'matchKey' : 'mpn';
       const offers = await find(`${inList(field, [key])} && ${inList('countries', [country])}`, 'price:asc');
-      return offers.sort((a, b) => a.price + (a.shipping ?? 0) - (b.price + (b.shipping ?? 0)));
+      return matchingOffers(reference, offers, size).sort((a, b) => a.price + (a.shipping ?? 0) - (b.price + (b.shipping ?? 0)));
     },
 
     async stats(country): Promise<CatalogueStats> {
