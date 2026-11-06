@@ -1,0 +1,79 @@
+# LOCAL FUTURE DRAFT: provider, publication and one execution require explicit approval.
+name: Register Tagora CSS developer once
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_plan_sha256:
+        description: Exact reviewed plan hash (includes dimos@growagency.online and possible Google invitation/notifications)
+        required: true
+        type: string
+      allow_if_not_registered:
+        description: Allow one registration POST only if both current GET checks explicitly identify this project as unregistered
+        required: true
+        default: false
+        type: boolean
+permissions: {}
+concurrency:
+  group: css-register-developer-5900257120
+  cancel-in-progress: false
+jobs:
+  register:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.repository == 'dimosbc89/pazari' &&
+      github.repository_id == '1442881486' &&
+      github.repository_owner_id == '72251765' &&
+      github.ref == 'refs/heads/main' &&
+      github.workflow_ref == 'dimosbc89/pazari/.github/workflows/css-register-developer.yml@refs/heads/main' &&
+      github.run_attempt == 1 &&
+      inputs.confirm_plan_sha256 == '278c828bf6439213761bee2f9e919205ffb85fe23befd5b54de044a31fef440d' &&
+      inputs.allow_if_not_registered == true
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GCP_WIF_PROVIDER_REGISTER: ${{ vars.GCP_WIF_PROVIDER_REGISTER }}
+      CSS_OAUTH_SCOPE: https://www.googleapis.com/auth/content
+      CSS_REGISTER_CONFIRM_SHA256: ${{ inputs.confirm_plan_sha256 }}
+      CSS_REGISTER_ALLOW_NOT_REGISTERED: ${{ inputs.allow_if_not_registered }}
+    steps:
+      - name: Check out the reviewed dispatched commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/css-register-developer.yml
+            /scripts/css-register-developer.mjs
+            /scripts/css-register-developer.test.mjs
+      - name: Set up Node without package installation
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Validate fixed plan, context and offline tests before authentication
+        run: |
+          node scripts/css-register-developer.mjs
+          node scripts/css-register-developer.mjs --check-context
+          node --test scripts/css-register-developer.test.mjs
+      - name: Obtain dedicated short-lived registration token
+        id: registration-auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: tagora-css-2026
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER_REGISTER }}
+          audience: https://iam.googleapis.com/projects/404604349240/locations/global/workloadIdentityPools/tagora-css/providers/github-pazari-register
+          service_account: tagora-css-sync@tagora-css-2026.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/content
+          access_token_lifetime: 600s
+          create_credentials_file: false
+          export_environment_variables: false
+      - name: Check status, register at most once, and read back the project link
+        env:
+          CSS_ACCESS_TOKEN: ${{ steps.registration-auth.outputs.access_token }}
+        run: node scripts/css-register-developer.mjs --register
