@@ -1,14 +1,14 @@
-# LOCAL FUTURE DRAFT: provider, publication and one execution require explicit approval.
-name: Register Tagora CSS developer once
+# Fixed link-only request: one separately approved manual execution, with no developer email.
+name: Link Tagora CSS project once
 on:
   workflow_dispatch:
     inputs:
       confirm_plan_sha256:
-        description: Exact reviewed plan hash (includes dimos@growagency.online and possible Google invitation/notifications)
+        description: Exact reviewed link-only plan hash (POST {}; developer contact setup remains outstanding)
         required: true
         type: string
       allow_if_not_registered:
-        description: Allow one registration POST only if both current GET checks explicitly identify this project as unregistered
+        description: Allow one link-only POST {} only if both current GET checks identify this exact project as unregistered
         required: true
         default: false
         type: boolean
@@ -26,7 +26,7 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.workflow_ref == 'dimosbc89/pazari/.github/workflows/css-register-developer.yml@refs/heads/main' &&
       github.run_attempt == 1 &&
-      inputs.confirm_plan_sha256 == '278c828bf6439213761bee2f9e919205ffb85fe23befd5b54de044a31fef440d' &&
+      inputs.confirm_plan_sha256 == '2c0aa573d5ebbdffeb129e382a278ec52822387c58c1e9a2e0c7483d18d628da' &&
       inputs.allow_if_not_registered == true
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -73,7 +73,7 @@ jobs:
           access_token_lifetime: 600s
           create_credentials_file: false
           export_environment_variables: false
-      - name: Check status, register at most once, and read back the project link
+      - name: Check status, link at most once without developer email, and read back
         env:
           CSS_ACCESS_TOKEN: ${{ steps.registration-auth.outputs.access_token }}
         run: node scripts/css-register-developer.mjs --register
