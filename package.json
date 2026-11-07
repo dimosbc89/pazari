@@ -23,7 +23,8 @@
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
     "deploy": "npm run build && wrangler deploy",
     "plugin:zip": "node scripts/build-plugin-zip.mjs",
-    "plugin:test": "php plugins/woocommerce/tests/catalog-test.php"
+    "plugin:test": "php plugins/woocommerce/tests/catalog-test.php",
+    "test:catalogue": "node --test scripts/catalogue-request-test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/commissioner": "^5.3.0",
