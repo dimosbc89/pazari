@@ -4,6 +4,7 @@
 // only; `?catalogue=auto` goes back to the site's setting.
 import { useEffect, useState } from 'react';
 import { SEARCH_CONFIG } from '../config';
+import { withRequestTimeout } from '../lib/request-timeout';
 import { createApiBackend } from './api';
 import { createLocalBackend } from './local';
 import { createTypesenseBackend } from './typesense';
@@ -28,21 +29,36 @@ function preview(): CatalogueMode | null {
 }
 
 let mode: Promise<CatalogueMode> | null = null;
-/** The catalogue this visitor sees. Without the shop API (e.g. a static host), the demo. */
-export function catalogueMode(): Promise<CatalogueMode> {
-  return (mode ??= (async (): Promise<CatalogueMode> => {
-    if (SEARCH_CONFIG.backend === 'local') return 'demo';
-    if (SEARCH_CONFIG.backend === 'typesense') return 'live';
-    const forced = preview();
-    if (forced) return forced;
-    try {
-      const res = await fetch('/api/catalogue/mode');
-      const data = (await res.json()) as { mode?: string };
-      return data.mode === 'live' ? 'live' : 'demo';
-    } catch {
-      return 'demo';
+const modeListeners = new Set<(value: CatalogueMode) => void>();
+
+async function resolveMode(): Promise<CatalogueMode> {
+  if (SEARCH_CONFIG.backend === 'local') return 'demo';
+  if (SEARCH_CONFIG.backend === 'typesense') return 'live';
+  const forced = preview();
+  if (forced) return forced;
+  return withRequestTimeout(async (signal) => {
+    const res = await fetch('/api/catalogue/mode', { signal });
+    // A static host has no shop API. Temporary failures must not select demo products.
+    if (res.status === 404) return 'demo';
+    if (!res.ok) throw new Error(`Catalogue mode ${res.status}`);
+    const data = (await res.json()) as { mode?: unknown; ok?: unknown } | null;
+    if (!data || typeof data !== 'object' || data.ok === false || (data.mode !== 'live' && data.mode !== 'demo')) {
+      throw new Error('Invalid catalogue mode');
     }
-  })());
+    return data.mode;
+  });
+}
+
+/** Share an in-flight or successful mode; allow a fresh attempt after failure. */
+export function catalogueMode(): Promise<CatalogueMode> {
+  if (mode) return mode;
+  const attempt = resolveMode();
+  mode = attempt;
+  void attempt.then(
+    (value) => { if (mode === attempt) for (const listener of modeListeners) listener(value); },
+    () => { if (mode === attempt) mode = null; },
+  );
+  return attempt;
 }
 
 const pick = async () => ((await catalogueMode()) === 'live' ? live : demo);
@@ -58,7 +74,14 @@ export const backend: SearchBackend = {
 /** True while the site shows the demo catalogue (the footer says so). */
 export function useIsDemo() {
   const [isDemo, setIsDemo] = useState(false);
-  useEffect(() => { let on = true; catalogueMode().then((m) => on && setIsDemo(m === 'demo')); return () => { on = false; }; }, []);
+  useEffect(() => {
+    let on = true;
+    const update = (value: CatalogueMode) => { if (on) setIsDemo(value === 'demo'); };
+    modeListeners.add(update);
+    // Stay subscribed so a later successful Retry also updates the demo notice.
+    void catalogueMode().then(update, () => {});
+    return () => { on = false; modeListeners.delete(update); };
+  }, []);
   return isDemo;
 }
 

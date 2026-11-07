@@ -1,16 +1,19 @@
 // Partner shops' products, searched in the Cloudflare database (worker/catalogue.ts)
 // through /api/catalogue/*. Responses are cached at Cloudflare's edge for a few minutes.
 import { FACETS, type CatalogueStats, type Product, type SearchBackend, type SearchParams, type SearchResult } from './types';
+import { withRequestTimeout } from '../lib/request-timeout';
 
 export function createApiBackend(base = '/api/catalogue'): SearchBackend {
   async function get<T>(path: string, params: Record<string, string | string[]> = {}): Promise<T | null> {
     const q = new URLSearchParams();
     for (const [k, v] of Object.entries(params)) for (const x of Array.isArray(v) ? v : [v]) q.append(k, x);
-    const res = await fetch(`${base}${path}${q.size ? `?${q}` : ''}`, path === '/stats' ? { cache: 'no-store' } : undefined);
-    if (res.status === 404) return null;
-    const data = (await res.json().catch(() => null)) as (T & { ok?: boolean }) | null;
-    if (!res.ok || !data || data.ok === false) throw new Error(`Catalogue ${res.status}`);
-    return data;
+    return withRequestTimeout(async (signal) => {
+      const res = await fetch(`${base}${path}${q.size ? `?${q}` : ''}`, { signal, ...(path === '/stats' ? { cache: 'no-store' as const } : {}) });
+      if (res.status === 404) return null;
+      const data = (await res.json().catch(() => null)) as (T & { ok?: boolean }) | null;
+      if (!res.ok || !data || data.ok === false) throw new Error(`Catalogue ${res.status}`);
+      return data;
+    });
   }
 
   return {
